@@ -1,5 +1,6 @@
 <!-- Last-touched: 2026-08-04 — renamed from OwnMail; name cleared against npm/PyPI/GitHub/WHOIS. -->
-**English** · [Tiếng Việt](README.vi.md) — English is authoritative, see [`TRANSLATIONS.md`](TRANSLATIONS.md)
+**English** · [Tiếng Việt](docs/i18n/vi/README.md) · [日本語](docs/i18n/ja/README.md) · [简体中文](docs/i18n/zh-CN/README.md) · [繁體中文](docs/i18n/zh-TW/README.md) · [ไทย](docs/i18n/th/README.md) · [Bahasa Indonesia](docs/i18n/id/README.md) · [हिन्दी](docs/i18n/hi/README.md) · [Français](docs/i18n/fr/README.md) · [Español](docs/i18n/es/README.md) · [Português](docs/i18n/pt/README.md) · [Русский](docs/i18n/ru/README.md)
+— English is authoritative, see [`TRANSLATIONS.md`](TRANSLATIONS.md)
 
 # Freehold Mail
 
@@ -72,6 +73,12 @@ Requirements: a Linux host with Docker and Compose v2, a domain you control, por
 git clone https://github.com/Novaza-ai/freeholdmail && cd freeholdmail
 ./install.sh
 ```
+
+> **Just rented a server, or about to?** Read [`docs/HOSTING.md`](docs/HOSTING.md) first. It
+> goes from a bare VPS to a working mailbox with a verification command at every step, and
+> it names the one thing you cannot fix afterwards: **most cheap providers block outbound
+> port 25**, which makes mail impossible no matter how well you configure this. It also has
+> measured RAM, CPU and disk figures so you rent the right size rather than guessing.
 
 The installer asks for your edition and domain, then:
 
@@ -193,12 +200,25 @@ Who decides what, how to become a maintainer, and what happens to you if this pr
 ever abandoned: [`GOVERNANCE.md`](GOVERNANCE.md). Who to expect a reply from, and an honest
 statement of the bus factor: [`MAINTAINERS.md`](MAINTAINERS.md).
 
-## Maintained by
+## Who builds this
 
-**[Novaza Solution JSC](https://novaza.ai)** — we run this stack's components (Stalwart and
-Bulwark) in production for our own mail, and we built Freehold Mail to package that architecture
-for anyone who wants to self-host it. MIT-licensed; see [`LICENSE`](LICENSE) and
-[`NOTICE`](NOTICE).
+Led by **Daika Ginza** — [GitHub](https://github.com/daikaginza) ·
+[Substack](https://substack.com/@daikaginza) ·
+[LinkedIn](https://www.linkedin.com/in/daikaginza/) — with
+[@anhkk1245](https://github.com/anhkk1245), at
+**[Novaza Solution JSC](https://novaza.ai)**.
+
+We run this stack's components (Stalwart and Bulwark) in production for our own mail, and we
+built Freehold Mail to package that architecture for anyone who wants to self-host it.
+MIT-licensed; see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).
+
+Full team, how decisions get made, and how to join:
+[`MAINTAINERS.md`](MAINTAINERS.md) · [`GOVERNANCE.md`](GOVERNANCE.md).
+
+> GitHub's contributor graph currently credits only `dependabot`, because our commits are
+> authored under a company identity that is not linked to a GitHub account. If you
+> contribute, commit under your own name and email — you will be credited there properly.
+> `MAINTAINERS.md` explains how we are fixing this for the team.
 
 ---
 

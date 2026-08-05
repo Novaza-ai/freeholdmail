@@ -1,22 +1,71 @@
 # Security Policy
 
-<!-- Last-touched: 2026-08-04 — written during the pre-public GATE-2 security review. -->
+<!-- Last-touched: 2026-08-05 — reporting channels made explicit and machine-readable
+     (a policy an automated checker cannot find is one a reporter cannot find either),
+     with a coordinated-disclosure timeline stated in days rather than implied. -->
 
 ## Reporting a vulnerability
 
-Report privately — **do not open a public issue**.
+Report privately. **Do not open a public issue, pull request or discussion** for a security
+problem — a public report is a public exploit for everyone running this stack.
 
-- Preferred: GitHub **Security → Report a vulnerability** (private advisory) on this repo.
-- Alternative: email the address in `NOTICE`, subject prefixed `[SECURITY]`.
+**Two channels, either is fine:**
 
-We aim to acknowledge within **3 business days** and to ship a fix or a documented
-mitigation within **30 days** for issues we can reproduce. We will credit you unless
-you ask otherwise.
+1. **GitHub private advisory — preferred.** Open a report at
+   https://github.com/Novaza-ai/freeholdmail/security/advisories/new
+   It is private between you and the maintainers, it lets us work with you on a fix in a
+   private fork, and it produces a CVE when the issue warrants one.
+2. **Email: admin@novaza.ai** — put `[SECURITY]` at the front of the subject.
+   Use this if you cannot or prefer not to use GitHub. If you want the report encrypted,
+   say so in a first message with no details and we will exchange a key.
 
-**Scope.** This repo is *orchestration*: compose files, nginx config, the installer,
-and docs. Vulnerabilities inside Stalwart, Bulwark, Keycloak, or nginx belong to those
-projects — please report them upstream. If an upstream flaw is *made worse by our
-defaults*, that is in scope here and we want to hear about it.
+Please include: what you found, the version or commit, how to reproduce it, and what an
+attacker gains. A proof of concept helps enormously. Reports in any language are welcome —
+we will translate rather than ask you to.
+
+### What happens next, and when
+
+These are commitments, not aspirations. If we miss one, you are entitled to say so publicly.
+
+| Stage | Target |
+|-------|--------|
+| We acknowledge your report | within **3 business days** |
+| We confirm or dispute it, with reasoning | within **10 days** |
+| Fix or documented mitigation shipped, for issues we can reproduce | within **30 days** |
+| Public disclosure and advisory published | within **90 days** of your report, or as soon as a fix is released — whichever comes first |
+
+We follow **coordinated disclosure**. We will agree an embargo with you and hold it. If we
+cannot fix an issue within 90 days we will say so publicly anyway, describing the risk and
+the workaround, because silence is worse for the people running this than an unfixed
+disclosed bug. If you disagree with our assessment, tell us — we would rather argue than be
+wrong quietly.
+
+**Credit.** We will name you in the advisory and in `CHANGELOG.md` unless you ask us not to.
+We do not run a paid bug-bounty programme and will not pretend otherwise.
+
+**Safe harbour.** Test against your own installation. We will not pursue or support legal
+action against anyone who reports in good faith, stays within their own systems, avoids
+privacy violations and service degradation, and gives us reasonable time before disclosure.
+
+### Scope
+
+This repository is **orchestration**: compose files, nginx configuration, the installer, the
+test suites, and documentation. It contains no third-party source code.
+
+**In scope:** anything in this repository, and — importantly — any way our *defaults* make an
+upstream weakness worse. An insecure default here is our bug even when the code is theirs.
+
+**Out of scope, report upstream:** vulnerabilities inside the programs this project runs.
+Their advisory channels are the correct place, and reporting there protects far more people
+than reporting here:
+
+- Stalwart Mail Server — https://github.com/stalwartlabs/stalwart/security
+- Bulwark Webmail — https://github.com/bulwarkmail/webmail/security
+- Keycloak — https://github.com/keycloak/keycloak/security
+- nginx — https://nginx.org/en/security_advisories.html
+
+If you are unsure which side of that line something falls on, report it here and we will
+route it.
 
 ## Known security properties (measured 2026-08-04, not assumed)
 

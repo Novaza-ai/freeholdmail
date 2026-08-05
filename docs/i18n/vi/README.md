@@ -1,7 +1,7 @@
 <!-- Last-touched: 2026-08-04 — bản dịch đầu tiên, dịch từ README.md cùng ngày. -->
-[English](README.md) · **Tiếng Việt** — bản tiếng Anh là bản có thẩm quyền, xem [`TRANSLATIONS.md`](TRANSLATIONS.md)
+[English](../../../README.md) · **Tiếng Việt** — bản tiếng Anh là bản có thẩm quyền, xem [`TRANSLATIONS.md`](../../../TRANSLATIONS.md)
 
-> ⚠️ Bản dịch có thể lạc hậu so với bản gốc. Khi có mâu thuẫn, [`README.md`](README.md)
+> ⚠️ Bản dịch có thể lạc hậu so với bản gốc. Khi có mâu thuẫn, [`README.md`](../../../README.md)
 > tiếng Anh là bản đúng.
 
 # Freehold Mail
@@ -14,12 +14,12 @@ server viết bằng Rust, web client hiện đại.
 > thuê hộp thư từ một bên mà mô hình kinh doanh của họ là dữ liệu của bạn.
 
 [![CI](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg)](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Components: AGPL-3.0](https://img.shields.io/badge/components-AGPL--3.0-orange.svg)](THIRD_PARTY_LICENSES.md)
-[![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-yellow.svg)](CHANGELOG.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
+[![Components: AGPL-3.0](https://img.shields.io/badge/components-AGPL--3.0-orange.svg)](../../../THIRD_PARTY_LICENSES.md)
+[![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-yellow.svg)](../../../CHANGELOG.md)
 
 <p align="center">
-  <img src="docs/media/inbox.png" alt="Hộp thư Freehold Mail: sidebar thư mục, danh sách thư và khung đọc" width="820">
+  <img src="../../../docs/media/inbox.png" alt="Hộp thư Freehold Mail: sidebar thư mục, danh sách thư và khung đọc" width="820">
 </p>
 
 Mail server, webmail và TLS termination — đã đấu nối sẵn với nhau, kèm một trình cài đặt tự
@@ -29,7 +29,7 @@ bạn cần, và hoàn toàn vắng mặt khi bạn không cần.
 > **Trạng thái: pre-1.0.** Edition mặc định đã được kiểm thử đầu-cuối — một email thật đi
 > qua SMTP → hộp thư → IMAP. Edition SSO thì khởi động được, database và OIDC discovery đã
 > xác minh, nhưng phiên bản Keycloak đang khai và luồng đăng nhập qua trình duyệt thì chưa.
-> Hãy đọc [Known gaps](CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these) trước
+> Hãy đọc [Known gaps](../../../CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these) trước
 > khi bạn dựa vào bộ này.
 
 ---
@@ -41,11 +41,11 @@ email được gửi qua SMTP và đọc lại qua IMAP bằng `scripts/seed_dem
 giả:
 
 <p align="center">
-  <img src="docs/media/tour.gif" alt="Tour hướng dẫn webmail: sidebar, soạn thư, tìm kiếm, danh sách thư, khung đọc, nhãn, danh bạ, cài đặt, phím tắt" width="820">
+  <img src="../../../docs/media/tour.gif" alt="Tour hướng dẫn webmail: sidebar, soạn thư, tìm kiếm, danh sách thư, khung đọc, nhãn, danh bạ, cài đặt, phím tắt" width="820">
 </p>
 
 Mọi hình ở đây đều được sinh lại bằng script, không chỉnh sửa tay — xem
-[`docs/media/README.md`](docs/media/README.md) để biết lệnh.
+[`docs/media/README.md`](../../../docs/media/README.md) để biết lệnh.
 
 ## Vì sao dự án này tồn tại
 
@@ -63,7 +63,7 @@ server của ai cả.
 | Edition | Gồm những gì | Đăng nhập | Đã test E2E |
 |---------|--------------|-----------|-------------|
 | **Full Mail** (mặc định) | mail server + webmail + nginx | tài khoản/mật khẩu tự thân | ✅ có |
-| **Mail + SSO** | như trên **+ Keycloak + PostgreSQL** | OIDC/SSO | ⚠️ một phần — stack khởi động được, database và OIDC discovery đã xác minh trên Keycloak 24; cấu hình cho bản 26.0 đang khai và vòng đăng nhập qua trình duyệt thì chưa đo. Xem [Known gaps](CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these) |
+| **Mail + SSO** | như trên **+ Keycloak + PostgreSQL** | OIDC/SSO | ⚠️ một phần — stack khởi động được, database và OIDC discovery đã xác minh trên Keycloak 24; cấu hình cho bản 26.0 đang khai và vòng đăng nhập qua trình duyệt thì chưa đo. Xem [Known gaps](../../../CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these) |
 
 Bạn không phải đụng đến Keycloak trừ khi muốn dùng SSO; nó nằm trong một file overlay tuỳ chọn.
 
@@ -77,6 +77,12 @@ git clone https://github.com/Novaza-ai/freeholdmail && cd freeholdmail
 ./install.sh
 ```
 
+> **Vừa thuê server, hoặc sắp thuê?** Đọc [`docs/HOSTING.md`](../../../docs/HOSTING.md) trước. Tài liệu
+> đó đi từ một VPS trắng tới hộp thư chạy được, mỗi bước kèm lệnh kiểm chứng, và nói thẳng thứ
+> duy nhất **không sửa được về sau**: đa số nhà cung cấp giá rẻ **chặn cổng 25 chiều ra**, khiến
+> việc gửi mail bất khả thi dù bạn cấu hình hoàn hảo. Nó cũng có số liệu RAM, CPU, đĩa **đo
+> thật** để bạn thuê đúng cỡ thay vì đoán.
+
 Trình cài đặt sẽ hỏi bạn chọn edition nào và domain là gì, sau đó:
 
 1. sinh secret ngẫu nhiên mạnh vào `.env` (mode 600, `umask 077` — không hardcode gì cả);
@@ -87,7 +93,7 @@ Trình cài đặt sẽ hỏi bạn chọn edition nào và domain là gì, sau 
 Sau đó tạo một hộp thư rồi đăng nhập tại `https://<domain-cua-ban>`:
 
 ```bash
-# tạo domain trước, rồi tạo user — trường roles là BẮT BUỘC, thiếu nó SMTP AUTH sẽ từ chối tài khoản
+# domain, then user — the roles field is required, or SMTP AUTH refuses the account
 curl -u admin:$STALWART_FALLBACK_ADMIN_SECRET -X POST http://127.0.0.1:8080/api/principal \
   -H 'Content-Type: application/json' -d '{"type":"domain","name":"example.com"}'
 
@@ -97,7 +103,7 @@ curl -u admin:$STALWART_FALLBACK_ADMIN_SECRET -X POST http://127.0.0.1:8080/api/
        "emails":["you@example.com"],"roles":["user"]}'
 ```
 
-Cuối cùng là đặt các bản ghi DNS — [`docs/DNS.md`](docs/DNS.md) có đủ MX, SPF, DKIM và DMARC.
+Cuối cùng là đặt các bản ghi DNS — [`docs/DNS.md`](../../../docs/DNS.md) có đủ MX, SPF, DKIM và DMARC.
 
 ## Kiến trúc
 
@@ -140,7 +146,7 @@ ticketing, công cụ di trú từ nhà cung cấp khác, hay control panel có 
 gửi hàng loạt là cả một bộ môn về deliverability, không phải một cái công tắc bật lên —
 đừng mặc định là có.
 
-**Lộ trình:** xem [`ROADMAP.md`](ROADMAP.md) — trước mắt là làm cho đáng tin (xác minh SSO
+**Lộ trình:** xem [`ROADMAP.md`](../../../ROADMAP.md) — trước mắt là làm cho đáng tin (xác minh SSO
 trên đúng bản Keycloak đang khai, lên dòng mail server hiện hành của upstream, ghim digest
 mọi image, đo deliverability trên domain thật). Xa hơn, chúng tôi muốn đây là bộ stack mà
 software agent có thể dùng một cách an toàn: một MCP server chạy trên JMAP, và credential
@@ -150,7 +156,7 @@ chúng. **Rất mong có người đóng góp phần agent — xem mục "Help w
 
 ## ⚖️ Giấy phép
 
-- **Repo này** (orchestration, config, installer, tài liệu): **MIT** — xem [`LICENSE`](LICENSE).
+- **Repo này** (orchestration, config, installer, tài liệu): **MIT** — xem [`LICENSE`](../../../LICENSE).
 - **Các chương trình mà nó triển khai vẫn giữ giấy phép riêng** và được kéo về dưới dạng
   image đã publish; repo này không chứa mã nguồn của chúng:
   - Stalwart Mail Server — **AGPL-3.0**
@@ -159,15 +165,15 @@ chúng. **Rất mong có người đóng góp phần agent — xem mục "Help w
 
 Nếu bạn **sửa đổi** Stalwart hoặc Bulwark rồi phục vụ cho người khác, AGPL buộc bạn phải
 công bố mã nguồn đã sửa *của chính thành phần đó*. Chạy image nguyên bản thì không phát sinh
-nghĩa vụ này. Chi tiết: [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md) và
-[`NOTICE`](NOTICE). *(Văn bản giấy phép chỉ có hiệu lực pháp lý ở bản tiếng Anh.)*
+nghĩa vụ này. Chi tiết: [`THIRD_PARTY_LICENSES.md`](../../../THIRD_PARTY_LICENSES.md) và
+[`NOTICE`](../../../NOTICE). *(Văn bản giấy phép chỉ có hiệu lực pháp lý ở bản tiếng Anh.)*
 
 ## Bảo mật
 
 Open relay bị từ chối, gửi thư bắt buộc xác thực, và các cơ chế mật khẩu (`PLAIN`/`LOGIN`)
 chỉ được cấp sau STARTTLS — tất cả đều **đã đo**, không phải phỏng đoán. Nhưng cũng có
 những điểm yếu thật mà bạn phải tính đến, trong đó có một admin API của upstream trả về mật
-khẩu tài khoản ở dạng cleartext. **Hãy đọc [`SECURITY.md`](SECURITY.md) trước khi mở bộ này
+khẩu tài khoản ở dạng cleartext. **Hãy đọc [`SECURITY.md`](../../../SECURITY.md) trước khi mở bộ này
 ra internet.** *(File SECURITY.md chỉ có bản tiếng Anh — đó là bản có thẩm quyền.)*
 
 ## Kiểm thử và vận hành
@@ -175,34 +181,47 @@ ra internet.** *(File SECURITY.md chỉ có bản tiếng Anh — đó là bản
 Cả hai đều nằm trong repo — bạn tự tái lập được mọi tuyên bố ở trên:
 
 ```bash
-tests/test_config.sh      # tĩnh: validate cả 2 edition, không secret, digest đã ghim … (~vài giây)
-tests/test_e2e.sh         # thật: dựng stack → gửi một email → đọc lại qua IMAP (~2 phút)
-tests/test_e2e.sh --sso   # như trên, thêm Keycloak + PostgreSQL
+tests/test_config.sh      # static: both editions validate, no secrets, digests pinned … (~seconds)
+tests/test_e2e.sh         # real: stack up → send a message → read it back over IMAP (~2 min)
+tests/test_e2e.sh --sso   # same, plus Keycloak + PostgreSQL
 ```
 
 `test_e2e.sh` dựng một stack dùng-một-lần trên các cổng chỉ bind loopback, với volume và tên
 container riêng, và luôn dọn sạch khi kết thúc — nó sẽ không làm phiền một bản triển khai
-đang chạy. Xem [`tests/README.md`](tests/README.md), gồm cả phần **cố ý không** kiểm thử.
+đang chạy. Xem [`tests/README.md`](../../../tests/README.md), gồm cả phần **cố ý không** kiểm thử.
 
 Vận hành hằng ngày — sao lưu, gia hạn chứng chỉ, quản lý hộp thư, nâng cấp, xử lý sự cố —
-nằm ở [`docs/RUNBOOK.md`](docs/RUNBOOK.md). Điều kiện tiên quyết ở
-[`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md).
+nằm ở [`docs/RUNBOOK.md`](../../../docs/RUNBOOK.md). Điều kiện tiên quyết ở
+[`docs/REQUIREMENTS.md`](../../../docs/REQUIREMENTS.md).
 
 ## Đóng góp
 
-Xem [`CONTRIBUTING.md`](CONTRIBUTING.md). Một luật nội bộ: mọi tuyên bố về hành vi lúc chạy
+Xem [`CONTRIBUTING.md`](../../../CONTRIBUTING.md). Một luật nội bộ: mọi tuyên bố về hành vi lúc chạy
 phải có số đo, không phải "chạy được trên máy tôi".
 
 Ai quyết định điều gì, làm sao để trở thành maintainer, và chuyện gì xảy ra với bạn nếu dự án
-này bị bỏ rơi: [`GOVERNANCE.md`](GOVERNANCE.md). Ai sẽ trả lời bạn, kèm tuyên bố thẳng thắn
-rằng **dự án hiện chỉ có một maintainer**: [`MAINTAINERS.md`](MAINTAINERS.md).
+này bị bỏ rơi: [`GOVERNANCE.md`](../../../GOVERNANCE.md). Ai sẽ trả lời bạn, kèm tuyên bố thẳng thắn
+rằng **dự án hiện chỉ có một maintainer**: [`MAINTAINERS.md`](../../../MAINTAINERS.md).
 
-## Đơn vị duy trì
+## Ai xây dự án này
 
-**[Novaza Solution JSC](https://novaza.ai)** — chúng tôi chạy các thành phần của stack này
-(Stalwart và Bulwark) trong môi trường production cho hệ thống mail của chính mình, và xây
-Freehold Mail để đóng gói kiến trúc đó cho bất kỳ ai muốn tự vận hành. Giấy phép MIT; xem
-[`LICENSE`](LICENSE) và [`NOTICE`](NOTICE).
+Dẫn dắt bởi **Daika Ginza** — [GitHub](https://github.com/daikaginza) ·
+[Substack](https://substack.com/@daikaginza) ·
+[LinkedIn](https://www.linkedin.com/in/daikaginza/) — cùng
+[@anhkk1245](https://github.com/anhkk1245), tại
+**[Novaza Solution JSC](https://novaza.ai)**.
+
+Chúng tôi chạy các thành phần của stack này (Stalwart và Bulwark) trong môi trường production
+cho hệ thống mail của chính mình, và xây Freehold Mail để đóng gói kiến trúc đó cho bất kỳ ai
+muốn tự vận hành. Giấy phép MIT; xem [`LICENSE`](../../../LICENSE) và [`NOTICE`](../../../NOTICE).
+
+Toàn bộ team, cách ra quyết định, và cách tham gia:
+[`MAINTAINERS.md`](../../../MAINTAINERS.md) · [`GOVERNANCE.md`](../../../GOVERNANCE.md).
+
+> Đồ thị contributor của GitHub hiện chỉ ghi nhận `dependabot`, vì các commit của chúng tôi
+> ký dưới danh nghĩa pháp nhân không gắn với tài khoản GitHub nào. Nếu bạn đóng góp, hãy
+> commit bằng tên và email của chính bạn — bạn sẽ được ghi nhận đúng ở đó. `MAINTAINERS.md`
+> giải thích cách chúng tôi đang khắc phục điều này cho team.
 
 ---
 

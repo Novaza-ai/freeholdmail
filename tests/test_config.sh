@@ -286,26 +286,61 @@ echo "== language =="
 # non-English letters — a stray localised sentence in the canonical docs is a defect.
 # shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
 check "canonical files are English-only" bash -c '
-  # Allow the language-selector line, which must show each language in its own script.
-  hits=$(grep -rlP "[^\x00-\x7F]" --include="*.md" --exclude="README.*.md" . 2>/dev/null \
+  # Translations live under docs/i18n/ and are the only files allowed non-English letters.
+  # The root README carries a language selector, so its own non-ASCII line is expected.
+  # README.md and TRANSLATIONS.md carry the language selector, which must show each
+  # language in its own script. Everything else canonical stays ASCII.
+  hits=$(grep -rlP "[^\x00-\x7F]" --include="*.md" . 2>/dev/null \
+         | grep -v "docs/i18n/" \
          | xargs -r grep -lP "[\x{00C0}-\x{024F}\x{1E00}-\x{1EFF}]" 2>/dev/null \
-         | xargs -r grep -LP "README\.[a-z-]+\.md" 2>/dev/null)
+         | grep -vE "(^|/)(README|TRANSLATIONS)\.md$")
   [ -z "$hits" ] || { echo "$hits"; exit 1; }'
-check "README.md carries the language selector" grep -q '(README.vi.md)' README.md
+check "README.md carries the language selector" grep -q 'docs/i18n/vi/README.md' README.md
 # Every language advertised in TRANSLATIONS.md must actually exist, or the selector lies.
 # shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
 check "every declared translation file exists" bash -c '
   missing=0
-  for f in $(grep -oE "README\\.[a-zA-Z-]+\\.md" TRANSLATIONS.md | sort -u); do
+  for f in $(grep -oE "docs/i18n/[a-zA-Z-]+/README\.md" TRANSLATIONS.md | sort -u); do
     [ -f "$f" ] || { echo "declared but missing: $f"; missing=1; }
   done
   exit $missing'
+# The selector in README.md and the table in TRANSLATIONS.md must agree. One advertising a
+# language the other does not is how a reader lands on a 404.
+# shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
+check "selector and translation table list the same languages" bash -c '
+  a=$(grep -oE "docs/i18n/[a-zA-Z-]+/README\.md" README.md | sort -u)
+  b=$(grep -oE "docs/i18n/[a-zA-Z-]+/README\.md" TRANSLATIONS.md | sort -u)
+  [ "$a" = "$b" ] || { echo "selector vs table differ:"; diff <(echo "$a") <(echo "$b"); exit 1; }'
+# Nothing on disk may be an orphan: a translation nobody links to is one nobody maintains.
+# shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
+check "no translation file is unadvertised" bash -c '
+  orphan=0
+  for f in docs/i18n/*/README.md; do
+    grep -q "$f" TRANSLATIONS.md || { echo "on disk but undeclared: $f"; orphan=1; }
+  done
+  exit $orphan'
 while IFS= read -r tr; do
-  check "$tr links back to the English source" grep -q '(README.md)' "$tr"
+  check "$tr links back to the English source" grep -q '(\.\./\.\./\.\./README\.md)' "$tr"
   # Language-neutral on purpose: match the link, not a phrase in the target language,
   # so this file stays English-only like every other canonical file.
   check "$tr points at the translation policy" grep -q 'TRANSLATIONS.md' "$tr"
-done < <(grep -oE 'README\.[a-zA-Z-]+\.md' TRANSLATIONS.md | sort -u)
+  # Every translation must warn that it is not authoritative, or a reader may act on a
+  # stale instruction believing it current. Matched by the link, not by translated words.
+  # shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
+  # Code blocks must be byte-identical to the English. The policy forbids translating
+  # commands, and a translated comment inside a shell block is how that rule erodes: it
+  # looks harmless, then someone translates a flag. Caught the Vietnamese file doing it.
+  check "$tr keeps code blocks identical to English" python3 -c '
+import re, sys
+b = lambda t: re.findall(r"```[a-z]*\n(.*?)```", t, re.S)
+en = b(open("README.md", encoding="utf-8").read())
+tr = b(open(sys.argv[1], encoding="utf-8").read())
+sys.exit(0 if en == tr else 1)' "$tr"
+  # shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
+  check "$tr keeps the same section count as English" bash -c '
+    en=$(grep -c "^## " README.md); tr=$(grep -c "^## " "$0")
+    [ "$en" = "$tr" ] || { echo "English has $en sections, $0 has $tr"; exit 1; }' "$tr"
+done < <(grep -oE 'docs/i18n/[a-zA-Z-]+/README\.md' TRANSLATIONS.md | sort -u)
 # shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
 check "every shipped file has a Last-touched line" bash -c '
   missing=0

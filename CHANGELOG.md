@@ -7,6 +7,31 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **A hosting playbook** — `docs/HOSTING.md`. From a freshly rented VPS to a working mailbox,
+  with a verification command at every step, and the one thing that cannot be fixed later
+  stated first: **most cheap providers block outbound port 25**. Server sizing comes from
+  `docker stats` against this stack running, not from a vendor's guess — measured idle,
+  **218 MiB** for the base edition and **802 MiB** for SSO, of which Keycloak alone is
+  **537 MiB**. Image download is **478 MB** / **1197 MB**.
+- **Ten more translations**, and the structure to survive them. `README.<tag>.md` at the root
+  does not scale past a handful of languages, exactly as `TRANSLATIONS.md` predicted, so
+  translations moved to `docs/i18n/<BCP 47 tag>/README.md`: Japanese, Simplified and
+  Traditional Chinese, Thai, Indonesian, Hindi, French, Spanish, Portuguese and Russian join
+  Vietnamese. English remains the only authority and every translation says so in its own
+  language. **They have not been reviewed by native speakers** — that is stated in
+  `TRANSLATIONS.md` rather than left for a reader to discover.
+- **Four guards for the translations**, because twelve hand-maintained files drift: the
+  selector and the table must list the same languages, no file may be an orphan on disk, each
+  translation must keep the English section count, and **code blocks must be byte-identical
+  to the English**. That last one caught the Vietnamese file translating shell comments —
+  a small thing that is how "never translate commands" erodes.
+- **The team is named.** `MAINTAINERS.md` and the README now credit the people behind this,
+  not only the legal entity. It also records why GitHub's contributor graph shows only
+  `dependabot`: commits are authored under a company identity not linked to any GitHub
+  account, so the graph credits nobody. That is an artefact of how we sign, not a measure of
+  who worked.
+
 ### Security
 - **Every container now drops all Linux capabilities** and adds back only what it provably
   needs: `NET_BIND_SERVICE` for the mail server, and that plus `SETUID`/`SETGID`/`CHOWN`/
@@ -15,7 +40,7 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `CapEff` drops from `a80425fb` to `0000000000000400`, and a `chown` that succeeds with the
   default set is refused under `cap_drop: ALL`.
 - **Every container is bounded** by `mem_limit`, `pids_limit` and rotated JSON logs
-  (`10m` × 5). An unbounded container log fills the host disk and takes the mail server with
+  (`10m` x 5). An unbounded container log fills the host disk and takes the mail server with
   it; a runaway process should be stopped by the kernel rather than by the operator.
 - **Off two end-of-life branches.** nginx moves from `1.27` — a *mainline* branch, retired;
   nginx numbers stable branches with an even minor — to the current stable **`1.30.4`**.
@@ -55,6 +80,12 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   final 200).
 
 ### Changed
+- **`SECURITY.md` rewritten to the OpenSSF Scorecard criteria**, which score a policy on
+  whether a reporter can actually find a way to reach you. It scored 4/10 because it named
+  no URL and no email — the two things worth 6 of the 10 points. It now carries the private
+  advisory link, `admin@novaza.ai`, a stage-by-stage disclosure timeline in days, an explicit
+  coordinated-disclosure commitment, safe-harbour terms, and the upstream advisory channels
+  for the components this project only orchestrates.
 - **Stalwart's licence was overstated** as `AGPL-3.0-or-later`. Upstream states AGPL-3.0 as
   published by the FSF, dual-licensed with SELv1, and offers no "or later" — restating it
   more broadly grants a permission the copyright holder did not.

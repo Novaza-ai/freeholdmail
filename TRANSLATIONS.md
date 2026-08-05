@@ -5,7 +5,7 @@
 `README.md` is the version that governs. Translations are a courtesy for readers, never an
 authority.
 
-Available: [English](README.md) · [Tiếng Việt](README.vi.md)
+Available: [English](README.md) · [Tiếng Việt](docs/i18n/vi/README.md) · [日本語](docs/i18n/ja/README.md) · [简体中文](docs/i18n/zh-CN/README.md) · [繁體中文](docs/i18n/zh-TW/README.md) · [ไทย](docs/i18n/th/README.md) · [Bahasa Indonesia](docs/i18n/id/README.md) · [हिन्दी](docs/i18n/hi/README.md) · [Français](docs/i18n/fr/README.md) · [Español](docs/i18n/es/README.md) · [Português](docs/i18n/pt/README.md) · [Русский](docs/i18n/ru/README.md)
 
 ## The convention this repo follows
 
@@ -16,9 +16,9 @@ standard for the language codes.
 | Rule | Choice here | Why |
 |------|-------------|-----|
 | Canonical language | English, `README.md` at the repo root | GitHub renders the root `README.md` as the project home page; it must be the one everybody can read |
-| Filename pattern | `README.<tag>.md` at the repo root | Most discoverable. The alternative, `docs/i18n/<tag>/README.md`, keeps the root cleaner and is worth switching to past ~4 languages |
+| Filename pattern | `docs/i18n/<tag>/README.md` | Moved here at 12 languages, exactly as the note at the bottom of this file said to. `README.<tag>.md` at the root is more discoverable but stops scaling: eleven `README.*.md` files bury every other root document |
 | Language codes | **BCP 47** ([RFC 5646](https://www.rfc-editor.org/rfc/rfc5646)) | The real standard. Use the bare subtag when the region does not matter (`vi`, `ja`, `de`), the regional form when it does (`zh-CN` vs `zh-TW`, `pt-BR` vs `pt-PT`) |
-| Language selector | First line of every version, linking all versions | A reader who lands on a translation must be one click from the authoritative text |
+| Language selector | Full list on `README.md`; each translation links **back to English** | The stated goal is that a reader landing on a translation is one click from the authoritative text, and a back-link achieves it. Repeating a 12-item list in 12 files is the drift this section warns about — the root README is the one place it stays correct |
 | Staleness | Translations may lag; English wins on any conflict | Stated on every translated file so nobody acts on an outdated instruction |
 
 ## What gets translated, and what must not
@@ -57,12 +57,39 @@ correct the original.
 | Language | Tag | File | Tracks |
 |----------|-----|------|--------|
 | English (source) | `en` | [`README.md`](README.md) | — |
-| Vietnamese | `vi` | [`README.vi.md`](README.vi.md) | initial translation, 2026-08-04 |
+| Vietnamese | `vi` | [`docs/i18n/vi/README.md`](docs/i18n/vi/README.md) | initial translation, 2026-08-04 |
+| Japanese | `ja` | [`docs/i18n/ja/README.md`](docs/i18n/ja/README.md) | initial translation, 2026-08-05 |
+| Chinese (Simplified) | `zh-CN` | [`docs/i18n/zh-CN/README.md`](docs/i18n/zh-CN/README.md) | initial translation, 2026-08-05 |
+| Chinese (Traditional) | `zh-TW` | [`docs/i18n/zh-TW/README.md`](docs/i18n/zh-TW/README.md) | initial translation, 2026-08-05 |
+| Thai | `th` | [`docs/i18n/th/README.md`](docs/i18n/th/README.md) | initial translation, 2026-08-05 |
+| Indonesian | `id` | [`docs/i18n/id/README.md`](docs/i18n/id/README.md) | initial translation, 2026-08-05 |
+| Hindi | `hi` | [`docs/i18n/hi/README.md`](docs/i18n/hi/README.md) | initial translation, 2026-08-05 |
+| French | `fr` | [`docs/i18n/fr/README.md`](docs/i18n/fr/README.md) | initial translation, 2026-08-05 |
+| Spanish | `es` | [`docs/i18n/es/README.md`](docs/i18n/es/README.md) | initial translation, 2026-08-05 |
+| Portuguese | `pt` | [`docs/i18n/pt/README.md`](docs/i18n/pt/README.md) | initial translation, 2026-08-05 |
+| Russian | `ru` | [`docs/i18n/ru/README.md`](docs/i18n/ru/README.md) | initial translation, 2026-08-05 |
+
+**On regional tags.** `zh-CN` and `zh-TW` are kept apart because the scripts and the
+vocabulary genuinely differ. `es` and `pt` are deliberately *not* split into `es-ES`/`es-MX`
+or `pt-PT`/`pt-BR`: for technical prose of this kind the regional differences are small, and
+one well-maintained file beats two that drift. Split them the day a reader shows a passage
+that actually misleads.
+
+**These translations have not been reviewed by native speakers.** They were produced against
+the English source and checked for structure, not for idiom. If you speak one of these
+languages and something reads wrong, a correcting PR is genuinely welcome — that is the fastest
+path from "machine-accurate" to "actually good".
 
 ## If this grows
 
-Past roughly four languages, hand-maintained files stop working: they drift silently and
-nobody notices. At that point move to `docs/i18n/<tag>/` and adopt a translation platform
-such as [Weblate](https://weblate.org/) or [Crowdin](https://crowdin.com/), both of which
-have free tiers for open-source projects and can open PRs automatically. Do not build a
-custom pipeline for this.
+The move to `docs/i18n/<tag>/` happened at 12 languages. The rest of that original advice
+still stands and is now the live problem: **hand-maintained translations drift silently.**
+Eleven files cannot be kept in step with the English by willpower.
+
+The next step, before adding a thirteenth language, is a translation platform —
+[Weblate](https://weblate.org/) or [Crowdin](https://crowdin.com/), both free for open-source
+projects and both able to open PRs automatically. Do not build a custom pipeline for this.
+
+Until that lands, `tests/test_config.sh` enforces the mechanical half: every language
+advertised in the selector must exist on disk, and every translated file must carry the
+"English wins" banner. It cannot check whether a translation is *correct* — only a reader can.
