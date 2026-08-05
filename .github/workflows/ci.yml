@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       # The suite SKIPS checks whose tool is missing, and a skip exits non-zero — so every
       # tool it needs has to be here or the job fails for the right reason. ImageMagick is
       # not on a stock runner and the media checks need it.
@@ -35,7 +35,7 @@ jobs:
     # green static suite has, in this repo's history, coexisted with a stack that could
     # not boot at all.
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: tests/test_e2e.sh
         run: tests/test_e2e.sh
 
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Shell syntax
         run: bash -n install.sh
@@ -132,7 +132,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       # From the distro, not pip: an unpinned `pip install` is an unpinned dependency, and
       # OpenSSF Scorecard flags it (PinnedDependenciesID) in a repo whose own rule is that
       # everything is pinned. apt packages come from the runner image, which IS pinned.
