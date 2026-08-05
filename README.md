@@ -26,8 +26,8 @@ when you want it, absent when you don't.
 
 > **Status: pre-1.0.** The default edition has been tested end to end — a real message
 > travels SMTP → mailbox → IMAP. The SSO edition starts and its database and OIDC
-> discovery are verified, but the shipped Keycloak version and the browser login flow
-> are not. Read [Known gaps](CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these)
+> discovery are verified on the Keycloak version actually shipped; the browser login flow
+> is not. Read [Known gaps](CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these)
 > before you rely on this.
 
 ---
@@ -60,7 +60,7 @@ docs. **What it is not:** a fork or a rewrite of anyone's mail server.
 | Edition | Includes | Login | Tested E2E |
 |---------|----------|-------|------------|
 | **Full Mail** (default) | mail server + webmail + nginx | native username/password | ✅ yes |
-| **Mail + SSO** | the above **+ Keycloak + PostgreSQL** | OIDC/SSO | ⚠️ partial — stack starts, database and OIDC discovery verified on Keycloak 24; the shipped 26.0 config and the browser login round-trip are not yet measured. See [Known gaps](CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these) |
+| **Mail + SSO** | the above **+ Keycloak + PostgreSQL** | OIDC/SSO | ⚠️ partial — stack starts, database and OIDC discovery **verified on the shipped Keycloak 26.7.0** (15/15); the browser login round-trip is still not measured. See [Known gaps](CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these) |
 
 You never touch Keycloak unless you want SSO; it lives in an optional overlay file.
 

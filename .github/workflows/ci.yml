@@ -39,6 +39,21 @@ jobs:
       - name: tests/test_e2e.sh
         run: tests/test_e2e.sh
 
+  e2e-sso:
+    name: End-to-end (SSO edition)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # The SSO edition's "15/15 on the shipped Keycloak" claim was resting on one undated
+    # local run. A claim the README makes is a claim CI has to hold, or it decays into
+    # folklore the moment the shipped Keycloak version moves.
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: tests/test_e2e.sh --sso
+        env:
+          FREEHOLDMAIL_TEST_KC_HOSTNAME_VALUE: https://id.qa.test
+          FREEHOLDMAIL_TEST_PORT_BASE: "16400"
+        run: tests/test_e2e.sh --sso
+
   lint:
     name: Lint and validate
     runs-on: ubuntu-latest

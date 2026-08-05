@@ -74,13 +74,15 @@ route it.
 
 Verified on a throwaway stack built from this repo. **First measured 2026-08-04,
 independently re-measured 2026-08-05** — every response string below was reproduced
-character for character on the second run. Rows 1 and 2 are additionally re-proved by
-`tests/test_e2e.sh` on every run, so they cannot rot silently; rows 3 and 4 are not yet
-guarded and are therefore dated claims — re-run them yourself before relying on them.
+character for character on the second run. What the test suite actually guards is narrower than it looks: `tests/test_e2e.sh` asserts
+only that rows 1 and 2 are **refused with some 5xx**, not the specific code or message. So
+the *behaviour* in those two rows cannot rot silently, but the **exact strings quoted below
+can** — as can rows 3 and 4, which are not exercised at all (the suite never maps port 465).
+Treat every string here as dated, and re-run them yourself before relying on them.
 
 | Property | Result | How it was checked |
 |----------|--------|--------------------|
-| Open relay | **Denied** — `550 5.1.2 Relay not allowed` | `MAIL FROM` external, `RCPT TO` external on port 25 |
+| Open relay | **Denied** — `550 5.1.2 Relay not allowed.` | `MAIL FROM` external, `RCPT TO` external on port 25 |
 | Unauthenticated submission | **Denied** — `503 5.5.1 You must authenticate first` | `MAIL FROM` without AUTH on port 587 |
 | Password auth over cleartext | **Not offered** — EHLO advertises `AUTH OAUTHBEARER` only; `PLAIN`/`LOGIN` appear only after `STARTTLS`, and a cleartext password login is refused | EHLO + `login()` before/after `STARTTLS` on 587 |
 | Implicit TLS on 465 | **TLS 1.3**, `TLS_AES_256_GCM_SHA384` | `openssl s_client -connect :465` |

@@ -66,7 +66,8 @@ from a vendor recommendation. Reproduce it with `docker stats --no-stream` after
 `docker compose up -d`.
 
 **Ranges, not point values, and that is deliberate.** Two independent runs of the same stack
-disagreed by 31% on the total. Idle memory is not a constant: the webmail is Node and its
+disagreed by **32% on the base edition** (218 → 288 MiB) and **14% on the SSO edition**
+(802 → 917 MiB). Idle memory is not a constant: the webmail is Node and its
 heap grows before the garbage collector settles, Keycloak is a JVM doing the same, and
 PostgreSQL's cache fills as it is used. Anyone quoting you a single figure for this has
 measured once.
@@ -78,7 +79,7 @@ measured once.
 | Reverse proxy (nginx) | 17 MiB | 17 MiB |
 | PostgreSQL — *SSO only* | — | 48–60 MiB |
 | Keycloak — *SSO only* | — | **537–570 MiB** |
-| **Total, idle** | **218–288 MiB** | **802–917 MiB** |
+| **Total, idle** | **217–290 MiB** | **802–918 MiB** |
 
 Stalwart and nginx are the stable ones — Rust and C, measured within 1% across both runs.
 Everything on a managed runtime moved. **Size against the top of each range, never the
@@ -106,12 +107,12 @@ mail bursts, backups and log churn. The measured idle number is the floor, not t
 
 | Scenario | vCPU | RAM | Disk | Notes |
 |----------|------|-----|------|-------|
-| Base edition, 1–5 mailboxes, personal | 1 | **2 GB** | 20 GB SSD | Idle peaked at 288 MiB across two runs; the rest is OS, page cache and room for delivery bursts |
+| Base edition, 1–5 mailboxes, personal | 1 | **2 GB** | 20 GB SSD | Idle peaked at 290 MiB across two runs; the rest is OS, page cache and room for delivery bursts |
 | Base edition, 5–25 mailboxes, small team | 2 | **4 GB** | 60 GB SSD | Full-text indexing is the CPU spike; it is bursty, not sustained |
 | SSO edition, any size | 2 | **4 GB** | 60 GB SSD | Keycloak's JVM alone needs ~1 GB of the limit set in `docker-compose.sso.yml` |
 | SSO edition, 25+ mailboxes | 4 | **8 GB** | 100 GB+ SSD | Also the point to move backups off-box |
 
-**Do not rent a 1 GB server for the SSO edition.** Measured idle reached 917 MiB before the OS,
+**Do not rent a 1 GB server for the SSO edition.** Measured idle reached 918 MiB before the OS,
 before page cache, before a single message is delivered. It will OOM.
 
 **Swap is not optional on a 2 GB box.** (On btrfs, `fallocate` produces a file with holes
@@ -236,12 +237,15 @@ sudo chmod +x /etc/letsencrypt/renewal-hooks/pre/stop-proxy.sh \
               /etc/letsencrypt/renewal-hooks/post/start-proxy.sh
 ```
 
-**Then prove renewal actually works — do not wait 60 days to find out:**
+**Then prove renewal actually works — but only AFTER Step 4, once the stack exists.** Run
+now, the pre-hook's `docker stop` fails with "No such container", certbot reports the failure
+and carries on regardless, and the dry-run prints "Congratulations" having tested nothing:
 
 ```bash
-sudo certbot renew --dry-run
-# expect: "Congratulations, all simulated renewals succeeded"
-# a failure here is a certificate that will expire on a live server
+# AFTER the stack is up (Step 4). Note --run-deploy-hooks: a plain --dry-run skips them.
+sudo certbot renew --dry-run --run-deploy-hooks
+# expect: "Congratulations, all simulated renewals succeeded" AND no hook error above it.
+# Read the hook output, not just the last line.
 ```
 
 The `post` hook runs whether the renewal succeeded or failed, so the proxy always comes
@@ -264,15 +268,44 @@ bind mount, so a renewed certificate is picked up when the proxy restarts:
 sudo systemctl list-timers | grep certbot     # expect a scheduled timer
 ```
 
-A deploy hook additionally reloads the proxy so it picks up the new certificate
-immediately rather than serving the old one until something restarts it:
+**Renewal writes a NEW file, and the container is mounted on the old one.** This is the part
+that silently breaks. `install.sh` resolves the Let's Encrypt symlink and writes the
+*versioned archive path* — `/etc/letsencrypt/archive/<domain>/fullchain1.pem` — into `.env`,
+because Docker bind-mounts a symlink itself and it would dangle inside the container. When
+certbot renews it creates `fullchain2.pem` and repoints `live/`; your container is still
+mounted on `fullchain1.pem`, which certbot leaves on disk. **Nothing errors. Nothing warns.
+The proxy serves the expired certificate forever, and restarting it changes nothing** —
+the mount is baked into the container at creation.
+
+The deploy hook therefore has to re-resolve the path and *recreate* the containers:
 
 ```bash
 sudo mkdir -p /etc/letsencrypt/renewal-hooks/deploy
-printf '#!/bin/sh\ndocker restart freeholdmail-proxy\n' \
-  | sudo tee /etc/letsencrypt/renewal-hooks/deploy/reload-proxy.sh
-sudo chmod +x /etc/letsencrypt/renewal-hooks/deploy/reload-proxy.sh
+sudo tee /etc/letsencrypt/renewal-hooks/deploy/reload-freeholdmail.sh >/dev/null <<'HOOK'
+#!/bin/sh
+# certbot renewed the cert: archive/fullchainN.pem is a NEW file, so the compose mount must
+# be repointed and the containers recreated. `docker restart` is NOT enough — a restart
+# keeps the old bind mount.
+set -e
+REPO=/opt/freeholdmail            # <-- set this to where you cloned the repo
+DOMAIN=mail.example.com           # <-- your mail domain
+sed -i "s|^TLS_FULLCHAIN=.*|TLS_FULLCHAIN=$(readlink -f /etc/letsencrypt/live/$DOMAIN/fullchain.pem)|" "$REPO/.env"
+sed -i "s|^TLS_PRIVKEY=.*|TLS_PRIVKEY=$(readlink -f /etc/letsencrypt/live/$DOMAIN/privkey.pem)|" "$REPO/.env"
+cd "$REPO" && docker compose up -d --force-recreate proxy mailserver
+HOOK
+sudo chmod +x /etc/letsencrypt/renewal-hooks/deploy/reload-freeholdmail.sh
 ```
+
+**Prove it rotated, by reading the date off the live port** — not by trusting the hook:
+
+```bash
+echo | openssl s_client -connect mail.example.com:465 2>/dev/null | openssl x509 -noout -dates
+# notAfter must move ~90 days forward after a renewal. If it did not, the container is
+# still mounted on the previous certificate.
+```
+
+`docs/RUNBOOK.md` §"Certificate renewal" is the manual form of the same procedure; run it
+once by hand before trusting the hook.
 
 ---
 

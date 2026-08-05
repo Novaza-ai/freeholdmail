@@ -251,7 +251,7 @@ First public release.
 
 ## Known gaps (do not publish without deciding these)
 
-1. **The SSO edition was verified on Keycloak 24, not on the shipped default 26.0.**
+1. **The SSO edition was originally verified on Keycloak 24; **closed 2026-08-05** — the suite now runs against the shipped 26.7.0 (15/15).**
    Only Keycloak 24 could be pulled in the environment where this was tested, so what is
    proven is the database wiring, the startup ordering, the health probe and OIDC
    discovery. The Keycloak 26 specifics — `KC_BOOTSTRAP_ADMIN_*`, the full-URL
