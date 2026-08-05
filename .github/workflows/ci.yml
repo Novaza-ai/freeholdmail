@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Novaza Solution JSC
 # Last-touched: 2026-08-04 — created during pre-public QA (GATE 1).
 name: CI
 

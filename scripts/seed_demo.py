@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Novaza Solution JSC
 # Last-touched: 2026-08-05 — demo data for screenshots, GIFs and manual exploration.
 #
 # Fills a running Freehold Mail stack with a small, believable mailbox so the UI has

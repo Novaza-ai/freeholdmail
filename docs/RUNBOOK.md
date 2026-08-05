@@ -175,6 +175,14 @@ read the report. Records are documented in `docs/DNS.md`.
 
 ## 8. Incidents
 
+> **Blast radius: an unhealthy mail server takes the whole site down, not just mail.**
+> `docker-compose.yml` gives the proxy `depends_on: mailserver: condition: service_healthy`,
+> so while the mail server is unhealthy the proxy never starts — you lose the webmail, port
+> 443 **and port 80**, and with port 80 the ACME http-01 renewal path in
+> [`HOSTING.md`](HOSTING.md). Measured on a throwaway stack: proxy stuck in `Created`,
+> `curl` to the site refused. There is no graceful degradation here. Fix the mail server
+> first, and treat a long outage as also putting your certificate at risk.
+
 **Mail server restart-loops.** Almost always configuration.
 
 ```bash

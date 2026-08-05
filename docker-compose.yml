@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Novaza Solution JSC
 # Last-touched: 2026-08-04 — GATE-1/2/3 QA: real verified image coordinates, digest pinning,
 # container hardening, healthchecks, and a persistent volume for webmail settings.
 #

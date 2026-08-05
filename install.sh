@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Novaza Solution JSC
 # Last-touched: 2026-08-05 — senior review: restructured to the Google Shell Style Guide
 # (main function, readonly constants, errors to STDERR). Behaviour unchanged.
 #

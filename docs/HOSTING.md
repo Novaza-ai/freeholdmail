@@ -261,8 +261,8 @@ sudo openssl x509 -in /etc/letsencrypt/live/mail.example.com/fullchain.pem -noou
 # expect notAfter roughly 90 days out
 ```
 
-Renewal runs from certbot's own systemd timer. The containers read the certificate from a
-bind mount, so a renewed certificate is picked up when the proxy restarts:
+Renewal runs from certbot's own systemd timer. Confirm it is scheduled — but read the two
+sections below before assuming a scheduled renewal is a working one:
 
 ```bash
 sudo systemctl list-timers | grep certbot     # expect a scheduled timer

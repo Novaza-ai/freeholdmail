@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Novaza Solution JSC
 # Last-touched: 2026-08-04 — static checks: everything provable without starting containers.
 #
 # Fast (seconds, no images pulled). Run this before every commit; CI runs it on every push.
@@ -15,8 +17,8 @@ SKIP=0
 ok()   { printf '  \033[32mPASS\033[0m  %s\n' "$1"; PASS=$((PASS + 1)); }
 # A skipped check must be counted, not just printed. A suite that reports "all green"
 # while silently skipping is worse than one that fails: it teaches you to trust it.
-skip() { printf '  \033[33mSKIP\033[0m  %s\n' "$1"; SKIP=$((SKIP + 1)); }
-bad()  { printf '  \033[31mFAIL\033[0m  %s\n' "$1"; FAIL=$((FAIL + 1)); }
+skip() { printf '  \033[33mSKIP\033[0m  %s\n' "$1" >&2; SKIP=$((SKIP + 1)); }
+bad()  { printf '  \033[31mFAIL\033[0m  %s\n' "$1" >&2; FAIL=$((FAIL + 1)); }
 check() { # check <description> <command...>
   local desc="$1"; shift
   if "$@" >/dev/null 2>&1; then ok "$desc"; else bad "$desc"; fi
@@ -380,8 +382,7 @@ check "translations are not stale against README.md" bash -c '
   # marked STALE is an honest, published debt.
   [ "$stale" = 0 ] && exit 0
   grep -q "STALE" TRANSLATIONS.md || exit 1
-  echo "(stale translations are declared in TRANSLATIONS.md)"; exit 0
-  exit $stale' 
+  echo "(stale translations are declared in TRANSLATIONS.md)"; exit 0' 
 # shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
 check "every shipped file has a Last-touched line" bash -c '
   missing=0

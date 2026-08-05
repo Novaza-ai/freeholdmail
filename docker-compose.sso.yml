@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Novaza Solution JSC
 # Last-touched: 2026-08-04 — GATE-2/3 QA: added the PostgreSQL service Keycloak requires
 # (the overlay pointed KC_DB_URL at a `db` host that did not exist, so the SSO edition
 # could never start), switched to the Keycloak 26 bootstrap-admin variables, and replaced

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Novaza Solution JSC
 # Last-touched: 2026-08-04 — end-to-end: stand the real stack up, send a real message,
 # read it back, assert the security defaults, then destroy everything.
 #
@@ -42,7 +44,7 @@ trap cleanup EXIT INT TERM
 
 PASS=0; FAIL=0; SKIP=0
 ok()  { printf '  \033[32mPASS\033[0m  %s\n' "$1"; PASS=$((PASS + 1)); }
-bad() { printf '  \033[31mFAIL\033[0m  %s\n' "$1"; FAIL=$((FAIL + 1)); }
+bad() { printf '  \033[31mFAIL\033[0m  %s\n' "$1" >&2; FAIL=$((FAIL + 1)); }
 gen() { openssl rand -base64 24 | tr -d '\n=+/' | cut -c1-32; }
 
 echo "== preparing throwaway stack in $WORK (project $PROJECT) =="

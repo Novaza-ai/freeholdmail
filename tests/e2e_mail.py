@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Novaza Solution JSC
 # Last-touched: 2026-08-04 — E2E: prove a real message travels SMTP submission → mailbox → IMAP.
 #
 # This is the test that matters. "The container is Up" and "the config looks right" have both
