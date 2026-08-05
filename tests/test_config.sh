@@ -262,10 +262,18 @@ for img in docs/media/inbox.png docs/media/tour.gif; do
   check "$img exists" test -f "$img"
   check "$img is referenced by README.md" grep -q "$img" README.md
 done
-# shellcheck disable=SC2016  # body runs in the child shell, deliberately unexpanded
-check "tour.gif is a real animation" bash -c '
-  frames=$(identify docs/media/tour.gif 2>/dev/null | wc -l)
-  [ "${frames:-0}" -ge 5 ] || { echo "only ${frames} frames"; exit 1; }'
+# ImageMagick is not on a stock GitHub runner. Without this guard `identify` fails, the
+# frame count reads 0, and the check reports "only 0 frames" — accusing a perfectly good GIF
+# instead of naming the missing tool, which is how a maintainer ends up debugging an artifact
+# that was never broken. A tool that is absent is a SKIP, and a skip is not a pass.
+if command -v identify >/dev/null 2>&1; then
+  # shellcheck disable=SC2016  # body runs in the child shell, deliberately unexpanded
+  check "tour.gif is a real animation" bash -c '
+    frames=$(identify docs/media/tour.gif | wc -l)
+    [ "${frames:-0}" -ge 5 ] || { echo "only ${frames} frames"; exit 1; }'
+else
+  skip "tour.gif is a real animation (ImageMagick not installed)"
+fi
 # GitHub renders inline images from the repository; keep them small enough to load.
 # shellcheck disable=SC2016  # body runs in the child shell, deliberately unexpanded
 check "media stays under 2 MB total" bash -c '
