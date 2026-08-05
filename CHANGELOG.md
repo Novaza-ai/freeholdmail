@@ -177,7 +177,7 @@ First public release.
   length, the nginx template materialised with the domain substituted and no placeholder
   left, and that a second run refuses to clobber an existing `.env`.
 - `yamllint` added to the suite; two over-length YAML lines wrapped. Markdown link check:
-  38 internal links, 0 broken. No `TODO`/`FIXME`/`XXX`/`HACK` anywhere in the tree.
+  internal links verified 0 broken (38 at the time; hundreds now, and no CI check enforces it — historical). No `TODO`/`FIXME`/`XXX`/`HACK` anywhere in the tree.
 
 ### Security
 - **Pre-publication scan before the first public commit.** Clean on: internal

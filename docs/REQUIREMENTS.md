@@ -1,6 +1,11 @@
 <!-- Last-touched: 2026-08-04 — created during pre-public QA. -->
 # Requirements
 
+> **Pre-1.0, and the SSO edition's browser login flow has never been tested.** The numbers
+> below are minimums to get started; the **measured** figures, with ranges from two runs and
+> a rent-this table, are in [`HOSTING.md`](HOSTING.md). Where the two disagree, HOSTING.md is
+> the measured one.
+
 What you need before running `./install.sh`. Read the DNS and network sections carefully —
 they are what usually stops a self-hosted mail server from working, not the software.
 

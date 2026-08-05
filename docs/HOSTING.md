@@ -373,14 +373,25 @@ curl -sIL https://mail.example.com/ | grep -E '^HTTP'        # expect a final 20
 
 # TLS is modern and obsolete versions are refused
 echo | openssl s_client -connect mail.example.com:443 2>/dev/null | grep 'Protocol'
-# expect TLSv1.3 (or 1.2). If you see TLSv1 or TLSv1.1, stop and read SECURITY.md.
+# expect TLSv1.3 (or 1.2).
+#
+# That line alone cannot show TLSv1: a handshake negotiates the HIGHEST mutual version, so
+# it will never reveal that an obsolete one is still accepted. Ask for the old ones on
+# purpose instead — each must be REFUSED:
+for v in tls1 tls1_1; do
+  echo | openssl s_client -connect mail.example.com:443 -$v -cipher 'ALL:@SECLEVEL=0' 2>&1 \
+    | grep -q 'Cipher is (NONE)' && echo "$v refused (good)" || echo "$v ACCEPTED - read SECURITY.md"
+done
 
 # The mail server greets on submission
 timeout 8 bash -c 'exec 3<>/dev/tcp/mail.example.com/587; head -1 <&3'   # expect 220
 
-# Open relay is refused — this must FAIL, and failing is the pass condition
-swaks --to test@example.org --from spam@evil.test --server mail.example.com:25
-# expect: 550 5.1.2 Relay not allowed
+# Open relay is refused. --ehlo is load-bearing: without it swaks sends your local
+# hostname, and the server may reject the EHLO *before* it ever evaluates the relay —
+# so a connection failure, a DNS problem or a blocked port all look like "relay refused".
+swaks --to test@example.org --from spam@evil.test --ehlo probe.example.com \
+      --server mail.example.com:25
+# expect: 550 5.1.2 Relay not allowed.   ← read the CODE, not merely that it failed
 ```
 
 Then send yourself a real message from an outside account and reply to it. A stack that

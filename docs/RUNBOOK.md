@@ -1,5 +1,10 @@
 <!-- Last-touched: 2026-08-04 — created during pre-public QA. -->
-# Runbook — operating Freehold Mail
+# Runbook
+
+> **Pre-1.0.** This document describes day-2 operations as if the stack were mature. It is
+> not: the SSO edition's browser login round-trip is unverified, and the admin API used
+> below returns account passwords in cleartext. Read [`../SECURITY.md`](../SECURITY.md)
+> first. — operating Freehold Mail
 
 Day-2 operations. Every command here is meant to be copy-pasted on the host running the
 stack. Commands that touch secrets never print them.

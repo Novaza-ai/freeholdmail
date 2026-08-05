@@ -103,14 +103,9 @@ is not exercised at all (the suite never maps port 465). Treat every string here
 3. **No fail2ban / rate limiting is shipped.** Exposing 25/465/587/993 to the
    internet without brute-force protection is not advisable. See `docs/DNS.md`
    for deliverability and add host-level protection yourself.
-4. **Digest pins go stale.** Every image ships pinned to a version tag *and* a
-   `sha256` digest, so an install is reproducible and a moved tag cannot change
-   what runs. The trade-off is that a pin does not receive upstream security
-   fixes on its own: watch the upstream releases and re-pin deliberately —
-   `docs/RUNBOOK.md` has the upgrade and rollback procedure.
-5. **TLS material is bind-mounted from the host.** Anyone who can write those
+4. **TLS material is bind-mounted from the host.** Anyone who can write those
    files can impersonate your mail server.
-6. **Containers still run as root inside, and their filesystems are writable.**
+5. **Containers still run as root inside, and their filesystems are writable.**
    Every service drops **all** Linux capabilities and adds back only what it
    provably needs (`NET_BIND_SERVICE` for the mail server; that plus
    `SETUID`/`SETGID`/`CHOWN`/`DAC_OVERRIDE` for nginx, which starts as root to
@@ -119,7 +114,7 @@ is not exercised at all (the suite never maps port 465). Treat every string here
    override or `read_only: true`. Both interact with how each upstream image
    initialises its own data directory, and shipping them untested would be worse
    than saying so here.
-7. **A digest pin does not receive upstream fixes.** That is the trade-off for a
+6. **A digest pin does not receive upstream fixes.** That is the trade-off for a
    reproducible install, and it is not theoretical: this project shipped a webmail
    pinned below the patch floor for five High advisories until 2026-08-05 —
    CVE-2026-34834 (authentication bypass), CVE-2026-34833 (password disclosure)
