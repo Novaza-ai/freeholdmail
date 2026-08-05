@@ -41,6 +41,18 @@ services:
       - "127.0.0.1:8080:8080"
     security_opt:
       - no-new-privileges:true
+    # Drop every capability, then hand back only what the process provably needs.
+    # NET_BIND_SERVICE: this container listens on 25/465/587/993, all below 1024.
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    # An unbounded container log fills the host disk and takes the mail server down with it.
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "5"}
+    # Bounds, not tuning. A mail server that starts consuming without limit should be
+    # stopped by the kernel rather than take the machine with it. Raise for a busy server.
+    mem_limit: 1g
+    pids_limit: 512
     healthcheck:
       # The JMAP/HTTP listener accepting a connection is the earliest honest signal that
       # the stores opened. The image ships neither curl nor wget nor nc — bash's /dev/tcp
@@ -70,6 +82,13 @@ services:
       - "3000"
     security_opt:
       - no-new-privileges:true
+    # Listens on 3000, an unprivileged port, so it needs nothing back.
+    cap_drop: [ALL]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "5"}
+    mem_limit: 768m
+    pids_limit: 256
 
   proxy:
     image: nginx:${NGINX_VERSION}${NGINX_DIGEST}
@@ -93,6 +112,16 @@ services:
       - "443:443"
     security_opt:
       - no-new-privileges:true
+    # nginx starts as root to bind 80/443, then drops its workers to the `nginx` user —
+    # SETUID/SETGID are what that drop needs, CHOWN and DAC_OVERRIDE are for its cache and
+    # temp directories. Removing any one of these stops the workers from starting.
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE, SETUID, SETGID, CHOWN, DAC_OVERRIDE]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "5"}
+    mem_limit: 256m
+    pids_limit: 256
 
 volumes:
   mailserver_data:

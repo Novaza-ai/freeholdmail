@@ -56,6 +56,16 @@ services:
       - idp_db_data:/var/lib/postgresql/data
     security_opt:
       - no-new-privileges:true
+    # The postgres entrypoint starts as root, fixes ownership of the data directory and
+    # then re-executes as the `postgres` user — CHOWN/FOWNER/DAC_OVERRIDE for the first
+    # part, SETUID/SETGID for the second.
+    cap_drop: [ALL]
+    cap_add: [CHOWN, FOWNER, DAC_OVERRIDE, SETUID, SETGID]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "5"}
+    mem_limit: 512m
+    pids_limit: 256
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${KC_DB_USERNAME} -d $${KC_DB_NAME}"]
       interval: 10s
@@ -95,6 +105,15 @@ services:
       - "8080"
     security_opt:
       - no-new-privileges:true
+    # Listens on 8080 and 9000, both unprivileged, and the image already runs as a
+    # non-root user — nothing to hand back.
+    cap_drop: [ALL]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "5"}
+    # A JVM needs real headroom; 512m makes Keycloak OOM during realm import.
+    mem_limit: 1g
+    pids_limit: 512
     healthcheck:
       # The image ships no curl or wget by design, so probe over bash's /dev/tcp.
       # Keycloak 25+ serves health on the management port 9000; on 24 and earlier it is

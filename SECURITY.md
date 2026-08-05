@@ -52,6 +52,20 @@ Verified on a throwaway stack built from this repo:
    `docs/RUNBOOK.md` has the upgrade and rollback procedure.
 5. **TLS material is bind-mounted from the host.** Anyone who can write those
    files can impersonate your mail server.
+6. **Containers still run as root inside, and their filesystems are writable.**
+   Every service drops **all** Linux capabilities and adds back only what it
+   provably needs (`NET_BIND_SERVICE` for the mail server; that plus
+   `SETUID`/`SETGID`/`CHOWN`/`DAC_OVERRIDE` for nginx, which starts as root to
+   bind 80/443 and then drops its workers), and every service is bounded by
+   `mem_limit`, `pids_limit` and log rotation. What is **not** done: a `user:`
+   override or `read_only: true`. Both interact with how each upstream image
+   initialises its own data directory, and shipping them untested would be worse
+   than saying so here.
+7. **A digest pin does not receive upstream fixes.** That is the trade-off for a
+   reproducible install, and it is not theoretical: this project shipped a webmail
+   pinned below the patch floor for CVE-2026-34834 (authentication bypass) and
+   CVE-2026-34833 (password disclosure) until 2026-08-05. Watch the upstream
+   advisories for every component you pin, and re-pin deliberately.
 
 ## Supported versions
 

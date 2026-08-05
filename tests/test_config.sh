@@ -123,6 +123,34 @@ for svc_file in docker-compose.yml docker-compose.sso.yml; do
 done
 refute "no privileged containers" grep -rq 'privileged:[[:space:]]*true' docker-compose.yml docker-compose.sso.yml
 
+# Container hardening, asserted on the RESOLVED config so an overlay cannot quietly drop it.
+# Every service must drop ALL capabilities, cap its memory and pids, and rotate its logs —
+# an unbounded container log fills the host disk and takes the mail server down with it.
+hardening="$(docker compose --env-file .env.example \
+  -f docker-compose.yml -f docker-compose.sso.yml config 2>/dev/null)"
+if [[ -z "$hardening" ]]; then
+  bad "could not resolve compose config for the hardening checks (docker available?)"
+else
+  # Parse the YAML rather than guessing its indentation: an earlier version of this check
+  # grepped for a fixed leading-space count, matched nothing, and reported 0/5 on a config
+  # that was fully hardened — a guard that is wrong in the safe direction is still wrong.
+  for field in cap_drop mem_limit pids_limit logging; do
+    counts="$(printf '%s' "$hardening" | python3 -c "
+import sys, yaml
+svcs = (yaml.safe_load(sys.stdin) or {}).get('services', {})
+have = [n for n, s in svcs.items() if (s or {}).get('$field') is not None]
+print(f'{len(have)} {len(svcs)}')
+" 2>/dev/null)"
+    got="${counts% *}"; want="${counts#* }"
+    if [[ -n "$got" && "$got" == "$want" && "$want" != "0" ]]; then
+      ok "all $want services set $field"
+    else
+      bad "$field set on ${got:-?}/${want:-?} services — every service must be bounded"
+    fi
+  done
+  refute "no service keeps SYS_ADMIN" grep -q 'SYS_ADMIN' <<<"$hardening"
+fi
+
 # The two nginx templates must not drift apart: the SSO edition is the one users reach for
 # when they care about identity, so it must never be the laxer of the two. nginx's own
 # defaults enable TLSv1/TLSv1.1 and a 1m body limit, so every directive below is a

@@ -8,6 +8,20 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Security
+- **Every container now drops all Linux capabilities** and adds back only what it provably
+  needs: `NET_BIND_SERVICE` for the mail server, and that plus `SETUID`/`SETGID`/`CHOWN`/
+  `DAC_OVERRIDE` for nginx, which starts as root to bind 80/443 and then drops its workers.
+  The webmail and Keycloak keep nothing. Verified at the kernel, not just in the config:
+  `CapEff` drops from `a80425fb` to `0000000000000400`, and a `chown` that succeeds with the
+  default set is refused under `cap_drop: ALL`.
+- **Every container is bounded** by `mem_limit`, `pids_limit` and rotated JSON logs
+  (`10m` × 5). An unbounded container log fills the host disk and takes the mail server with
+  it; a runaway process should be stopped by the kernel rather than by the operator.
+- **Off two end-of-life branches.** nginx moves from `1.27` — a *mainline* branch, retired;
+  nginx numbers stable branches with an even minor — to the current stable **`1.30.4`**.
+  Keycloak moves from the retired `26.0` to **`26.7.0`**. Both re-pinned by digest and
+  re-tested: the SSO suite now reports Keycloak creating **100** tables where 26.0 created
+  87, which is how you can tell the new image actually ran.
 - **The pinned webmail carried five High advisories.** `v1.4.8` predates the fixes for
   CVE-2026-34834 (authentication bypass in `verifyIdentity()`, missing cookie validation),
   CVE-2026-34833 (password returned by `/api/auth/session`), and CVE-2026-35389/35390/35391.
