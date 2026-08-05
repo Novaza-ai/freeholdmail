@@ -138,8 +138,8 @@ và SSO tuỳ chọn, gói gọn ở một chỗ.
 
 ## Phạm vi, nói thẳng
 
-**Hiện có:** hộp thư, SMTP/IMAP/JMAP, webmail, TLS, SSO tuỳ chọn — đủ để thay thế một hộp
-thư thuê.
+**Hiện có:** hộp thư, SMTP/IMAP/JMAP, webmail, TLS, SSO tuỳ chọn — một lựa chọn **đáng tin
+cậy** để thay thế một hộp thư thuê.
 
 **Chưa có:** email marketing/gửi hàng loạt, newsletter, hộp thư dùng chung cho nhóm,
 ticketing, công cụ di trú từ nhà cung cấp khác, hay control panel có người quản trị. Riêng
@@ -147,10 +147,10 @@ gửi hàng loạt là cả một bộ môn về deliverability, không phải m
 đừng mặc định là có.
 
 **Lộ trình:** xem [`ROADMAP.md`](../../../ROADMAP.md) — trước mắt là làm cho đáng tin (xác minh SSO
-trên đúng bản Keycloak đang khai, lên dòng mail server hiện hành của upstream, ghim digest
-mọi image, đo deliverability trên domain thật). Xa hơn, chúng tôi muốn đây là bộ stack mà
-software agent có thể dùng một cách an toàn: một MCP server chạy trên JMAP, và credential
-riêng cho từng agent — có giới hạn phạm vi, thu hồi được — thay vì đưa mật khẩu của bạn cho
+trên đúng bản Keycloak đang ship, lên dòng mail server hiện hành của upstream, đo
+deliverability trên domain thật). Xa hơn là **Agentic Mail** (v0.3): một bộ stack có thể
+giao cho software agent một cách an toàn — một MCP server chạy trên JMAP, và credential
+riêng cho từng agent, có giới hạn phạm vi và thu hồi được, thay vì đưa mật khẩu của bạn cho
 một con bot. **Chưa có thứ nào trong số đó được xây**, và dự án cố ý không lấy tên theo
 chúng. **Rất mong có người đóng góp phần agent — xem mục "Help wanted" trong lộ trình.**
 
@@ -201,7 +201,7 @@ phải có số đo, không phải "chạy được trên máy tôi".
 
 Ai quyết định điều gì, làm sao để trở thành maintainer, và chuyện gì xảy ra với bạn nếu dự án
 này bị bỏ rơi: [`GOVERNANCE.md`](../../../GOVERNANCE.md). Ai sẽ trả lời bạn, kèm tuyên bố thẳng thắn
-rằng **dự án hiện chỉ có một maintainer**: [`MAINTAINERS.md`](../../../MAINTAINERS.md).
+về bus factor: [`MAINTAINERS.md`](../../../MAINTAINERS.md).
 
 ## Ai xây dự án này
 

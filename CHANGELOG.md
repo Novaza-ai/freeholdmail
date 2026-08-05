@@ -101,9 +101,12 @@ First public release.
 - **The webmail image was the only one not pinned.** `BULWARK_VERSION` shipped as
   `latest` with an empty `BULWARK_DIGEST`, so two installs a week apart could run
   different webmail builds and whoever can push that tag could change every install.
-  Now pinned to `v1.4.8` and `@sha256:022b1900…`, verified to resolve anonymously from
-  `ghcr.io` (manifest **HTTP 200**). Keycloak is pinned the same way
-  (`26.0` / `@sha256:09a381c7…`), so **5/5 images** are now digest-pinned.
+  Pinned by digest so **5/5 images** are reproducible. **Note for anyone reading this at the
+  tag:** `v0.1.0` was cut later than this entry was written, and the tagged tree ships
+  `BULWARK_VERSION=v1.7.8` and `KEYCLOAK_VERSION=26.7.0` — verify with
+  `git show v0.1.0:.env.example`. **The `v0.1.0` tag already contains the fix for
+  CVE-2026-34834 and the other four advisories**; the re-pin is filed under `[Unreleased]`
+  above because that is when it was committed, not because the tag lacks it.
 - **The supply-chain guard could not see the problem above.** It grepped the raw compose
   files for `image:.*:latest`, but those contain `${BULWARK_VERSION}` — so the check
   inspected a placeholder, matched nothing, and reported green while the image that

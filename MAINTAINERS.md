@@ -22,7 +22,7 @@ Substack.
 | [@anhkk1245](https://github.com/anhkk1245) | [@anhkk1245](https://github.com/anhkk1245) | Team member |
 
 The project is stewarded by **[Novaza Solution JSC](https://novaza.ai)**, which runs this
-exact stack in production for its own mail.
+stack's components (Stalwart and Bulwark) in production for its own mail.
 
 Contact: `admin@novaza.ai`. For anything with a security dimension use the private advisory
 flow instead — see [`SECURITY.md`](SECURITY.md). Never report a vulnerability in a public

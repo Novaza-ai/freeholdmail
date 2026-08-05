@@ -56,26 +56,40 @@ correct the original.
 
 ## Current translations
 
-| Language | Tag | File | Tracks |
+| Language | Tag | File | Tracks (commit of `README.md`) |
 |----------|-----|------|--------|
 | English (source) | `en` | [`README.md`](README.md) | — |
-| Vietnamese | `vi` | [`docs/i18n/vi/README.md`](docs/i18n/vi/README.md) | initial translation, 2026-08-04 |
-| Japanese | `ja` | [`docs/i18n/ja/README.md`](docs/i18n/ja/README.md) | initial translation, 2026-08-05 |
-| Chinese (Simplified) | `zh-CN` | [`docs/i18n/zh-CN/README.md`](docs/i18n/zh-CN/README.md) | initial translation, 2026-08-05 |
-| Chinese (Traditional) | `zh-TW` | [`docs/i18n/zh-TW/README.md`](docs/i18n/zh-TW/README.md) | initial translation, 2026-08-05 |
-| Thai | `th` | [`docs/i18n/th/README.md`](docs/i18n/th/README.md) | initial translation, 2026-08-05 |
-| Indonesian | `id` | [`docs/i18n/id/README.md`](docs/i18n/id/README.md) | initial translation, 2026-08-05 |
-| Hindi | `hi` | [`docs/i18n/hi/README.md`](docs/i18n/hi/README.md) | initial translation, 2026-08-05 |
-| French | `fr` | [`docs/i18n/fr/README.md`](docs/i18n/fr/README.md) | initial translation, 2026-08-05 |
-| Spanish | `es` | [`docs/i18n/es/README.md`](docs/i18n/es/README.md) | initial translation, 2026-08-05 |
-| Portuguese | `pt` | [`docs/i18n/pt/README.md`](docs/i18n/pt/README.md) | initial translation, 2026-08-05 |
-| Russian | `ru` | [`docs/i18n/ru/README.md`](docs/i18n/ru/README.md) | initial translation, 2026-08-05 |
+| Vietnamese | `vi` | [`docs/i18n/vi/README.md`](docs/i18n/vi/README.md) | `1ed15b3` |
+| Japanese | `ja` | [`docs/i18n/ja/README.md`](docs/i18n/ja/README.md) | `1ed15b3` |
+| Chinese (Simplified) | `zh-CN` | [`docs/i18n/zh-CN/README.md`](docs/i18n/zh-CN/README.md) | `1ed15b3` |
+| Chinese (Traditional) | `zh-TW` | [`docs/i18n/zh-TW/README.md`](docs/i18n/zh-TW/README.md) | `1ed15b3` |
+| Thai | `th` | [`docs/i18n/th/README.md`](docs/i18n/th/README.md) | `1ed15b3` |
+| Indonesian | `id` | [`docs/i18n/id/README.md`](docs/i18n/id/README.md) | `1ed15b3` |
+| Hindi | `hi` | [`docs/i18n/hi/README.md`](docs/i18n/hi/README.md) | `1ed15b3` |
+| French | `fr` | [`docs/i18n/fr/README.md`](docs/i18n/fr/README.md) | `1ed15b3` |
+| Spanish | `es` | [`docs/i18n/es/README.md`](docs/i18n/es/README.md) | `1ed15b3` |
+| Portuguese | `pt` | [`docs/i18n/pt/README.md`](docs/i18n/pt/README.md) | `1ed15b3` |
+| Russian | `ru` | [`docs/i18n/ru/README.md`](docs/i18n/ru/README.md) | `1ed15b3` |
 
 **On regional tags.** `zh-CN` and `zh-TW` are kept apart because the scripts and the
 vocabulary genuinely differ. `es` and `pt` are deliberately *not* split into `es-ES`/`es-MX`
 or `pt-PT`/`pt-BR`: for technical prose of this kind the regional differences are small, and
 one well-maintained file beats two that drift. Split them the day a reader shows a passage
 that actually misleads.
+
+### Known stale, stated rather than hidden
+
+**Ten of the eleven translations are behind the English right now.** The English `README.md`
+changed after they were written — the roadmap paragraph now names the **Agentic Mail**
+milestone, and the licence list gained **nginx** and **PostgreSQL** and corrected Stalwart to
+its dual `AGPL-3.0-only OR SELv1`. Only `vi` has been brought forward. The rest still carry
+the superseded roadmap wording and the three-component licence list.
+
+That is a real defect, and it is exactly the drift this file warned about. It is recorded
+here, and `tests/test_config.sh` now fails when a translation's tracked commit falls behind
+`README.md`, so this cannot happen silently again. **The licence list is the part that
+matters most** — a public repo stating component licences incompletely in ten languages is a
+legal-accuracy problem, not a style one. Correcting PRs are welcome and are the fastest fix.
 
 **These translations have not been reviewed by native speakers.** They were produced against
 the English source and checked for structure, not for idiom. If you speak one of these

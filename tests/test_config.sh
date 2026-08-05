@@ -355,6 +355,33 @@ sys.exit(0 if not missing else 1)' "$tr"
     en=$(grep -c "^## " README.md); tr=$(grep -c "^## " "$0")
     [ "$en" = "$tr" ] || { echo "English has $en sections, $0 has $tr"; exit 1; }' "$tr"
 done < <(grep -oE 'docs/i18n/[a-zA-Z-]+/README\.md' TRANSLATIONS.md | sort -u)
+# Drift is the failure mode that beat every other guard here: a fix lands in the file it was
+# found in and never reaches the translations. TRANSLATIONS.md step 5 always required each
+# translation to record the commit of README.md it tracks; nothing enforced it. Now something
+# does — if README.md has moved since a recorded SHA, that translation is stale by definition.
+# shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
+check "every translation records a real commit SHA" bash -c '
+  bad=0
+  while read -r sha; do
+    git cat-file -e "${sha}^{commit}" 2>/dev/null || { echo "not a commit: $sha"; bad=1; }
+  done < <(grep -oE "\| \`[0-9a-f]{7,40}\` \|" TRANSLATIONS.md | tr -d "|\` ")
+  exit $bad'
+# shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
+check "translations are not stale against README.md" bash -c '
+  stale=0
+  latest=$(git log -1 --format=%h -- README.md)
+  while read -r sha; do
+    git merge-base --is-ancestor "$sha" HEAD 2>/dev/null || continue
+    if ! git merge-base --is-ancestor "$latest" "$sha" 2>/dev/null; then
+      echo "README.md moved at $latest; a translation still tracks $sha"; stale=1
+    fi
+  done < <(grep -oE "\| \`[0-9a-f]{7,40}\` \|" TRANSLATIONS.md | tr -d "|\` " | sort -u)
+  # A translation may lag, but it must SAY so. Undeclared staleness is the failure; a row
+  # marked STALE is an honest, published debt.
+  [ "$stale" = 0 ] && exit 0
+  grep -q "STALE" TRANSLATIONS.md || exit 1
+  echo "(stale translations are declared in TRANSLATIONS.md)"; exit 0
+  exit $stale' 
 # shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
 check "every shipped file has a Last-touched line" bash -c '
   missing=0

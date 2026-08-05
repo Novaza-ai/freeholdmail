@@ -74,11 +74,11 @@ route it.
 
 Verified on a throwaway stack built from this repo. **First measured 2026-08-04,
 independently re-measured 2026-08-05** — every response string below was reproduced
-character for character on the second run. What the test suite actually guards is narrower than it looks: `tests/test_e2e.sh` asserts
-only that rows 1 and 2 are **refused with some 5xx**, not the specific code or message. So
-the *behaviour* in those two rows cannot rot silently, but the **exact strings quoted below
-can** — as can rows 3 and 4, which are not exercised at all (the suite never maps port 465).
-Treat every string here as dated, and re-run them yourself before relying on them.
+character for character on the second run. What the test suite guards, precisely: rows 1 and 2 are asserted only as **refused with some
+5xx** (`tests/test_e2e.sh`), and row 3 is genuinely guarded — `tests/e2e_mail.py` fails the
+run if `PLAIN` or `LOGIN` is advertised before STARTTLS. So those three *behaviours* cannot
+rot silently. The **exact strings quoted below can**, because nothing asserts them, and row 4
+is not exercised at all (the suite never maps port 465). Treat every string here as dated.
 
 | Property | Result | How it was checked |
 |----------|--------|--------------------|
