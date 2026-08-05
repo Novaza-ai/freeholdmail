@@ -8,6 +8,12 @@ you what to run and what you should see.
 
 **Budget about 45 minutes**, most of it waiting for DNS.
 
+> **This project is pre-1.0, and the SSO edition is only partly verified** — its browser
+> login round-trip has not been measured. The sizing table below covers it because you asked
+> the server how big to be, not because the edition is proven. See
+> [Known gaps](../CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these) before you
+> put either edition in front of people who depend on their mail.
+
 - [Before you rent](#before-you-rent-the-one-thing-that-cannot-be-fixed-later)
 - [Server sizing](#server-sizing-measured-not-guessed)
 - [Step 1 — the server](#step-1--prepare-the-server)
@@ -68,7 +74,7 @@ idle, at steady state — not from a vendor recommendation. Reproduce it yoursel
 | Reverse proxy (nginx) | 17 MiB | 17 MiB |
 | PostgreSQL — *SSO only* | — | 48 MiB |
 | Keycloak — *SSO only* | — | **537 MiB** |
-| **Total, idle** | **≈ 218 MiB** | **≈ 802 MiB** |
+| **Total, idle** | **219 MiB** | **804 MiB** |
 
 Keycloak is a JVM and it is two thirds of the SSO edition's memory on its own. If you do not
 need centralised identity, the base edition is dramatically cheaper to host.
@@ -77,7 +83,8 @@ need centralised identity, the base edition is dramatically cheaper to host.
 
 | Item | Base edition | SSO edition |
 |------|--------------|-------------|
-| Container images, first download | 478 MB | 1197 MB |
+| Container images, on disk once pulled | **504 MB** (480 MiB) | **1258 MB** (1200 MiB) |
+| Container images, bytes actually downloaded | ~183 MB | ~561 MB |
 | Data volumes at first boot | ~3 MB | ~55 MB |
 | Docker engine + OS | ~2 GB | ~2 GB |
 
@@ -93,15 +100,17 @@ mail bursts, backups and log churn. The measured idle number is the floor, not t
 
 | Scenario | vCPU | RAM | Disk | Notes |
 |----------|------|-----|------|-------|
-| Base edition, 1–5 mailboxes, personal | 1 | **2 GB** | 20 GB SSD | Idle uses 218 MiB; the rest is OS, page cache and room for delivery bursts |
+| Base edition, 1–5 mailboxes, personal | 1 | **2 GB** | 20 GB SSD | Idle uses 219 MiB; the rest is OS, page cache and room for delivery bursts |
 | Base edition, 5–25 mailboxes, small team | 2 | **4 GB** | 60 GB SSD | Full-text indexing is the CPU spike; it is bursty, not sustained |
 | SSO edition, any size | 2 | **4 GB** | 60 GB SSD | Keycloak's JVM alone needs ~1 GB of the limit set in `docker-compose.sso.yml` |
 | SSO edition, 25+ mailboxes | 4 | **8 GB** | 100 GB+ SSD | Also the point to move backups off-box |
 
-**Do not rent a 1 GB server for the SSO edition.** Measured idle is 802 MiB before the OS,
+**Do not rent a 1 GB server for the SSO edition.** Measured idle is 804 MiB before the OS,
 before page cache, before a single message is delivered. It will OOM.
 
-**Swap is not optional on a 2 GB box.** 1–2 GB of swap turns a memory spike into a slow
+**Swap is not optional on a 2 GB box.** (On btrfs, `fallocate` produces a file with holes
+that `swapon` rejects — use `btrfs filesystem mkswapfile` instead.)
+ 1–2 GB of swap turns a memory spike into a slow
 minute instead of an OOM-killed mail server:
 
 ```bash
@@ -121,6 +130,10 @@ A current Debian or Ubuntu LTS. Everything below is provider-agnostic.
 # Docker Engine + the compose plugin, from Docker's own repository
 curl -fsSL https://get.docker.com | sudo sh
 docker --version && docker compose version
+
+# Tools this playbook uses in later steps. dig comes from dnsutils; swaks tests SMTP;
+# ufw is not installed by default on a minimal Debian.
+sudo apt-get update && sudo apt-get install -y dnsutils swaks ufw
 ```
 
 Verify — both commands must print a version:
@@ -146,6 +159,15 @@ sudo ufw allow 993/tcp    # IMAPS
 sudo ufw enable
 sudo ufw status numbered  # verify: every port above is listed as ALLOW
 ```
+
+> **`ufw` does not protect the container ports, and `ufw status` will not tell you that.**
+> Docker inserts its own DNAT rules in `nat PREROUTING` and filters in `FORWARD`, while ufw
+> works in `INPUT` — so a published container port reaches the container even when ufw says
+> `DENY`. Check reality with `sudo iptables -t nat -L DOCKER -n`. The rules above still
+> matter for anything running on the host itself (SSH), and they document intent, but treat
+> the compose `ports:` list as the real firewall: what is published is exposed. This is why
+> the admin API is bound to `127.0.0.1:8080` in `docker-compose.yml` rather than left to a
+> firewall rule.
 
 Port 8080 is deliberately **not** in that list. The admin API binds to `127.0.0.1` only, and
 it returns account passwords in cleartext — see [`../SECURITY.md`](../SECURITY.md). Reach it
@@ -189,7 +211,36 @@ sudo apt-get update && sudo apt-get install -y certbot
 sudo certbot certonly --standalone -d mail.example.com
 ```
 
-Port 80 must be free while this runs — nothing else may be listening.
+Port 80 must be free while this runs — nothing else may be listening. That is true at
+issuance, and it is **also true at every renewal 60 days later**, which is the part that
+bites: certbot records the authenticator in
+`/etc/letsencrypt/renewal/mail.example.com.conf` and reuses it, but by then the proxy owns
+:80 and `--standalone` cannot bind. The certificate then expires silently on a server that
+has been working for three months.
+
+Stop and start the proxy around each renewal, so `--standalone` gets the port it needs:
+
+```bash
+sudo mkdir -p /etc/letsencrypt/renewal-hooks/{pre,post}
+echo -e '#!/bin/sh\ndocker stop freeholdmail-proxy' \
+  | sudo tee /etc/letsencrypt/renewal-hooks/pre/stop-proxy.sh
+echo -e '#!/bin/sh\ndocker start freeholdmail-proxy' \
+  | sudo tee /etc/letsencrypt/renewal-hooks/post/start-proxy.sh
+sudo chmod +x /etc/letsencrypt/renewal-hooks/pre/stop-proxy.sh \
+              /etc/letsencrypt/renewal-hooks/post/start-proxy.sh
+```
+
+**Then prove renewal actually works — do not wait 60 days to find out:**
+
+```bash
+sudo certbot renew --dry-run
+# expect: "Congratulations, all simulated renewals succeeded"
+# a failure here is a certificate that will expire on a live server
+```
+
+The `post` hook runs whether the renewal succeeded or failed, so the proxy always comes
+back. The `deploy` hook below is different — it runs only after a *successful* renewal,
+which is why it cannot be the thing that restarts your proxy.
 
 Verify:
 
@@ -207,10 +258,13 @@ bind mount, so a renewed certificate is picked up when the proxy restarts:
 sudo systemctl list-timers | grep certbot     # expect a scheduled timer
 ```
 
-Add a post-renewal reload so you are not serving an expired certificate for up to a week:
+A deploy hook additionally reloads the proxy so it picks up the new certificate
+immediately rather than serving the old one until something restarts it:
 
 ```bash
-echo 'docker restart freeholdmail-proxy' | sudo tee /etc/letsencrypt/renewal-hooks/deploy/reload-proxy.sh
+sudo mkdir -p /etc/letsencrypt/renewal-hooks/deploy
+printf '#!/bin/sh\ndocker restart freeholdmail-proxy\n' \
+  | sudo tee /etc/letsencrypt/renewal-hooks/deploy/reload-proxy.sh
 sudo chmod +x /etc/letsencrypt/renewal-hooks/deploy/reload-proxy.sh
 ```
 

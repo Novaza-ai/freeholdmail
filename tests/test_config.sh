@@ -336,6 +336,20 @@ b = lambda t: re.findall(r"```[a-z]*\n(.*?)```", t, re.S)
 en = b(open("README.md", encoding="utf-8").read())
 tr = b(open(sys.argv[1], encoding="utf-8").read())
 sys.exit(0 if en == tr else 1)' "$tr"
+  # Fenced blocks were only half of it: a translated placeholder inside an INLINE `code`
+  # span slipped past the check above (`<your-domain>` became `<domain-cua-ban>`). Inline
+  # spans that look like commands, paths, env vars or placeholders must survive untouched.
+  # shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
+  check "$tr keeps command-like inline code identical to English" python3 -c '
+import re, sys
+def spans(t):
+    t = re.sub(r"```.*?```", "", t, flags=re.S)
+    keep = re.compile(r"^([<$/.]|[A-Za-z0-9_.-]+\.(md|sh|py|yml|toml|example)$|[A-Z_]{4,}$|https?://)")
+    return sorted({s for s in re.findall(r"`([^`\n]+)`", t) if keep.match(s)})
+en = spans(open("README.md", encoding="utf-8").read())
+tr = spans(open(sys.argv[1], encoding="utf-8").read())
+missing = [x for x in en if x not in tr]
+sys.exit(0 if not missing else 1)' "$tr"
   # shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
   check "$tr keeps the same section count as English" bash -c '
     en=$(grep -c "^## " README.md); tr=$(grep -c "^## " "$0")

@@ -40,10 +40,12 @@ readers cross-reference by section.
 
 ## Contributing a translation
 
-1. Copy `README.md` to `README.<tag>.md` using the correct BCP 47 tag.
-2. Translate prose only, following the rules above.
-3. Keep the language selector line at the top, and add your language to it in **every**
-   existing translated file plus `README.md`.
+1. Copy `README.md` to `docs/i18n/<tag>/README.md` using the correct BCP 47 tag.
+2. Translate prose only, following the rules above. Prefix every repo-root link with
+   `../../../`, and leave inline `` `code` `` spans alone as well as fenced blocks.
+3. Keep the first two lines: the `Last-touched` comment, then a selector line that links
+   **back to English** and names your language. Add your language to the full selector in
+   `README.md` and to the table below — those two are the only places the full list lives.
 4. Add the file and its tag to the table in this document.
 5. Open a PR. State which commit of `README.md` you translated — that is what a later
    reviewer needs to see how far the translation has drifted.

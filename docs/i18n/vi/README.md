@@ -90,7 +90,7 @@ Trình cài đặt sẽ hỏi bạn chọn edition nào và domain là gì, sau 
 3. giải quyết đường dẫn Let's Encrypt của bạn (symlink `live/` không dùng được bên trong container);
 4. dựng stack lên và in ra các lệnh để tạo hộp thư đầu tiên.
 
-Sau đó tạo một hộp thư rồi đăng nhập tại `https://<domain-cua-ban>`:
+Sau đó tạo một hộp thư rồi đăng nhập tại `https://<your-domain>`:
 
 ```bash
 # domain, then user — the roles field is required, or SMTP AUTH refuses the account

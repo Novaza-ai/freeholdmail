@@ -19,7 +19,7 @@ Substack.
 | Person | GitHub | Role here |
 |--------|--------|-----------|
 | Daika Ginza | [@daikaginza](https://github.com/daikaginza) | Project lead · maintainer · releases · security response |
-| [@anhkk1245](https://github.com/anhkk1245) | [@anhkk1245](https://github.com/anhkk1245) | Team member, Novaza Solution JSC |
+| [@anhkk1245](https://github.com/anhkk1245) | [@anhkk1245](https://github.com/anhkk1245) | Team member |
 
 The project is stewarded by **[Novaza Solution JSC](https://novaza.ai)**, which runs this
 exact stack in production for its own mail.

@@ -25,11 +25,14 @@ we will translate rather than ask you to.
 
 ### What happens next, and when
 
-These are commitments, not aspirations. If we miss one, you are entitled to say so publicly.
+These are the targets we work to. Be aware of what is behind them: **one person can merge**
+(see [`MAINTAINERS.md`](MAINTAINERS.md)), so these are honest intentions, not a contractual
+SLA — a single-maintainer project that promises an SLA is lying. If we miss one, you are
+entitled to say so publicly, and that is the accountability we offer instead.
 
 | Stage | Target |
 |-------|--------|
-| We acknowledge your report | within **3 business days** |
+| We acknowledge your report | within **72 hours** |
 | We confirm or dispute it, with reasoning | within **10 days** |
 | Fix or documented mitigation shipped, for issues we can reproduce | within **30 days** |
 | Public disclosure and advisory published | within **90 days** of your report, or as soon as a fix is released — whichever comes first |
@@ -112,8 +115,9 @@ Verified on a throwaway stack built from this repo:
    than saying so here.
 7. **A digest pin does not receive upstream fixes.** That is the trade-off for a
    reproducible install, and it is not theoretical: this project shipped a webmail
-   pinned below the patch floor for CVE-2026-34834 (authentication bypass) and
-   CVE-2026-34833 (password disclosure) until 2026-08-05. Watch the upstream
+   pinned below the patch floor for five High advisories until 2026-08-05 —
+   CVE-2026-34834 (authentication bypass), CVE-2026-34833 (password disclosure)
+   and CVE-2026-35389/35390/35391. Watch the upstream
    advisories for every component you pin, and re-pin deliberately.
 
 ## Supported versions
