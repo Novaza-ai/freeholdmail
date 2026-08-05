@@ -70,9 +70,13 @@ than reporting here:
 If you are unsure which side of that line something falls on, report it here and we will
 route it.
 
-## Known security properties (measured 2026-08-04, not assumed)
+## Known security properties (measured, not assumed)
 
-Verified on a throwaway stack built from this repo:
+Verified on a throwaway stack built from this repo. **First measured 2026-08-04,
+independently re-measured 2026-08-05** — every response string below was reproduced
+character for character on the second run. Rows 1 and 2 are additionally re-proved by
+`tests/test_e2e.sh` on every run, so they cannot rot silently; rows 3 and 4 are not yet
+guarded and are therefore dated claims — re-run them yourself before relying on them.
 
 | Property | Result | How it was checked |
 |----------|--------|--------------------|

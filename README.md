@@ -145,10 +145,10 @@ particular is a deliverability discipline, not a feature toggle — don't assume
 
 **Roadmap:** see [`ROADMAP.md`](ROADMAP.md) — near term is trustworthiness (SSO verified on
 the shipped Keycloak, current upstream mail-server line, deliverability measured on a real
-domain). Further out we want this stack to be the one
-software agents can use safely: an MCP server over JMAP, and scoped, revocable per-agent
-credentials instead of handing a bot your password. None of that is built yet, and the
-project is deliberately not named after it. **Contributions on the agent work are wanted —
+domain). Further out is **Agentic Mail** (v0.3): a stack a software
+agent can be given safely — an MCP server over JMAP, and scoped, revocable per-agent
+credentials instead of handing a bot your password. **None of it is built yet**, which is
+why the milestone carries that name and the product does not. **Contributions on the agent work are wanted —
 see "Help wanted" in the roadmap.**
 
 ## ⚖️ License

@@ -61,23 +61,29 @@ You also need:
 
 ## Server sizing (measured, not guessed)
 
-Every number in this section came from `docker stats` against this stack actually running,
-idle, at steady state — not from a vendor recommendation. Reproduce it yourself with
-`docker stats --no-stream` after `docker compose up -d`.
+Every number here came from `docker stats` against this stack actually running, idle — not
+from a vendor recommendation. Reproduce it with `docker stats --no-stream` after
+`docker compose up -d`.
 
-### What it actually consumes at idle
+**Ranges, not point values, and that is deliberate.** Two independent runs of the same stack
+disagreed by 31% on the total. Idle memory is not a constant: the webmail is Node and its
+heap grows before the garbage collector settles, Keycloak is a JVM doing the same, and
+PostgreSQL's cache fills as it is used. Anyone quoting you a single figure for this has
+measured once.
 
 | Container | Base edition | SSO edition |
 |-----------|--------------|-------------|
-| Mail server (Stalwart) | 141 MiB | 141 MiB |
-| Webmail (Bulwark) | 61 MiB | 61 MiB |
+| Mail server (Stalwart) | 139–141 MiB | 139–141 MiB |
+| Webmail (Bulwark) | 61–132 MiB | 61–132 MiB |
 | Reverse proxy (nginx) | 17 MiB | 17 MiB |
-| PostgreSQL — *SSO only* | — | 48 MiB |
-| Keycloak — *SSO only* | — | **537 MiB** |
-| **Total, idle** | **219 MiB** | **804 MiB** |
+| PostgreSQL — *SSO only* | — | 48–60 MiB |
+| Keycloak — *SSO only* | — | **537–570 MiB** |
+| **Total, idle** | **218–288 MiB** | **802–917 MiB** |
 
-Keycloak is a JVM and it is two thirds of the SSO edition's memory on its own. If you do not
-need centralised identity, the base edition is dramatically cheaper to host.
+Stalwart and nginx are the stable ones — Rust and C, measured within 1% across both runs.
+Everything on a managed runtime moved. **Size against the top of each range, never the
+bottom.** Keycloak alone is roughly two thirds of the SSO edition, so if you do not need
+centralised identity the base edition is dramatically cheaper to host.
 
 ### Disk
 
@@ -100,12 +106,12 @@ mail bursts, backups and log churn. The measured idle number is the floor, not t
 
 | Scenario | vCPU | RAM | Disk | Notes |
 |----------|------|-----|------|-------|
-| Base edition, 1–5 mailboxes, personal | 1 | **2 GB** | 20 GB SSD | Idle uses 219 MiB; the rest is OS, page cache and room for delivery bursts |
+| Base edition, 1–5 mailboxes, personal | 1 | **2 GB** | 20 GB SSD | Idle peaked at 288 MiB across two runs; the rest is OS, page cache and room for delivery bursts |
 | Base edition, 5–25 mailboxes, small team | 2 | **4 GB** | 60 GB SSD | Full-text indexing is the CPU spike; it is bursty, not sustained |
 | SSO edition, any size | 2 | **4 GB** | 60 GB SSD | Keycloak's JVM alone needs ~1 GB of the limit set in `docker-compose.sso.yml` |
 | SSO edition, 25+ mailboxes | 4 | **8 GB** | 100 GB+ SSD | Also the point to move backups off-box |
 
-**Do not rent a 1 GB server for the SSO edition.** Measured idle is 804 MiB before the OS,
+**Do not rent a 1 GB server for the SSO edition.** Measured idle reached 917 MiB before the OS,
 before page cache, before a single message is delivered. It will OOM.
 
 **Swap is not optional on a 2 GB box.** (On btrfs, `fallocate` produces a file with holes

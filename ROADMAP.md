@@ -11,9 +11,9 @@ Measured on a throwaway stack built from this repo (see `tests/`):
 
 | Capability | Status | Evidence |
 |------------|--------|----------|
-| Full Mail edition boots and delivers | ✅ works | `tests/test_e2e.sh` — 9/9, a real message goes SMTP → mailbox → IMAP with a matching `Message-ID` |
-| Security defaults | ✅ verified | relay refused `550`, unauthenticated submission refused `503`, password AUTH only after STARTTLS, TLS 1.3 |
-| SSO edition starts | ⚠️ partial | `tests/test_e2e.sh --sso` — 10/10 on Keycloak 24; the shipped 26.0 config is documentation-derived, not measured |
+| Full Mail edition boots and delivers | ✅ works | `tests/test_e2e.sh` — **14/14**, a real message goes SMTP → mailbox → IMAP with a matching `Message-ID` |
+| Security defaults | ✅ verified | relay refused `550 5.1.2`, unauthenticated submission refused `503 5.5.1`, password AUTH only after STARTTLS, TLS 1.3 on 465 — re-measured 2026-08-05 |
+| SSO edition starts | ⚠️ partial | `tests/test_e2e.sh --sso` — **15/15** on the shipped **Keycloak 26.7.0**; the browser login round-trip is still unmeasured |
 | Browser OIDC login | ❌ untested | needs browser automation |
 | Deliverability (SPF/DKIM/DMARC scoring) | ❌ unmeasured | needs a real public domain |
 
@@ -23,7 +23,8 @@ The unglamorous work that has to land before anything else matters.
 
 - ~~Pin every image by digest, including the webmail.~~ **Done in 0.1.0** — all five
   images ship pinned to a version tag and a `sha256` digest.
-- Verify the SSO edition on the Keycloak version we actually ship.
+- ~~Verify the SSO edition on the Keycloak version we actually ship.~~ **Done** — the suite
+  now runs against the shipped 26.7.0, 15/15. The browser login round-trip remains open.
 - Move to the current upstream mail-server release line (the image was renamed and its
   config and data paths moved; see `CHANGELOG.md` "Known gaps").
 - Measure deliverability against a real domain and publish the score, good or bad.
@@ -37,14 +38,22 @@ The unglamorous work that has to land before anything else matters.
 - Metrics and log guidance: what to alert on, and what normal looks like.
 - Multi-domain hosting worked through properly, with tests.
 
-## v0.3 — agent-ready, deliberately in that order
+## v0.3 — **Agentic Mail**, deliberately in that order
 
-We think mail infrastructure is about to be consumed by software agents as much as by
-people, and this stack is unusually well placed for it: the mail server is **JMAP-native**,
-which is a JSON API rather than a protocol from 1986 that agents have to be taught to
-speak.
+The direction has a name now: **Agentic Mail** — mail infrastructure a software agent can be
+given safely, rather than mail infrastructure an agent has to be handed your password to use.
 
-What that could mean here — **none of this is built yet**:
+**It is a destination, not a description of this release.** Nothing in this section exists in
+the repository today; `grep -ri "mcp\|agent" --include='*.py' --include='*.sh' .` finds no
+implementation, and the version that ships it is the version that may claim it.
+
+We think mail is about to be consumed by software agents as much as by people, and this stack
+is unusually well placed for it: the mail server is **JMAP-native**, a JSON API rather than a
+protocol from 1986 that agents must be taught to speak. That is an accident of what we
+assembled, not foresight — but it is the reason this direction is credible here and would not
+be on a Postfix/Dovecot stack.
+
+What Agentic Mail means concretely — **none of this is built yet**:
 
 - **An MCP server for the mailbox**, so an assistant can search, read, draft and file mail
   through a typed interface instead of scraping IMAP.
@@ -55,7 +64,8 @@ What that could mean here — **none of this is built yet**:
   separable from human mail at the protocol level rather than by filters.
 - **An audit trail** that answers "which agent sent this, on whose authority, when".
 
-**Why the project is not called something agentic.** There is no agent code in this repo
+**Why the project is still not *named* Agentic Mail.** The milestone carries the name; the
+product does not, and will not until the code exists. There is no agent code in this repo
 today. A name that promises autonomous agents while shipping a mail-server assembly would
 be a claim we cannot support, and this project's only real asset is that its claims hold up
 when you check them. The name will keep describing what the thing *is* — a mail stack you
