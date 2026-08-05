@@ -15,10 +15,17 @@ and **applies no patches** to them — it pulls their **official images** at ins
 
 | Component | Role | License | Source | Ships in this repo? |
 |-----------|------|---------|--------|---------------------|
-| Stalwart Mail Server | Backend mail server (JMAP/IMAP/SMTP store) | **AGPL-3.0-or-later** (dual w/ proprietary Enterprise license) | https://github.com/stalwartlabs/mail-server | ❌ pulled as official image |
+| Stalwart Mail Server | Backend mail server (JMAP/IMAP/SMTP store) | **AGPL-3.0-only OR SELv1** (dual) | https://github.com/stalwartlabs/stalwart | ❌ pulled as official image |
 | Bulwark Webmail | Frontend webmail UI | **AGPL-3.0-only** | https://github.com/bulwarkmail/webmail | ❌ pulled as official image |
 | Keycloak *(SSO edition only)* | Identity provider / SSO (OIDC) | **Apache-2.0** | https://github.com/keycloak/keycloak | ❌ pulled as official image |
-| nginx | Reverse proxy | BSD-2-Clause | https://nginx.org | ❌ pulled as official image |
+| PostgreSQL *(SSO edition only)* | Keycloak's database | **PostgreSQL License** | https://www.postgresql.org/about/licence/ | ❌ pulled as official image |
+| nginx | Reverse proxy / TLS termination | **BSD-2-Clause** | https://nginx.org/LICENSE | ❌ pulled as official image |
+
+> **On Stalwart's licence, precisely.** Upstream states AGPL-3.0 *as published by the Free
+> Software Foundation*, dual-licensed with the Stalwart Enterprise License v1 — it does not
+> offer an "or later" option, and this repository must not restate it as `-or-later`, which
+> would grant a permission the copyright holder did not. Which of the two licences governs
+> the binary in the official image is a question for Stalwart Labs, not for this repo.
 
 > Verify the exact image coordinates in `docker-compose.yml` against each project's
 > official registry before publishing — do not assume a registry path.

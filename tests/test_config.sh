@@ -122,6 +122,29 @@ for svc_file in docker-compose.yml docker-compose.sso.yml; do
   check "$svc_file sets no-new-privileges" grep -q 'no-new-privileges:true' "$svc_file"
 done
 refute "no privileged containers" grep -rq 'privileged:[[:space:]]*true' docker-compose.yml docker-compose.sso.yml
+
+# The two nginx templates must not drift apart: the SSO edition is the one users reach for
+# when they care about identity, so it must never be the laxer of the two. nginx's own
+# defaults enable TLSv1/TLSv1.1 and a 1m body limit, so every directive below is a
+# correction of a default, not a preference.
+for conf in config/nginx/mail.conf.example config/nginx/mail.sso.conf.example; do
+  check "$(basename "$conf") pins ssl_protocols to 1.2/1.3" \
+    grep -qE '^\s*ssl_protocols\s+TLSv1\.2\s+TLSv1\.3;' "$conf"
+  refute "$(basename "$conf") does not allow TLSv1/TLSv1.1" \
+    grep -qE '^\s*ssl_protocols[^;]*TLSv1(\.1)?[[:space:];]' "$conf"
+  check "$(basename "$conf") sets HSTS" \
+    grep -q 'Strict-Transport-Security' "$conf"
+  check "$(basename "$conf") sets nosniff" \
+    grep -q 'X-Content-Type-Options' "$conf"
+  check "$(basename "$conf") forbids framing" \
+    grep -q "frame-ancestors 'none'" "$conf"
+  check "$(basename "$conf") hides the nginx version" \
+    grep -qE '^\s*server_tokens\s+off;' "$conf"
+  check "$(basename "$conf") raises client_max_body_size above the 1m default" \
+    grep -qE '^\s*client_max_body_size\s+[0-9]+m;' "$conf"
+  refute "$(basename "$conf") does not hardcode Connection: upgrade" \
+    grep -q 'proxy_set_header Connection "upgrade"' "$conf"
+done
 refute "keycloak database is not published to the host" \
   bash -c "grep -A12 '^  db:' docker-compose.sso.yml | grep -qE '^[[:space:]]+ports:'"
 
@@ -260,5 +283,13 @@ if (( SKIP > 0 )); then
   echo "== result: $PASS passed, $FAIL failed, $SKIP SKIPPED — install the missing tools before trusting this =="
 else
   echo "== result: $PASS passed, $FAIL failed =="
+fi
+# A skip must not exit 0. Counting and printing skips was only half the fix: CI reads the
+# exit code, not the text, so a runner without yamllint or shellcheck would report a green
+# `static` job over a board where those checks never ran. Set FREEHOLDMAIL_ALLOW_SKIPS=1 to
+# accept a partial run knowingly — never in CI.
+if (( SKIP > 0 )) && [[ "${FREEHOLDMAIL_ALLOW_SKIPS:-0}" != "1" ]]; then
+  echo "   (exiting non-zero: $SKIP check(s) did not run. Set FREEHOLDMAIL_ALLOW_SKIPS=1 to override.)"
+  exit 1
 fi
 exit $(( FAIL > 0 ))

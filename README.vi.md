@@ -193,6 +193,10 @@ nằm ở [`docs/RUNBOOK.md`](docs/RUNBOOK.md). Điều kiện tiên quyết ở
 Xem [`CONTRIBUTING.md`](CONTRIBUTING.md). Một luật nội bộ: mọi tuyên bố về hành vi lúc chạy
 phải có số đo, không phải "chạy được trên máy tôi".
 
+Ai quyết định điều gì, làm sao để trở thành maintainer, và chuyện gì xảy ra với bạn nếu dự án
+này bị bỏ rơi: [`GOVERNANCE.md`](GOVERNANCE.md). Ai sẽ trả lời bạn, kèm tuyên bố thẳng thắn
+rằng **dự án hiện chỉ có một maintainer**: [`MAINTAINERS.md`](MAINTAINERS.md).
+
 ## Đơn vị duy trì
 
 **[Novaza Solution JSC](https://novaza.ai)** — chúng tôi chạy các thành phần của stack này

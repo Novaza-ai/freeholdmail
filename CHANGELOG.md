@@ -7,6 +7,47 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Security
+- **The pinned webmail carried five High advisories.** `v1.4.8` predates the fixes for
+  CVE-2026-34834 (authentication bypass in `verifyIdentity()`, missing cookie validation),
+  CVE-2026-34833 (password returned by `/api/auth/session`), and CVE-2026-35389/35390/35391.
+  Patch floor is **1.4.11**; this now pins **v1.7.8**. A digest pin is what makes an install
+  reproducible, and it is equally what would have frozen every install on the vulnerable
+  build — so the pin is only as good as the advisory-watching behind it.
+- **`/` on port 80 answered "Welcome to nginx!"** for any unmatched Host, with none of the
+  security headers, because the image's stock `default.conf` sorts before `mail.conf` and
+  won as the default server. It is now masked with `/dev/null` in both editions; measured:
+  unmatched Host `200` + nginx welcome page → `301` to HTTPS.
+
+### Fixed
+- **The admin API was unreachable, so nobody could complete the first step.** Every
+  document tells the operator to `curl http://127.0.0.1:8080/api/principal` to create their
+  domain and first mailbox, but port 8080 was never published and nginx routes only `/jmap`.
+  Now published on **`127.0.0.1:8080` only** — never on a public interface, because that API
+  returns account passwords in cleartext.
+- **Two e2e guards could not fail.** The obsolete-TLS check ended in an `else` that returned
+  PASS for any unrecognised probe output, so a dead proxy scored two unearned passes; it now
+  fails and prints the output. And `bad "proxy TLS handshake failed"` was unreachable —
+  under `set -euo pipefail` a non-matching `grep` killed the script before that line, so a
+  broken proxy produced no FAIL and no result line at all.
+- **A skipped check exited 0.** Both suites counted and printed skips but still
+  `exit $(( FAIL > 0 ))`, so CI on a runner without `yamllint` or `shellcheck` reported a
+  green board over checks that never ran. Skips now exit non-zero unless
+  `FREEHOLDMAIL_ALLOW_SKIPS=1` says otherwise. Measured: 3 tools hidden → `124 passed,
+  0 failed, 3 SKIPPED`, exit **1**.
+- **The webmail-reachability check asserted the wrong thing.** Bulwark 1.7 routes `/`
+  through a 307 to a locale prefix, so a healthy stack failed a bare `== 200`. It now
+  follows the chain and requires the final status to be 200 (measured: first hop 307,
+  final 200).
+
+### Changed
+- **Stalwart's licence was overstated** as `AGPL-3.0-or-later`. Upstream states AGPL-3.0 as
+  published by the FSF, dual-licensed with SELv1, and offers no "or later" — restating it
+  more broadly grants a permission the copyright holder did not.
+- **PostgreSQL and nginx were missing from the licence documents** although both ship.
+- CI no longer claims `-S style` is stricter than the default; it is the default, and the
+  comment said otherwise.
+
 ## [0.1.0] — 2026-08-05
 
 First public release.
@@ -178,7 +219,11 @@ First public release.
    `/etc/stalwart` and data to `/var/lib/stalwart`. This repo targets the v0.11.x
    layout because that is what was actually tested here. Upgrading requires changing
    the image name **and** both volume paths, then re-running the E2E test.
-3. **`BULWARK_DIGEST` is empty** — pin it before production.
+3. **Pins do not self-update.** Every image ships pinned to a version tag *and* a digest,
+   which is what makes an install reproducible — and also what stops it drifting onto an
+   upstream security fix. Watch the upstream advisories and re-pin deliberately;
+   `docs/RUNBOOK.md` has the upgrade and rollback procedure. (Until 2026-08-05 this entry
+   said `BULWARK_DIGEST` was empty; that was left behind by the release that pinned it.)
 4. **No SPF/DKIM/DMARC or deliverability score has been measured** against a real
    public domain; `docs/DNS.md` is guidance, not a verified result.
 5. **`SEARCH HEADER Message-ID` returns no hits** on the tested mail server version

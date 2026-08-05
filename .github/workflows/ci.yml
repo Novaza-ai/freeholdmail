@@ -44,12 +44,20 @@ jobs:
       - name: ShellCheck
         # Installed from the distro rather than via a third-party action: one less
         # supply-chain dependency, and nothing here needs a marketplace action to run.
+        # `style` is shellcheck's DEFAULT severity floor, so `-S style` changes nothing —
+        # it is spelled out only to make the level explicit and to stop anyone "tightening"
+        # it to -S error, which would hide findings. What actually matters here is the file
+        # list: it must match the local suite, or the two gates drift apart.
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
-          shellcheck install.sh tests/test_config.sh tests/test_e2e.sh
+          shellcheck -S style install.sh tests/test_config.sh tests/test_e2e.sh scripts/make_gif.sh
 
-      - name: Python syntax
-        run: python3 -c "import ast; ast.parse(open('tests/e2e_mail.py').read())"
+      - name: Python syntax and style
+        run: |
+          python3 -c "import ast; ast.parse(open('tests/e2e_mail.py').read())"
+          python3 -c "import ast; ast.parse(open('scripts/seed_demo.py').read())"
+          pip install --quiet pycodestyle
+          pycodestyle --max-line-length=100 tests/e2e_mail.py scripts/seed_demo.py
 
       - name: Compose config (base edition)
         run: docker compose --env-file .env.example -f docker-compose.yml config -q
@@ -88,12 +96,28 @@ jobs:
           fi
 
       - name: Images are digest-pinned
-        # A tag can be re-pointed by whoever can push; a digest cannot.
+        # A tag can be re-pointed by whoever can push; a digest cannot. This FAILS the
+        # build — it used to emit `::warning::`, which never fails anything, so the one
+        # check guarding the supply chain was decorative while the webmail rode `:latest`.
         run: |
           missing=$(grep -E '^[A-Z_]+_DIGEST=$' .env.example || true)
           if [ -n "$missing" ]; then
-            echo "::warning::unpinned images in .env.example:"; echo "$missing"
+            echo "::error::unpinned images in .env.example:"; echo "$missing"; exit 1
           fi
+          # Assert against the resolved config, not the raw files: those hold
+          # ${BULWARK_VERSION}, so grepping them for `:latest` inspects a placeholder.
+          resolved=$(docker compose --env-file .env.example \
+            -f docker-compose.yml -f docker-compose.sso.yml config | grep -E '^[[:space:]]+image:')
+          total=$(grep -c 'image:' <<<"$resolved")
+          pinned=$(grep -c '@sha256:' <<<"$resolved")
+          if [ "$total" -eq 0 ] || [ "$pinned" -ne "$total" ]; then
+            echo "::error::only $pinned/$total resolved images are digest-pinned"
+            grep -v '@sha256:' <<<"$resolved"; exit 1
+          fi
+          if grep -qE ':latest([[:space:]]|@|$)' <<<"$resolved"; then
+            echo "::error::a resolved image rides the mutable :latest tag"; exit 1
+          fi
+          echo "all $pinned/$total resolved images are digest-pinned"
 
   yaml:
     name: YAML syntax

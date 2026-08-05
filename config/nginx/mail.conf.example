@@ -1,7 +1,19 @@
-# Last-touched: 2026-08-04 — base edition nginx (Full Mail): FE + BE only, NO Keycloak upstream
+# Last-touched: 2026-08-05 — senior security review: pinned TLS versions and ciphers
+# (nginx's default still enables TLS 1.0/1.1 — measured), added response security headers,
+# raised the body limit so attachments work, and stopped leaking the nginx version.
 # Copy to mail.conf (install.sh does this). Genericized — no secrets.
 # Note: this file intentionally does NOT reference the idp upstream, so nginx starts
 # cleanly without Keycloak. The SSO edition uses mail.sso.conf instead.
+
+# Do not advertise the exact nginx version in responses and error pages.
+server_tokens off;
+
+# Websocket upgrade done properly: `Connection: upgrade` must only be sent when the client
+# actually asked for it, otherwise every plain request carries a bogus upgrade header.
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
 
 server {
     listen 443 ssl;
@@ -10,6 +22,30 @@ server {
 
     ssl_certificate     /etc/nginx/tls/fullchain.pem;
     ssl_certificate_key /etc/nginx/tls/privkey.pem;
+
+    # nginx's built-in default still LISTS TLSv1 and TLSv1.1, which RFC 8996 deprecated in
+    # 2021. On this image they are refused anyway, because its OpenSSL 3 security level
+    # leaves those versions no usable ciphersuite (measured: handshake returns
+    # `Cipher is (NONE)`). That is a property of the image, not of this config — pin the
+    # versions here so the guarantee survives a different base image or OpenSSL policy.
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305;
+    # With TLS 1.3 the client's preference order is the sane one to honour.
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+
+    # A webmail renders untrusted HTML from strangers, so these are load-bearing.
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    # Clickjacking: nothing here should ever be framed by another origin.
+    add_header Content-Security-Policy "frame-ancestors 'none'" always;
+    add_header X-Frame-Options "DENY" always;
+
+    # nginx defaults to 1m, which silently breaks any attachment larger than that.
+    client_max_body_size 50m;
 
     # FE: webmail UI
     location / {
@@ -29,7 +65,7 @@ server {
         proxy_set_header X-Forwarded-Proto https;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
+        proxy_set_header Connection $connection_upgrade;
     }
 }
 

@@ -33,6 +33,12 @@ services:
       - "465:465"
       - "587:587"
       - "993:993"
+      # The admin API. Every doc's first step — creating your domain and first mailbox —
+      # calls http://127.0.0.1:8080/api/principal, which was impossible because this port
+      # was never published. Bound to LOOPBACK ONLY and deliberately not proxied by nginx:
+      # this API returns account passwords in cleartext (see SECURITY.md), so it must never
+      # be reachable from the internet. Reach it over SSH port-forwarding from elsewhere.
+      - "127.0.0.1:8080:8080"
     security_opt:
       - no-new-privileges:true
     healthcheck:
@@ -76,6 +82,10 @@ services:
         condition: service_healthy
     volumes:
       - ./config/nginx/mail.conf:/etc/nginx/conf.d/mail.conf:ro
+      # Mask the image's stock default.conf. It sorts before mail.conf, so it wins as the
+      # default server on :80 and answers any unmatched Host with "Welcome to nginx!" —
+      # a 200 with none of our security headers, instead of the redirect to HTTPS.
+      - /dev/null:/etc/nginx/conf.d/default.conf:ro
       - ${TLS_FULLCHAIN}:/etc/nginx/tls/fullchain.pem:ro
       - ${TLS_PRIVKEY}:/etc/nginx/tls/privkey.pem:ro
     ports:

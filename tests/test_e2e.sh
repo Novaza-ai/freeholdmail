@@ -40,7 +40,7 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-PASS=0; FAIL=0
+PASS=0; FAIL=0; SKIP=0
 ok()  { printf '  \033[32mPASS\033[0m  %s\n' "$1"; PASS=$((PASS + 1)); }
 bad() { printf '  \033[31mFAIL\033[0m  %s\n' "$1"; FAIL=$((FAIL + 1)); }
 gen() { openssl rand -base64 24 | tr -d '\n=+/' | cut -c1-32; }
@@ -204,18 +204,66 @@ else
   bad "submission accepted without AUTH ($noauth)"
 fi
 
-tls="$(echo | timeout 15 openssl s_client -connect "127.0.0.1:${HTTPS_PORT}" 2>/dev/null | grep -oE 'TLSv1\.[23]' | head -1)"
+# `|| true` is load-bearing: under `set -euo pipefail` a non-matching grep exits 1, pipefail
+# propagates it, and the assignment kills the script — so the `bad` branch below was
+# unreachable and a broken proxy ended the run with no FAIL line and no result line at all.
+tls="$(echo | timeout 15 openssl s_client -connect "127.0.0.1:${HTTPS_PORT}" 2>/dev/null \
+        | grep -oE 'TLSv1\.[23]' | head -1 || true)"
 if [[ -n "$tls" ]]; then
   ok "proxy negotiates $tls"
 else
   bad "proxy TLS handshake failed"
 fi
 
-code="$(curl -sk -o /dev/null -w '%{http_code}' --max-time 15 "https://127.0.0.1:${HTTPS_PORT}/")"
-if [[ "$code" == "200" ]]; then
-  ok "webmail served through the proxy (http $code)"
+# Negotiating a modern protocol proves nothing about the obsolete ones: a client always
+# offers its best first. nginx's default protocol list still names TLSv1 and TLSv1.1, so
+# whether they are reachable depends on the image's OpenSSL policy rather than on anything
+# visible in this repo. Ask for them ON PURPOSE and require refusal — and if this openssl
+# build cannot even offer them, say so out loud rather than banking an unearned PASS.
+for legacy in tls1 tls1_1; do
+  out="$(echo | timeout 15 openssl s_client -connect "127.0.0.1:${HTTPS_PORT}" \
+           "-${legacy}" -cipher 'ALL:@SECLEVEL=0' 2>&1 || true)"
+  # Read whether a SESSION was established, not which protocol the line mentions:
+  # on refusal openssl still prints `Protocol : TLSv1` (the version it *attempted*) next to
+  # `Cipher : 0000`, so matching the protocol line alone reports a refusal as an acceptance.
+  if grep -q 'no protocols available\|unknown option' <<<"$out"; then
+    printf '  \033[33mSKIP\033[0m  %s\n' \
+      "cannot test ${legacy}: this openssl refuses to offer it (check NOT run)"
+    SKIP=$((SKIP + 1))
+  elif grep -qE 'Cipher is \(NONE\)|Cipher *: *0000|alert protocol version|wrong version number|unsupported protocol' <<<"$out"; then
+    ok "proxy refuses obsolete ${legacy}"
+  elif grep -qE '^ *Protocol *: *TLSv1(\.1)? *$' <<<"$out"; then
+    bad "proxy ACCEPTS obsolete ${legacy} — RFC 8996 deprecated it; pin ssl_protocols"
+  else
+    # Do NOT pass here. Unrecognised output means the probe never reached a live TLS
+    # endpoint — a refused connection, an empty reply, a timeout — and "the server did not
+    # answer" is not evidence that it refuses obsolete TLS. Passing on the unknown is how a
+    # guard silently turns decorative.
+    bad "cannot tell whether ${legacy} is refused: unexpected probe output (see below)"
+    printf '        %s\n' "$(head -3 <<<"$out")"
+  fi
+done
+
+hsts="$(curl -sk -o /dev/null -D - --max-time 15 "https://127.0.0.1:${HTTPS_PORT}/" \
+         | grep -ci '^strict-transport-security:' || true)"
+nosniff="$(curl -sk -o /dev/null -D - --max-time 15 "https://127.0.0.1:${HTTPS_PORT}/" \
+            | grep -ci '^x-content-type-options: *nosniff' || true)"
+if [[ "$hsts" -ge 1 && "$nosniff" -ge 1 ]]; then
+  ok "security headers present (HSTS + nosniff)"
 else
-  bad "webmail not served (http $code)"
+  bad "security headers missing (hsts=$hsts nosniff=$nosniff)"
+fi
+
+# Follow redirects and require the FINAL status to be 200. Bulwark 1.7 routes `/` through
+# a 307 to a locale prefix (`/en`), so asserting 200 on the first hop fails on a perfectly
+# healthy stack. Following the chain keeps the check honest in both directions: a redirect
+# loop or a redirect to an error page still fails here.
+first="$(curl -sk -o /dev/null -w '%{http_code}' --max-time 15 "https://127.0.0.1:${HTTPS_PORT}/")"
+final="$(curl -skL -o /dev/null -w '%{http_code}' --max-time 20 "https://127.0.0.1:${HTTPS_PORT}/")"
+if [[ "$final" == "200" ]]; then
+  ok "webmail served through the proxy (first hop $first, final $final)"
+else
+  bad "webmail not served (first hop $first, final $final)"
 fi
 
 # The HTML shell can render while the app is dead: the client then fetches its own
@@ -268,5 +316,16 @@ if (( WITH_SSO )); then
 fi
 
 echo
-echo "== result: $PASS passed, $FAIL failed =="
+# A skipped check is not a passed one. Naming the count keeps a partially-hollow board from
+# reading as a clean one — the failure mode that once produced a green 86/86 here.
+if (( SKIP > 0 )); then
+  echo "== result: $PASS passed, $FAIL failed, $SKIP SKIPPED — a check did NOT run =="
+else
+  echo "== result: $PASS passed, $FAIL failed =="
+fi
+# CI reads the exit code, not the text — a skip must not exit 0. See test_config.sh.
+if (( SKIP > 0 )) && [[ "${FREEHOLDMAIL_ALLOW_SKIPS:-0}" != "1" ]]; then
+  echo "   (exiting non-zero: $SKIP check(s) did not run. Set FREEHOLDMAIL_ALLOW_SKIPS=1 to override.)"
+  exit 1
+fi
 exit $(( FAIL > 0 ))

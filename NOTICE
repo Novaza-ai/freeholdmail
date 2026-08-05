@@ -15,13 +15,19 @@ each under its own license. This repository does NOT contain their source code
 and does NOT modify them. Running the official, unmodified images does not
 change their license terms.
 
-  - Stalwart Mail Server  — AGPL-3.0-or-later (dual-licensed with a proprietary
-                            Enterprise license by Stalwart Labs)
-                            https://github.com/stalwartlabs/mail-server
+  - Stalwart Mail Server  — dual-licensed AGPL-3.0-only OR Stalwart Enterprise
+                            License v1 (SELv1). NOT "or-later": upstream states
+                            AGPL-3.0 as published by the FSF, with no later-version
+                            option, so do not restate it more broadly than they do.
+                            https://github.com/stalwartlabs/stalwart
   - Bulwark Webmail       — AGPL-3.0-only
                             https://github.com/bulwarkmail/webmail
-  - Keycloak              — Apache-2.0
+  - Keycloak              — Apache-2.0  (SSO edition only)
                             https://github.com/keycloak/keycloak
+  - PostgreSQL            — PostgreSQL License  (SSO edition only; backs Keycloak)
+                            https://www.postgresql.org/about/licence/
+  - nginx                 — BSD-2-Clause  (TLS termination / reverse proxy)
+                            https://nginx.org/LICENSE
 
 IMPORTANT — AGPL obligations belong to those components, not to this repo:
 If YOU modify Stalwart or Bulwark and then distribute them or offer them to

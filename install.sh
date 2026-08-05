@@ -16,8 +16,10 @@ readonly ENV_FILE="${REPO_DIR}/.env"
 readonly STALWART_VERSION_DEFAULT="v0.11.8"
 readonly STALWART_DIGEST_DEFAULT="@sha256:a5ce0615640b29a01c0a55b9fff6dd2c9dfa261ec87862c22e4db7e0254cdb1f"
 readonly BULWARK_IMAGE_DEFAULT="ghcr.io/bulwarkmail/webmail"
-readonly BULWARK_VERSION_DEFAULT="v1.4.8"
-readonly BULWARK_DIGEST_DEFAULT="@sha256:022b19000e9d56400a56770c9087d5bd47bd1439c4f6d22502f249174f2f6332"
+# Patch floor is 1.4.11: anything below it carries CVE-2026-34834 (auth bypass) and
+# CVE-2026-34833 (password disclosure). See SECURITY.md before changing this.
+readonly BULWARK_VERSION_DEFAULT="v1.7.8"
+readonly BULWARK_DIGEST_DEFAULT="@sha256:1ea45e292e7baf84eccdfe3d7ed96fe4487f2b95025a6ab569706915f6798979"
 readonly NGINX_VERSION_DEFAULT="1.27-alpine"
 readonly NGINX_DIGEST_DEFAULT="@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10"
 readonly KEYCLOAK_VERSION_DEFAULT="26.0"
@@ -27,6 +29,19 @@ readonly POSTGRES_DIGEST_DEFAULT="@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd
 
 # Errors go to STDERR so that redirecting stdout to a log never swallows them.
 err() { printf '%s\n' "$*" >&2; }
+
+# Write a config from its template, but never silently destroy an operator's edits.
+# A re-run with --force must still refresh the domain, so the old file is kept beside it
+# rather than preserved in place (which would leave a stale domain in the config).
+install_config() {
+  local src="$1" dst="$2" backup
+  if [[ -f "${dst}" ]]; then
+    backup="${dst}.bak.$(date +%Y%m%d%H%M%S)"
+    cp -p "${dst}" "${backup}"
+    echo "ℹ️  Existing $(basename "${dst}") saved as $(basename "${backup}")"
+  fi
+  cp -f "${src}" "${dst}"
+}
 
 gen() { openssl rand -base64 32 | tr -d '\n=+/' | cut -c1-40; }
 
@@ -121,16 +136,16 @@ main() {
   cp -n "${REPO_DIR}/config/stalwart/config.toml.example" \
         "${REPO_DIR}/config/stalwart/config.toml"
   if [[ "${edition}" == "2" ]]; then
-    cp -f "${REPO_DIR}/config/nginx/mail.sso.conf.example" \
-          "${REPO_DIR}/config/nginx/mail.sso.conf"
+    install_config "${REPO_DIR}/config/nginx/mail.sso.conf.example" \
+                   "${REPO_DIR}/config/nginx/mail.sso.conf"
     sed -i "s/MAIL_DOMAIN_PLACEHOLDER/${mail_domain}/g" "${REPO_DIR}/config/nginx/mail.sso.conf"
     compose_args=(-f docker-compose.yml -f docker-compose.sso.yml)
     echo
     echo "ℹ️  SSO edition: a PostgreSQL service (\`db\`) is included and starts automatically."
     echo "    Keycloak waits for it to pass its healthcheck before booting."
   else
-    cp -f "${REPO_DIR}/config/nginx/mail.conf.example" \
-          "${REPO_DIR}/config/nginx/mail.conf"
+    install_config "${REPO_DIR}/config/nginx/mail.conf.example" \
+                   "${REPO_DIR}/config/nginx/mail.conf"
     sed -i "s/MAIL_DOMAIN_PLACEHOLDER/${mail_domain}/g" "${REPO_DIR}/config/nginx/mail.conf"
     compose_args=(-f docker-compose.yml)
   fi

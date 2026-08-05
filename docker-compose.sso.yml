@@ -27,6 +27,8 @@ services:
     # Swap in the nginx config that also routes IdP discovery.
     volumes:
       - ./config/nginx/mail.sso.conf:/etc/nginx/conf.d/mail.conf:ro
+      # Same masking as the base file — an overlay replaces the `volumes` list wholesale.
+      - /dev/null:/etc/nginx/conf.d/default.conf:ro
       - ${TLS_FULLCHAIN}:/etc/nginx/tls/fullchain.pem:ro
       - ${TLS_PRIVKEY}:/etc/nginx/tls/privkey.pem:ro
     depends_on:
