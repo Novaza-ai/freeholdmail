@@ -60,16 +60,16 @@ correct the original.
 |----------|-----|------|--------|
 | English (source) | `en` | [`README.md`](README.md) | — |
 | Vietnamese | `vi` | [`docs/i18n/vi/README.md`](docs/i18n/vi/README.md) | `1ed15b3` |
-| Japanese | `ja` | [`docs/i18n/ja/README.md`](docs/i18n/ja/README.md) | `1ed15b3` |
-| Chinese (Simplified) | `zh-CN` | [`docs/i18n/zh-CN/README.md`](docs/i18n/zh-CN/README.md) | `1ed15b3` |
-| Chinese (Traditional) | `zh-TW` | [`docs/i18n/zh-TW/README.md`](docs/i18n/zh-TW/README.md) | `1ed15b3` |
-| Thai | `th` | [`docs/i18n/th/README.md`](docs/i18n/th/README.md) | `1ed15b3` |
-| Indonesian | `id` | [`docs/i18n/id/README.md`](docs/i18n/id/README.md) | `1ed15b3` |
-| Hindi | `hi` | [`docs/i18n/hi/README.md`](docs/i18n/hi/README.md) | `1ed15b3` |
-| French | `fr` | [`docs/i18n/fr/README.md`](docs/i18n/fr/README.md) | `1ed15b3` |
-| Spanish | `es` | [`docs/i18n/es/README.md`](docs/i18n/es/README.md) | `1ed15b3` |
-| Portuguese | `pt` | [`docs/i18n/pt/README.md`](docs/i18n/pt/README.md) | `1ed15b3` |
-| Russian | `ru` | [`docs/i18n/ru/README.md`](docs/i18n/ru/README.md) | `1ed15b3` |
+| Japanese | `ja` | [`docs/i18n/ja/README.md`](docs/i18n/ja/README.md) | `1ed15b3` — **STALE** |
+| Chinese (Simplified) | `zh-CN` | [`docs/i18n/zh-CN/README.md`](docs/i18n/zh-CN/README.md) | `1ed15b3` — **STALE** |
+| Chinese (Traditional) | `zh-TW` | [`docs/i18n/zh-TW/README.md`](docs/i18n/zh-TW/README.md) | `1ed15b3` — **STALE** |
+| Thai | `th` | [`docs/i18n/th/README.md`](docs/i18n/th/README.md) | `1ed15b3` — **STALE** |
+| Indonesian | `id` | [`docs/i18n/id/README.md`](docs/i18n/id/README.md) | `1ed15b3` — **STALE** |
+| Hindi | `hi` | [`docs/i18n/hi/README.md`](docs/i18n/hi/README.md) | `1ed15b3` — **STALE** |
+| French | `fr` | [`docs/i18n/fr/README.md`](docs/i18n/fr/README.md) | `1ed15b3` — **STALE** |
+| Spanish | `es` | [`docs/i18n/es/README.md`](docs/i18n/es/README.md) | `1ed15b3` — **STALE** |
+| Portuguese | `pt` | [`docs/i18n/pt/README.md`](docs/i18n/pt/README.md) | `1ed15b3` — **STALE** |
+| Russian | `ru` | [`docs/i18n/ru/README.md`](docs/i18n/ru/README.md) | `1ed15b3` — **STALE** |
 
 **On regional tags.** `zh-CN` and `zh-TW` are kept apart because the scripts and the
 vocabulary genuinely differ. `es` and `pt` are deliberately *not* split into `es-ES`/`es-MX`

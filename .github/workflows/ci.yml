@@ -16,6 +16,11 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The translation-drift guards resolve commit SHAs, which a shallow clone cannot
+          # do — checkout defaults to fetch-depth 1 and `git cat-file` then fails on every
+          # recorded SHA. This guard was green locally and red here for exactly that reason.
+          fetch-depth: 0
       # The suite SKIPS checks whose tool is missing, and a skip exits non-zero — so every
       # tool it needs has to be here or the job fails for the right reason. ImageMagick is
       # not on a stock runner and the media checks need it.
