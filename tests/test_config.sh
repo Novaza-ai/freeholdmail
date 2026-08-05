@@ -100,12 +100,22 @@ echo "== supply chain =="
 resolved="$(docker compose --env-file .env.example -f docker-compose.yml -f docker-compose.sso.yml config 2>/dev/null | grep -E '^[[:space:]]+image:')"
 pinned="$(grep -c '@sha256:' <<<"$resolved")"
 total="$(grep -c 'image:' <<<"$resolved")"
-if (( pinned > 0 )); then
-  ok "images digest-pinned: $pinned/$total"
+# Assert against the RESOLVED config, never the raw compose files: those contain
+# ${BULWARK_VERSION}, so grepping them for `:latest` inspects the placeholder and passes
+# while the image that actually runs is mutable. Distinguish "not run" from "passed" too —
+# an empty resolution means docker could not resolve it, which is a failure, not a pass.
+if (( total == 0 )); then
+  bad "could not resolve compose config — is docker available? (checks did NOT run)"
+elif (( pinned == total )); then
+  ok "every resolved image is digest-pinned: $pinned/$total"
 else
-  bad "no image is digest-pinned"
+  bad "only $pinned/$total resolved images are digest-pinned:$(grep -v '@sha256:' <<<"$resolved" | sed 's/^ *image:/ /' | tr -d '\n')"
 fi
-refute "no :latest in compose files" grep -qE 'image:.*:latest' docker-compose.yml docker-compose.sso.yml
+if (( total > 0 )) && grep -qE ':latest([[:space:]]|@|$)' <<<"$resolved"; then
+  bad "a resolved image rides the mutable :latest tag"
+else
+  ok "no :latest among the resolved images"
+fi
 
 echo "== hardening =="
 for svc_file in docker-compose.yml docker-compose.sso.yml; do

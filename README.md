@@ -137,8 +137,8 @@ migration tooling from other providers, or a managed control panel. Bulk sending
 particular is a deliverability discipline, not a feature toggle — don't assume it.
 
 **Roadmap:** see [`ROADMAP.md`](ROADMAP.md) — near term is trustworthiness (SSO verified on
-the shipped Keycloak, current upstream mail-server line, every image digest-pinned,
-deliverability measured on a real domain). Further out we want this stack to be the one
+the shipped Keycloak, current upstream mail-server line, deliverability measured on a real
+domain). Further out we want this stack to be the one
 software agents can use safely: an MCP server over JMAP, and scoped, revocable per-agent
 credentials instead of handing a bot your password. None of that is built yet, and the
 project is deliberately not named after it. **Contributions on the agent work are wanted —
@@ -188,6 +188,10 @@ playbooks — are in [`docs/RUNBOOK.md`](docs/RUNBOOK.md). Prerequisites are in
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md). One house rule: claims about runtime
 behaviour need measurements, not "works on my machine".
+
+Who decides what, how to become a maintainer, and what happens to you if this project is
+ever abandoned: [`GOVERNANCE.md`](GOVERNANCE.md). Who to expect a reply from, and an honest
+statement of the bus factor: [`MAINTAINERS.md`](MAINTAINERS.md).
 
 ## Maintained by
 

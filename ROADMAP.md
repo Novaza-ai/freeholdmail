@@ -21,7 +21,8 @@ Measured on a throwaway stack built from this repo (see `tests/`):
 
 The unglamorous work that has to land before anything else matters.
 
-- Pin every image by digest, including the webmail.
+- ~~Pin every image by digest, including the webmail.~~ **Done in 0.1.0** — all five
+  images ship pinned to a version tag and a `sha256` digest.
 - Verify the SSO edition on the Keycloak version we actually ship.
 - Move to the current upstream mail-server release line (the image was renamed and its
   config and data paths moved; see `CHANGELOG.md` "Known gaps").

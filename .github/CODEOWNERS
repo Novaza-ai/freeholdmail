@@ -1,0 +1,26 @@
+# Last-touched: 2026-08-05 — added with GOVERNANCE.md/MAINTAINERS.md for the 0.1.0 release.
+#
+# Review routing for the paths where a mistake is expensive. A code owner is required to
+# have write access, so this lists a person rather than a team: at the time of writing no
+# organisation team has access to this repository.
+#
+# See MAINTAINERS.md for who these people are and GOVERNANCE.md for how decisions are made.
+
+# Default: everything gets a maintainer's eye.
+*                       @daikaginza
+
+# Supply chain. A change here can alter what every install downloads and runs.
+/.github/workflows/     @daikaginza
+/.env.example           @daikaginza
+/docker-compose.yml     @daikaginza
+/docker-compose.sso.yml @daikaginza
+
+# Writes the operator's secrets and their .env file mode.
+/install.sh             @daikaginza
+
+# Routing. `/api` belongs to the webmail; exposing the mail server's admin API here
+# would publish an endpoint that returns account passwords in cleartext.
+/config/nginx/          @daikaginza
+
+# Security posture and the promises made to reporters.
+/SECURITY.md            @daikaginza

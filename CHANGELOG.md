@@ -7,7 +7,34 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-08-05
+
+First public release.
+
 ### Fixed
+- **The webmail image was the only one not pinned.** `BULWARK_VERSION` shipped as
+  `latest` with an empty `BULWARK_DIGEST`, so two installs a week apart could run
+  different webmail builds and whoever can push that tag could change every install.
+  Now pinned to `v1.4.8` and `@sha256:022b1900…`, verified to resolve anonymously from
+  `ghcr.io` (manifest **HTTP 200**). Keycloak is pinned the same way
+  (`26.0` / `@sha256:09a381c7…`), so **5/5 images** are now digest-pinned.
+- **The supply-chain guard could not see the problem above.** It grepped the raw compose
+  files for `image:.*:latest`, but those contain `${BULWARK_VERSION}` — so the check
+  inspected a placeholder, matched nothing, and reported green while the image that
+  actually ran was mutable. It now asserts against `docker compose config` output,
+  requires **all** images pinned rather than at least one, and fails loudly when the
+  config cannot be resolved instead of silently passing.
+
+### Added
+- `GOVERNANCE.md` and `MAINTAINERS.md` — who decides, how a decision is made, and what
+  happens to the project if the maintainer's priorities change.
+- `.github/CODEOWNERS` — review routing for the paths where a mistake is expensive.
+
+### Changed
+- `SECURITY.md` "Known limitations" item 4 rewritten: digest pinning is no longer partial,
+  so the honest residual risk is that a pin does not receive upstream fixes by itself.
+
+### Fixed (earlier, pre-release)
 - **The SSO edition could not start at all.** `KC_DB_URL` pointed at a PostgreSQL host
   named `db` that no service defined. Added a `db` service (PostgreSQL, digest-pinned,
   not exposed to the host) with a `pg_isready` healthcheck, and made Keycloak wait for

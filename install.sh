@@ -10,14 +10,18 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly REPO_DIR
 readonly ENV_FILE="${REPO_DIR}/.env"
 
-# Image coordinates verified 2026-08-04. Change deliberately, and re-pin the digest when
-# you do: a tag can be moved by whoever can push, a digest cannot.
+# Image coordinates verified 2026-08-05 against each registry. Change deliberately, and
+# re-pin the digest when you do: a tag can be moved by whoever can push, a digest cannot.
+# Every image here is pinned — no `latest`, no empty digest.
 readonly STALWART_VERSION_DEFAULT="v0.11.8"
 readonly STALWART_DIGEST_DEFAULT="@sha256:a5ce0615640b29a01c0a55b9fff6dd2c9dfa261ec87862c22e4db7e0254cdb1f"
 readonly BULWARK_IMAGE_DEFAULT="ghcr.io/bulwarkmail/webmail"
-readonly BULWARK_VERSION_DEFAULT="latest"
+readonly BULWARK_VERSION_DEFAULT="v1.4.8"
+readonly BULWARK_DIGEST_DEFAULT="@sha256:022b19000e9d56400a56770c9087d5bd47bd1439c4f6d22502f249174f2f6332"
 readonly NGINX_VERSION_DEFAULT="1.27-alpine"
 readonly NGINX_DIGEST_DEFAULT="@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10"
+readonly KEYCLOAK_VERSION_DEFAULT="26.0"
+readonly KEYCLOAK_DIGEST_DEFAULT="@sha256:09a381c715ab0b111835b70f2905955274843a219c6f27efb348e4d9f4086858"
 readonly POSTGRES_VERSION_DEFAULT="17-alpine"
 readonly POSTGRES_DIGEST_DEFAULT="@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6"
 
@@ -85,7 +89,7 @@ main() {
     echo "STALWART_DIGEST=${STALWART_DIGEST_DEFAULT}"
     echo "BULWARK_IMAGE=${BULWARK_IMAGE_DEFAULT}"
     echo "BULWARK_VERSION=${BULWARK_VERSION_DEFAULT}"
-    echo "BULWARK_DIGEST="
+    echo "BULWARK_DIGEST=${BULWARK_DIGEST_DEFAULT}"
     echo "NGINX_VERSION=${NGINX_VERSION_DEFAULT}"
     echo "NGINX_DIGEST=${NGINX_DIGEST_DEFAULT}"
     echo "TLS_FULLCHAIN=${tls_fullchain}"
@@ -94,7 +98,7 @@ main() {
     echo "STALWART_FALLBACK_ADMIN_SECRET=${admin_secret}"
     if [[ "${edition}" == "2" ]]; then
       echo "IDP_DOMAIN=${idp_domain}"
-      echo "KEYCLOAK_VERSION=26.0"
+      echo "KEYCLOAK_VERSION=${KEYCLOAK_VERSION_DEFAULT}"
       # Full URL is the Keycloak 25+ form; drop the scheme if you pin an older Keycloak.
       echo "KC_HOSTNAME_VALUE=https://${idp_domain}"
       echo "OAUTH_CLIENT_ID=webmail"
@@ -102,7 +106,7 @@ main() {
       echo "OAUTH_ISSUER_URL=https://${idp_domain}/realms/mail"
       echo "KEYCLOAK_ADMIN_USER=admin"
       echo "KEYCLOAK_ADMIN_PASSWORD=$(gen)"
-      echo "KEYCLOAK_DIGEST="
+      echo "KEYCLOAK_DIGEST=${KEYCLOAK_DIGEST_DEFAULT}"
       echo "POSTGRES_VERSION=${POSTGRES_VERSION_DEFAULT}"
       echo "POSTGRES_DIGEST=${POSTGRES_DIGEST_DEFAULT}"
       echo "KC_DB_NAME=keycloak"

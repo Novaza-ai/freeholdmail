@@ -45,8 +45,11 @@ Verified on a throwaway stack built from this repo:
 3. **No fail2ban / rate limiting is shipped.** Exposing 25/465/587/993 to the
    internet without brute-force protection is not advisable. See `docs/DNS.md`
    for deliverability and add host-level protection yourself.
-4. **Digest pinning is partial.** `BULWARK_DIGEST` ships empty, so that image
-   follows a mutable tag until you pin it. Pin it before production.
+4. **Digest pins go stale.** Every image ships pinned to a version tag *and* a
+   `sha256` digest, so an install is reproducible and a moved tag cannot change
+   what runs. The trade-off is that a pin does not receive upstream security
+   fixes on its own: watch the upstream releases and re-pin deliberately —
+   `docs/RUNBOOK.md` has the upgrade and rollback procedure.
 5. **TLS material is bind-mounted from the host.** Anyone who can write those
    files can impersonate your mail server.
 

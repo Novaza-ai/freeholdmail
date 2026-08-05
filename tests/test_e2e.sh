@@ -67,8 +67,12 @@ sed -e "s|^MAIL_DOMAIN=.*|MAIL_DOMAIN=${MAIL_HOST}|" \
     -e "s|^KEYCLOAK_ADMIN_PASSWORD=.*|KEYCLOAK_ADMIN_PASSWORD=$(gen)|" \
     -e "s|^KC_DB_PASSWORD=.*|KC_DB_PASSWORD=$(gen)|" \
     "$REPO_DIR/.env.example" > "$WORK/.env"
+# Every *_VERSION must have its *_DIGEST overridable next to it. A digest outranks the tag
+# it is attached to, so overriding only the version silently keeps the pinned image and the
+# test quietly exercises something other than what it claims.
 for var in STALWART_VERSION STALWART_DIGEST BULWARK_IMAGE BULWARK_VERSION BULWARK_DIGEST \
-           NGINX_VERSION NGINX_DIGEST KEYCLOAK_VERSION KC_HOSTNAME_VALUE POSTGRES_VERSION; do
+           NGINX_VERSION NGINX_DIGEST KEYCLOAK_VERSION KEYCLOAK_DIGEST KC_HOSTNAME_VALUE \
+           POSTGRES_VERSION POSTGRES_DIGEST; do
   override="FREEHOLDMAIL_TEST_${var}"
   if [[ -n "${!override:-}" ]]; then
     sed -i "s|^${var}=.*|${var}=${!override}|" "$WORK/.env"
