@@ -1,0 +1,111 @@
+# Last-touched: 2026-08-04 — GATE-2/3 QA: added the PostgreSQL service Keycloak requires
+# (the overlay pointed KC_DB_URL at a `db` host that did not exist, so the SSO edition
+# could never start), switched to the Keycloak 26 bootstrap-admin variables, and replaced
+# the hardcoded JDBC string with host/port/database parts.
+#
+# Use ONLY together with the base file:
+#   docker compose -f docker-compose.yml -f docker-compose.sso.yml up -d
+#
+# Keycloak is Apache-2.0, PostgreSQL is under the PostgreSQL License. Orchestration only —
+# no third-party source here. NO secrets hardcoded; everything comes from .env.
+
+services:
+  webmail:
+    # Override the base "native login" with OAuth/OIDC against Keycloak.
+    environment:
+      APP_NAME: ${APP_NAME}
+      JMAP_SERVER_URL: "https://${MAIL_DOMAIN}"
+      SESSION_SECRET: ${WEBMAIL_SESSION_SECRET}
+      SETTINGS_DATA_DIR: /data/settings
+      OAUTH_ENABLED: "true"
+      OAUTH_ONLY: "true"
+      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}
+      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET}
+      OAUTH_ISSUER_URL: ${OAUTH_ISSUER_URL}
+
+  proxy:
+    # Swap in the nginx config that also routes IdP discovery.
+    volumes:
+      - ./config/nginx/mail.sso.conf:/etc/nginx/conf.d/mail.conf:ro
+      - ${TLS_FULLCHAIN}:/etc/nginx/tls/fullchain.pem:ro
+      - ${TLS_PRIVKEY}:/etc/nginx/tls/privkey.pem:ro
+    depends_on:
+      webmail:
+        condition: service_started
+      mailserver:
+        condition: service_healthy
+      idp:
+        # Deliberately not service_healthy: the idp healthcheck below targets the
+        # Keycloak 26 management port, and a wrong healthcheck would hang the whole
+        # stack rather than fail loudly. Revisit once 26 is verified on real hardware.
+        condition: service_started
+
+  # Keycloak's persistence. Not exposed to the host — reachable only on the compose
+  # network, by the service name `db` that KC_DB_URL_HOST points at.
+  db:
+    image: postgres:${POSTGRES_VERSION}${POSTGRES_DIGEST}
+    container_name: freeholdmail-idp-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${KC_DB_NAME}
+      POSTGRES_USER: ${KC_DB_USERNAME}
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD}
+    volumes:
+      - idp_db_data:/var/lib/postgresql/data
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${KC_DB_USERNAME} -d $${KC_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  idp:
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}${KEYCLOAK_DIGEST}
+    container_name: freeholdmail-idp
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["start"]
+    environment:
+      # Version-dependent, so it comes from .env rather than being built here:
+      # Keycloak 25+ wants a full URL (https://id.example.com); Keycloak 24 and earlier
+      # want a BARE hostname and will otherwise emit a doubled scheme in the issuer
+      # (measured: `issuer: https://https//id.qa.test/realms/master`).
+      KC_HOSTNAME: ${KC_HOSTNAME_VALUE}
+      KC_HOSTNAME_STRICT: "true"
+      # Keycloak 26 renamed these; KEYCLOAK_ADMIN/KEYCLOAK_ADMIN_PASSWORD are deprecated.
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      # Parts instead of a JDBC string, so the database name is not written twice.
+      KC_DB_URL_HOST: db
+      KC_DB_URL_PORT: "5432"
+      KC_DB_URL_DATABASE: ${KC_DB_NAME}
+      KC_DB_USERNAME: ${KC_DB_USERNAME}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+    expose:
+      - "8080"
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      # The image ships no curl or wget by design, so probe over bash's /dev/tcp.
+      # Keycloak 25+ serves health on the management port 9000; on 24 and earlier it is
+      # on 8080 instead.
+      test:
+        - CMD-SHELL
+        - >-
+          { printf 'HEAD /health/ready HTTP/1.0\r\n\r\n' >&0; grep -q '200'; }
+          0<>/dev/tcp/localhost/9000
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+
+volumes:
+  idp_db_data:

@@ -1,0 +1,107 @@
+# Last-touched: 2026-08-04 — created during pre-public QA (GATE 1).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    name: Static checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      # The full static suite: compose validation for both editions, storage-mapping and
+      # listener assertions, secret/placeholder scans, digest pinning, hardening flags,
+      # valid_domain() unit checks, docs presence. See tests/README.md.
+      - name: tests/test_config.sh
+        run: tests/test_config.sh
+
+  e2e:
+    name: End-to-end (real message)
+    runs-on: ubuntu-latest
+    # Pulls images and stands the stack up; ~2 minutes. Runs on pushes and PRs because a
+    # green static suite has, in this repo's history, coexisted with a stack that could
+    # not boot at all.
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: tests/test_e2e.sh
+        run: tests/test_e2e.sh
+
+  lint:
+    name: Lint and validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Shell syntax
+        run: bash -n install.sh
+
+      - name: ShellCheck
+        # Installed from the distro rather than via a third-party action: one less
+        # supply-chain dependency, and nothing here needs a marketplace action to run.
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          shellcheck install.sh tests/test_config.sh tests/test_e2e.sh
+
+      - name: Python syntax
+        run: python3 -c "import ast; ast.parse(open('tests/e2e_mail.py').read())"
+
+      - name: Compose config (base edition)
+        run: docker compose --env-file .env.example -f docker-compose.yml config -q
+
+      - name: Compose config (SSO edition)
+        run: docker compose --env-file .env.example -f docker-compose.yml -f docker-compose.sso.yml config -q
+
+      - name: No unresolved placeholders
+        # Match placeholder VALUES in files that configure the stack — not prose in
+        # docs (CHANGELOG legitimately mentions the word) and not this workflow itself.
+        run: |
+          if grep -rnE '=[A-Za-z_]*CHANGEME' \
+               .env.example install.sh docker-compose.yml docker-compose.sso.yml config/; then
+            echo "::error::placeholder value left in a config file"; exit 1
+          fi
+          if grep -rn 'SET-BEFORE-PUBLISHING' NOTICE LICENSE README.md; then
+            echo "::error::publishing placeholder left in a legal/landing file"; exit 1
+          fi
+
+      - name: No committed secrets
+        run: |
+          if grep -rnE '(SECRET|PASSWORD|TOKEN|API_KEY)=[A-Za-z0-9+/=_-]{8,}' \
+               --exclude-dir=.git --exclude=CHANGELOG.md --exclude=SUPPORT.md .; then
+            echo "::error::possible secret committed"; exit 1
+          fi
+
+      - name: No secret or operator data tracked
+        # A public repo must never carry an operator's mailbox, dumps, certs or .env.
+        run: |
+          pattern='(^|/)\.env($|\.)'
+          pattern="$pattern"'|\.(pem|key|crt|p12|pfx|bak|tar\.gz|tgz|sql|sql\.gz|dump)$'
+          pattern="$pattern"'|^backups?/'
+          bad=$(git ls-files | grep -E "$pattern" | grep -v '^\.env\.example$' || true)
+          if [ -n "$bad" ]; then
+            echo "::error::secret or operator data tracked by git:"; echo "$bad"; exit 1
+          fi
+
+      - name: Images are digest-pinned
+        # A tag can be re-pointed by whoever can push; a digest cannot.
+        run: |
+          missing=$(grep -E '^[A-Z_]+_DIGEST=$' .env.example || true)
+          if [ -n "$missing" ]; then
+            echo "::warning::unpinned images in .env.example:"; echo "$missing"
+          fi
+
+  yaml:
+    name: YAML syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - run: pip install yamllint
+      # Block scalar on purpose: the inline flow mapping in the -d argument contains
+      # `: ` and makes a plain scalar unparseable as YAML.
+      - run: |
+          yamllint -d '{extends: relaxed, rules: {line-length: {max: 120}}}' .

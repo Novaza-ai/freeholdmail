@@ -1,0 +1,39 @@
+# Last-touched: 2026-08-05 — OpenSSF Scorecard: automated, third-party scoring of this
+# repo's security posture. Results land in the Security tab; the badge is generated from
+# the published results, so it cannot be faked by us.
+name: OpenSSF Scorecard
+
+on:
+  branch_protection_rule:
+  schedule:
+    - cron: '31 4 * * 1'     # weekly, Monday
+  push:
+    branches: [main]
+
+permissions: read-all
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write   # upload results to the Security tab
+      id-token: write          # publish results so the badge can read them
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Run Scorecard
+        uses: ossf/scorecard-action@62b2cac7ed8198b15735ed49ab1e5cf35480ba46 # v2.4.0
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          # Publishes results to the OpenSSF API so https://scorecard.dev can show them
+          # and the README badge resolves. Set to false to keep results private.
+          publish_results: true
+
+      - name: Upload to the Security tab
+        uses: github/codeql-action/upload-sarif@c4dd10e44af883a891fe31ced449bcb4a6728b9b # v3
+        with:
+          sarif_file: results.sarif

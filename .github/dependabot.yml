@@ -1,0 +1,14 @@
+# Last-touched: 2026-08-05 — keeps SHA-pinned actions current.
+#
+# Actions are pinned to commit SHAs for supply-chain safety, which means they never update
+# on their own. Dependabot is what stops "pinned" from turning into "abandoned".
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "ci"
+    labels:
+      - dependencies

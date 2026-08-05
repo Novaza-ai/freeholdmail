@@ -1,0 +1,65 @@
+# Last-touched: 2026-08-04 — GATE-3 QA: added the storage/store/directory blocks the server
+# REQUIRES to boot (without them Stalwart crash-loops with "Store not configured"), the
+# submission listener on 587, and a bootstrap admin. Verified by a real send+receive E2E.
+#
+# Copy to config.toml. Consult https://stalw.art/docs/ for the authoritative schema.
+# Do NOT put secrets in this file — inject them via environment.
+
+[server]
+hostname = "%{env:STALWART_HOSTNAME}%"
+
+[server.listener.smtp]
+bind = ["[::]:25"]
+protocol = "smtp"
+
+# Submission with STARTTLS. AUTH is refused until the connection is upgraded, and
+# unauthenticated submission is refused outright (measured: 503 5.5.1).
+[server.listener.submission]
+bind = ["[::]:587"]
+protocol = "smtp"
+
+[server.listener.submissions]
+bind = ["[::]:465"]
+protocol = "smtp"
+tls.implicit = true
+
+[server.listener.imaptls]
+bind = ["[::]:993"]
+protocol = "imap"
+tls.implicit = true
+
+[server.listener.jmap]
+bind = ["[::]:8080"]
+protocol = "http"
+
+[certificate.default]
+cert = "%{file:/opt/tls/fullchain.pem}%"
+private-key = "%{file:/opt/tls/privkey.pem}%"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STORAGE — mandatory. Every one of data/fts/blob/lookup/directory must resolve
+# to a configured store or the server exits(1) in a restart loop.
+# RocksDB keeps a single-node install dependency-free. For multi-node, point
+# these at PostgreSQL/S3 per upstream docs.
+# ─────────────────────────────────────────────────────────────────────────────
+[store."db"]
+type = "rocksdb"
+path = "/opt/stalwart-mail/data"
+compression = "lz4"
+
+[storage]
+data = "db"
+fts = "db"
+blob = "db"
+lookup = "db"
+directory = "internal"
+
+[directory."internal"]
+type = "internal"
+store = "db"
+
+# Bootstrap administrator. Set STALWART_FALLBACK_ADMIN_SECRET in .env (install.sh
+# generates it). Use it once to create your domain and accounts, then rotate.
+[authentication.fallback-admin]
+user = "admin"
+secret = "%{env:STALWART_FALLBACK_ADMIN_SECRET}%"

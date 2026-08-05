@@ -1,0 +1,89 @@
+# Last-touched: 2026-08-04 — GATE-1/2/3 QA: real verified image coordinates, digest pinning,
+# container hardening, healthchecks, and a persistent volume for webmail settings.
+#
+# Base edition = "Full Mail" (mail server + webmail, native login, NO Keycloak).
+# For the SSO edition (adds Keycloak + OAuth), also include docker-compose.sso.yml:
+#   docker compose -f docker-compose.yml -f docker-compose.sso.yml up -d
+#
+# Orchestration only — no third-party source here. See THIRD_PARTY_LICENSES.md.
+# NO SECRETS HARDCODED — all come from .env (install.sh generates them).
+#
+# SUPPLY CHAIN: ${*_DIGEST} pins each image to a content digest. .env.example ships the
+# digest that was actually tested; `docker pull <image>@<digest>` is reproducible, a tag is not.
+
+services:
+  mailserver:
+    # Verified coordinate: Docker Hub `stalwartlabs/mail-server`. NOTE: upstream has since
+    # renamed the repo to `stalwartlabs/stalwart` and moved config to /etc/stalwart +
+    # data to /var/lib/stalwart from v0.16. This file targets the v0.11.x layout, which is
+    # what has been E2E-tested here. See CHANGELOG "Known gaps" before upgrading.
+    image: stalwartlabs/mail-server:${STALWART_VERSION}${STALWART_DIGEST}
+    container_name: freeholdmail-mailserver
+    restart: unless-stopped
+    environment:
+      STALWART_HOSTNAME: ${MAIL_DOMAIN}
+      STALWART_FALLBACK_ADMIN_SECRET: ${STALWART_FALLBACK_ADMIN_SECRET}
+    volumes:
+      - ./config/stalwart/config.toml:/opt/stalwart-mail/etc/config.toml:ro
+      - mailserver_data:/opt/stalwart-mail
+      - ${TLS_FULLCHAIN}:/opt/tls/fullchain.pem:ro
+      - ${TLS_PRIVKEY}:/opt/tls/privkey.pem:ro
+    ports:
+      - "25:25"
+      - "465:465"
+      - "587:587"
+      - "993:993"
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      # The JMAP/HTTP listener accepting a connection is the earliest honest signal that
+      # the stores opened. The image ships neither curl nor wget nor nc — bash's /dev/tcp
+      # is the dependency-free way to probe it (verified: /usr/bin/bash exists).
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  webmail:
+    # Verified coordinate: GitHub Container Registry, the project's official publisher.
+    image: ${BULWARK_IMAGE}:${BULWARK_VERSION}${BULWARK_DIGEST}
+    container_name: freeholdmail-webmail
+    restart: unless-stopped
+    environment:
+      APP_NAME: ${APP_NAME}
+      JMAP_SERVER_URL: "https://${MAIL_DOMAIN}"
+      SESSION_SECRET: ${WEBMAIL_SESSION_SECRET}
+      # Full Mail edition: native login against the mail server, OAuth OFF.
+      OAUTH_ENABLED: "false"
+      # Without this volume+path, user settings are lost on every container replacement.
+      SETTINGS_DATA_DIR: /data/settings
+    volumes:
+      - webmail_data:/data
+    expose:
+      - "3000"
+    security_opt:
+      - no-new-privileges:true
+
+  proxy:
+    image: nginx:${NGINX_VERSION}${NGINX_DIGEST}
+    container_name: freeholdmail-proxy
+    restart: unless-stopped
+    depends_on:
+      webmail:
+        condition: service_started
+      mailserver:
+        condition: service_healthy
+    volumes:
+      - ./config/nginx/mail.conf:/etc/nginx/conf.d/mail.conf:ro
+      - ${TLS_FULLCHAIN}:/etc/nginx/tls/fullchain.pem:ro
+      - ${TLS_PRIVKEY}:/etc/nginx/tls/privkey.pem:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  mailserver_data:
+  webmail_data:
