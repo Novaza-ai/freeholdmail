@@ -13,6 +13,7 @@ jobs:
   static:
     name: Static checks
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       # The suite SKIPS checks whose tool is missing, and a skip exits non-zero — so every
@@ -29,6 +30,7 @@ jobs:
   e2e:
     name: End-to-end (real message)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     # Pulls images and stands the stack up; ~2 minutes. Runs on pushes and PRs because a
     # green static suite has, in this repo's history, coexisted with a stack that could
     # not boot at all.
@@ -40,6 +42,7 @@ jobs:
   lint:
     name: Lint and validate
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
@@ -61,7 +64,7 @@ jobs:
         run: |
           python3 -c "import ast; ast.parse(open('tests/e2e_mail.py').read())"
           python3 -c "import ast; ast.parse(open('scripts/seed_demo.py').read())"
-          pip install --quiet pycodestyle
+          sudo apt-get install -y -qq pycodestyle
           pycodestyle --max-line-length=100 tests/e2e_mail.py scripts/seed_demo.py
 
       - name: Compose config (base edition)
@@ -127,9 +130,13 @@ jobs:
   yaml:
     name: YAML syntax
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - run: pip install yamllint
+      # From the distro, not pip: an unpinned `pip install` is an unpinned dependency, and
+      # OpenSSF Scorecard flags it (PinnedDependenciesID) in a repo whose own rule is that
+      # everything is pinned. apt packages come from the runner image, which IS pinned.
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq yamllint
       # Block scalar on purpose: the inline flow mapping in the -d argument contains
       # `: ` and makes a plain scalar unparseable as YAML.
       - run: |
