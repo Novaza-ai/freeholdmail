@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-05 — initial Simplified Chinese translation. -->
+<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 [English](../../../README.md) · **简体中文** — 英文版为准，参见 [`TRANSLATIONS.md`](../../../TRANSLATIONS.md)
 
 > **本翻译仅供参考。** 如与英文版有任何冲突，一律以英文版为准。翻译可能滞后。
@@ -45,8 +45,9 @@ Webmail 内置了一个引导教程。下面就是该教程在真实运行的系
 ## 为什么会有这个项目
 
 自托管邮件通常只有两种结局：花一个周末把 Postfix、Dovecot、Rspamd 和某个 Webmail 拼在一起；
-或者用一个托管邮箱，让别人读你的元数据。Freehold Mail 是第三种选择：用一个仓库，把一套现代、
-内存安全的系统组装起来，运行在你自己掌控的机器上。
+或者用一个托管邮箱，让别人读你的元数据。Freehold Mail 是第三种选择：用一个仓库，把一套现代的
+系统组装起来，运行在你自己掌控的机器上。邮件服务器和 Webmail 使用内存安全的语言；nginx 和
+PostgreSQL 是 C 写的，所以“内存安全”描述的是我们所选的那部分，而不是整套系统。
 
 **它是什么：** 编排（orchestration）。Compose 文件、一份 nginx 配置、一个安装程序，以及诚实的文档。
 **它不是什么：** 任何人邮件服务器的分支或重写。
@@ -144,9 +145,11 @@ Rust 编写的邮件服务器，并希望 Webmail 与可选 SSO 集中在一处�
 
 - **本仓库**（编排、配置、安装程序、文档）：**MIT** —— 见 [`LICENSE`](../../../LICENSE)。
 - **它部署的程序各自保留自己的许可证**，以已发布镜像的形式拉取；本仓库不含它们的任何源代码：
-  - Stalwart Mail Server —— **AGPL-3.0**
-  - Bulwark Webmail —— **AGPL-3.0**
-  - Keycloak —— **Apache-2.0**
+  - Stalwart Mail Server —— **AGPL-3.0-only OR SELv1**（双重许可，不是 "or later"）
+  - Bulwark Webmail —— **AGPL-3.0-only**
+  - Keycloak —— **Apache-2.0**（SSO 版）
+  - PostgreSQL —— **PostgreSQL License**（SSO 版）
+  - nginx —— **BSD-2-Clause**
 
 如果你**修改** Stalwart 或 Bulwark 并对外提供服务，AGPL 要求你公开*该组件*修改后的源代码。
 运行未经修改的镜像则不需要。详情见

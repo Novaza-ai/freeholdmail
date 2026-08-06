@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-05 — initial Indonesian translation. -->
+<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 [English](../../../README.md) · **Bahasa Indonesia** — Versi bahasa Inggris adalah acuan resmi, lihat [`TRANSLATIONS.md`](../../../TRANSLATIONS.md)
 
 > **Terjemahan ini disediakan sebagai bentuk kemudahan.** Jika isinya bertentangan dengan versi bahasa Inggris,
@@ -52,8 +52,10 @@ Setiap gambar di sini diregenerasi oleh skrip, tidak pernah disunting ulang — 
 
 Melakukan self-hosting email biasanya berarti menghabiskan akhir pekan untuk merekatkan Postfix,
 Dovecot, Rspamd, dan sebuah webmail — atau memakai kotak surat hosted di mana orang lain membaca
-metadata Anda. Freehold Mail adalah opsi ketiga: satu repo yang merakit stack modern dan memory-safe
-yang Anda jalankan sendiri, di mesin yang Anda kendalikan.
+metadata Anda. Freehold Mail adalah opsi ketiga: satu repo yang merakit stack modern yang Anda
+jalankan sendiri, di mesin yang Anda kendalikan. Mail server dan webmail ditulis dalam bahasa yang
+memory-safe; nginx dan PostgreSQL ditulis dalam C, jadi "memory-safe" menggambarkan bagian yang
+kami pilih, bukan keseluruhan stack.
 
 **Apa ini:** orkestrasi. File Compose, sebuah konfigurasi nginx, sebuah installer, dan dokumentasi
 yang jujur. **Apa ini bukan:** fork atau penulisan ulang mail server milik siapa pun.
@@ -160,9 +162,11 @@ tersebut. **Kontribusi untuk pekerjaan agent sangat diharapkan — lihat "Help w
 - **Repo ini** (orkestrasi, konfigurasi, installer, dokumentasi): **MIT** — lihat [`LICENSE`](../../../LICENSE).
 - **Program-program yang di-deploy tetap memakai lisensinya sendiri** dan diambil sebagai
   image yang dipublikasikan; repo ini tidak memuat source mereka sama sekali:
-  - Stalwart Mail Server — **AGPL-3.0**
-  - Bulwark Webmail — **AGPL-3.0**
-  - Keycloak — **Apache-2.0**
+  - Stalwart Mail Server — **AGPL-3.0-only OR SELv1** *(lisensi ganda; bukan "or later")*
+  - Bulwark Webmail — **AGPL-3.0-only**
+  - Keycloak — **Apache-2.0** *(edisi SSO)*
+  - PostgreSQL — **PostgreSQL License** *(edisi SSO)*
+  - nginx — **BSD-2-Clause**
 
 Jika Anda **memodifikasi** Stalwart atau Bulwark dan menyajikannya kepada orang lain, AGPL mewajibkan
 Anda mempublikasikan source yang dimodifikasi *dari komponen tersebut*. Menjalankan image tanpa

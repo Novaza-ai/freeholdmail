@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-05 — initial Hindi translation. -->
+<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 [English](../../../README.md) · **हिन्दी** — अंग्रेज़ी संस्करण ही प्रामाणिक है, देखें [`TRANSLATIONS.md`](../../../TRANSLATIONS.md)
 
 > **यह अनुवाद केवल सुविधा के लिए है।** यदि इसमें और अंग्रेज़ी संस्करण में कोई विरोधाभास हो, तो
@@ -52,8 +52,9 @@ Webmail के साथ एक गाइडेड टूर आता है।
 
 ईमेल self-host करना आमतौर पर या तो Postfix, Dovecot, Rspamd और किसी webmail को जोड़ने में बीता
 एक पूरा सप्ताहांत होता है — या फिर एक hosted mailbox, जहाँ कोई और आपका metadata पढ़ता है।
-Freehold Mail तीसरा विकल्प है: एक ही repo जो आधुनिक, memory-safe स्टैक को इकट्ठा करता है, जिसे
-आप स्वयं, अपने नियंत्रण की मशीन पर चलाते हैं।
+Freehold Mail तीसरा विकल्प है: एक ही repo जो एक आधुनिक स्टैक को इकट्ठा करता है, जिसे आप स्वयं,
+अपने नियंत्रण की मशीन पर चलाते हैं। mail server और webmail memory-safe भाषाओं में लिखे हैं; nginx
+और PostgreSQL C में हैं, इसलिए "memory-safe" उन हिस्सों का वर्णन करता है जो हमने चुने, पूरे स्टैक का नहीं।
 
 **यह क्या है:** orchestration। Compose फ़ाइलें, एक nginx config, एक installer, और ईमानदार
 दस्तावेज़। **यह क्या नहीं है:** किसी के मेल सर्वर का fork या rewrite नहीं।
@@ -161,9 +162,11 @@ domain पर मापी गई deliverability)। उससे आगे ह�
 - **यह repo** (orchestration, config, installer, docs): **MIT** — देखें [`LICENSE`](../../../LICENSE)।
 - **जिन प्रोग्रामों को यह डिप्लॉय करता है, वे अपनी-अपनी licence बनाए रखते हैं** और प्रकाशित
   images के रूप में खींचे जाते हैं; इस repo में उनका कोई source नहीं है:
-  - Stalwart Mail Server — **AGPL-3.0**
-  - Bulwark Webmail — **AGPL-3.0**
-  - Keycloak — **Apache-2.0**
+  - Stalwart Mail Server — **AGPL-3.0-only OR SELv1** *(दोहरा licence; "or later" नहीं)*
+  - Bulwark Webmail — **AGPL-3.0-only**
+  - Keycloak — **Apache-2.0** *(SSO संस्करण)*
+  - PostgreSQL — **PostgreSQL License** *(SSO संस्करण)*
+  - nginx — **BSD-2-Clause**
 
 यदि आप Stalwart या Bulwark को **संशोधित** करके दूसरों को परोसते हैं, तो AGPL आपसे *उस component
 का* संशोधित source प्रकाशित करने की माँग करता है। अपरिवर्तित images चलाने से यह माँग नहीं बनती।

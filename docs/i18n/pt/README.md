@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-05 — initial Portuguese translation. -->
+<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 [English](../../../README.md) · **Português** — a versão em inglês é a autoritativa, consulte [`TRANSLATIONS.md`](../../../TRANSLATIONS.md)
 
 > **Esta tradução é uma cortesia.** Se algo aqui entrar em conflito com a versão em inglês, o inglês
@@ -51,8 +51,10 @@ Todas as imagens aqui são regeradas por script, nunca retocadas — consulte
 
 Auto-hospedar e-mail costuma ser uma de duas coisas: um fim de semana inteiro para colar Postfix,
 Dovecot, Rspamd e um webmail — ou uma caixa de correio alojada onde outra pessoa lê os seus
-metadados. O Freehold Mail é a terceira opção: um único repositório que monta uma stack moderna e
-com segurança de memória que executa você mesmo, numa máquina que controla.
+metadados. O Freehold Mail é a terceira opção: um único repositório que monta uma stack moderna que executa
+você mesmo, numa máquina que controla. O servidor de e-mail e o webmail são escritos em linguagens
+com segurança de memória; o nginx e o PostgreSQL são em C, por isso «segurança de memória» descreve
+as partes que escolhemos, não a stack inteira.
 
 **O que é:** orquestração. Ficheiros Compose, uma configuração nginx, um instalador e documentação
 honesta. **O que não é:** um fork ou uma reescrita do servidor de e-mail de ninguém.
@@ -162,9 +164,11 @@ consulte "Help wanted" no roteiro.**
   [`LICENSE`](../../../LICENSE).
 - **Os programas que ele implanta mantêm as suas próprias licenças** e são obtidos como imagens
   publicadas; este repositório não contém nenhum do código-fonte deles:
-  - Stalwart Mail Server — **AGPL-3.0**
-  - Bulwark Webmail — **AGPL-3.0**
-  - Keycloak — **Apache-2.0**
+  - Stalwart Mail Server — **AGPL-3.0-only OR SELv1** *(licença dupla; não "or later")*
+  - Bulwark Webmail — **AGPL-3.0-only**
+  - Keycloak — **Apache-2.0** *(edição SSO)*
+  - PostgreSQL — **PostgreSQL License** *(edição SSO)*
+  - nginx — **BSD-2-Clause**
 
 Se **modificar** o Stalwart ou o Bulwark e o servir a terceiros, a AGPL exige que publique o
 código-fonte modificado *desse componente*. Executar as imagens não modificadas não exige isso.

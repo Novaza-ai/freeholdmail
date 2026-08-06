@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-04 — bản dịch đầu tiên, dịch từ README.md cùng ngày. -->
+<!-- Last-touched: 2026-08-06 — bổ sung đủ danh sách giấy phép và đính chính khẳng định "memory-safe". -->
 [English](../../../README.md) · **Tiếng Việt** — bản tiếng Anh là bản có thẩm quyền, xem [`TRANSLATIONS.md`](../../../TRANSLATIONS.md)
 
 > ⚠️ Bản dịch có thể lạc hậu so với bản gốc. Khi có mâu thuẫn, [`README.md`](../../../README.md)
@@ -51,8 +51,10 @@ Mọi hình ở đây đều được sinh lại bằng script, không chỉnh s
 
 Tự vận hành email thường rơi vào một trong hai kịch bản: mất cả cuối tuần chắp vá Postfix,
 Dovecot, Rspamd và một webmail — hoặc dùng hộp thư thuê, nơi người khác đọc metadata của
-bạn. Freehold Mail là lựa chọn thứ ba: một repo lắp ghép sẵn một stack hiện đại,
-memory-safe, do bạn tự chạy trên máy do bạn kiểm soát.
+bạn. Freehold Mail là lựa chọn thứ ba: một repo lắp ghép sẵn một stack hiện đại, do
+bạn tự chạy trên máy do bạn kiểm soát. Mail server và webmail viết bằng ngôn ngữ
+memory-safe; nginx và PostgreSQL viết bằng C, nên "memory-safe" mô tả những phần chúng
+tôi chọn, không phải toàn bộ stack.
 
 **Nó là gì:** phần orchestration. Các file compose, một cấu hình nginx, một trình cài đặt,
 và tài liệu trung thực. **Nó không phải là gì:** không phải bản fork hay viết lại mail
@@ -159,9 +161,11 @@ chúng. **Rất mong có người đóng góp phần agent — xem mục "Help w
 - **Repo này** (orchestration, config, installer, tài liệu): **MIT** — xem [`LICENSE`](../../../LICENSE).
 - **Các chương trình mà nó triển khai vẫn giữ giấy phép riêng** và được kéo về dưới dạng
   image đã publish; repo này không chứa mã nguồn của chúng:
-  - Stalwart Mail Server — **AGPL-3.0**
-  - Bulwark Webmail — **AGPL-3.0**
-  - Keycloak — **Apache-2.0**
+  - Stalwart Mail Server — **AGPL-3.0-only OR SELv1** *(giấy phép kép; không phải "or later")*
+  - Bulwark Webmail — **AGPL-3.0-only**
+  - Keycloak — **Apache-2.0** *(bản SSO)*
+  - PostgreSQL — **PostgreSQL License** *(bản SSO)*
+  - nginx — **BSD-2-Clause**
 
 Nếu bạn **sửa đổi** Stalwart hoặc Bulwark rồi phục vụ cho người khác, AGPL buộc bạn phải
 công bố mã nguồn đã sửa *của chính thành phần đó*. Chạy image nguyên bản thì không phát sinh

@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-04 — renamed from OwnMail; name cleared against npm/PyPI/GitHub/WHOIS. -->
+<!-- Last-touched: 2026-08-06 — commit authorship is now per-person; corrected the Contributors note. -->
 **English** · [Tiếng Việt](docs/i18n/vi/README.md) · [日本語](docs/i18n/ja/README.md) · [简体中文](docs/i18n/zh-CN/README.md) · [繁體中文](docs/i18n/zh-TW/README.md) · [ไทย](docs/i18n/th/README.md) · [Bahasa Indonesia](docs/i18n/id/README.md) · [हिन्दी](docs/i18n/hi/README.md) · [Français](docs/i18n/fr/README.md) · [Español](docs/i18n/es/README.md) · [Português](docs/i18n/pt/README.md) · [Русский](docs/i18n/ru/README.md)
 — English is authoritative, see [`TRANSLATIONS.md`](TRANSLATIONS.md)
 
@@ -218,13 +218,16 @@ MIT-licensed; see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).
 Full team, how decisions get made, and how to join:
 [`MAINTAINERS.md`](MAINTAINERS.md) · [`GOVERNANCE.md`](GOVERNANCE.md).
 
-> **Why GitHub's Contributors list shows only `dependabot`.** Git records an author *email*,
-> and GitHub credits a commit only when that email is verified on a GitHub account. Our 14
-> human commits are authored as `Novaza Solution JSC <admin@novaza.ai>`, which belongs to no
-> account — so they count toward nobody. The people are real; the graph is a lookup miss.
-> If you contribute, commit with an email verified on your own account and you will be
-> credited properly. [`MAINTAINERS.md`](MAINTAINERS.md#why-githubs-contributors-list-is-empty-and-how-to-appear-in-it)
-> has the commands and the three ways we can fix it on our side.
+> **On commit authorship.** Commits are authored by the person who made them, using an email
+> verified on their GitHub account. Copyright is separate and does not change:
+> [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) name Novaza Solution JSC. Earlier commits were
+> made under the company identity, `Novaza Solution JSC <admin@novaza.ai>`. That address is
+> not verified on any GitHub account, so GitHub does not credit those commits to anyone, and
+> its Contributors list showed only `dependabot`. They are already published and are left as
+> they are. If you contribute, commit with an email verified on your own account and you
+> will be credited.
+> [`MAINTAINERS.md`](MAINTAINERS.md#who-a-commit-is-credited-to-and-how-to-appear-in-the-contributors-list)
+> has the commands.
 
 ---
 

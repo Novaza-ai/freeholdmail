@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-04 — static checks: everything provable without starting containers.
+# Last-touched: 2026-08-06 — per-row staleness guard; SHA guard repaired; secret scan tracked-only.
 #
 # Fast (seconds, no images pulled). Run this before every commit; CI runs it on every push.
 # For the checks that need a running stack, see tests/test_e2e.sh.
@@ -26,6 +26,14 @@ check() { # check <description> <command...>
 refute() { # refute <description> <command...>  — passes when the command FAILS
   local desc="$1"; shift
   if "$@" >/dev/null 2>&1; then bad "$desc"; else ok "$desc"; fi
+}
+# Some checks can only be answered inside a git checkout of THIS repository: a tarball
+# export has no history, and a copy vendored inside another repo would answer with the
+# parent's history instead of its own. Comparing the toplevel to REPO_DIR rules out both.
+# Skipping is the honest outcome there — a skip is counted and exits non-zero, whereas a
+# vacuous pass would report a green board over checks that never ran.
+in_this_git_repo() {
+  [[ "$(git rev-parse --show-toplevel 2>/dev/null)" == "$REPO_DIR" ]]
 }
 
 echo "== syntax =="
@@ -83,9 +91,22 @@ refute "no placeholder values in config files" \
   grep -rqE '=[A-Za-z_]*CHANGEME' .env.example install.sh docker-compose.yml docker-compose.sso.yml config/
 refute "no publishing markers left" \
   grep -rq 'SET-BEFORE-PUBLISHING' NOTICE LICENSE README.md
-refute "no committed secrets" \
-  grep -rqE '(SECRET|PASSWORD|TOKEN|API_KEY)=[A-Za-z0-9+/=_-]{8,}' \
-    --exclude-dir=.git --exclude-dir=tests --exclude=CHANGELOG.md --exclude=SUPPORT.md .
+# "Committed" has to mean committed. This scanned the whole working tree, so a correct
+# install failed it: install.sh writes .env at mode 600, .gitignore covers it, it is never
+# committed — and the check still called it a leaked secret. Reporting a leak on a secure
+# system is not a harmless false alarm; it teaches operators to ignore the suite, or to
+# delete the file it is complaining about. git grep searches tracked files only, so an
+# untracked .env is invisible while a secret pasted into a tracked file is still caught.
+# The tradeoff: an untracked file that is not gitignored is no longer scanned either. The
+# .gitignore checks just below cover .env, keys, certificates and dumps by name — they do
+# not cover an arbitrary filename, so this trades a guaranteed false alarm for a narrow gap.
+if in_this_git_repo; then
+  refute "no committed secrets" \
+    git grep -qE '(SECRET|PASSWORD|TOKEN|API_KEY)=[A-Za-z0-9+/=_-]{8,}' -- \
+      ':!tests' ':!CHANGELOG.md' ':!SUPPORT.md'
+else
+  skip "no committed secrets (not a git checkout)"
+fi
 # RUNBOOK §4 makes operators produce mail-store archives, database dumps and a copy of
 # .env. Any of those inside the working tree is one `git add -A` from being published.
 for pattern in '.env' '.env.*' '*.pem' '*.key' '*.crt' 'certs/' \
@@ -362,27 +383,52 @@ done < <(grep -oE 'docs/i18n/[a-zA-Z-]+/README\.md' TRANSLATIONS.md | sort -u)
 # translation to record the commit of README.md it tracks; nothing enforced it. Now something
 # does — if README.md has moved since a recorded SHA, that translation is stale by definition.
 # shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
+if in_this_git_repo; then
 check "every translation records a real commit SHA" bash -c '
   bad=0
-  while read -r sha; do
+  rows=0
+  while IFS= read -r row; do
+    rows=$((rows + 1))
+    sha=$(printf "%s" "$row" | grep -oE "\`[0-9a-f]{7,}\`" | tail -1 | tr -d "\`")
+    if [ -z "$sha" ]; then echo "row has no tracked commit: $row"; bad=1; continue; fi
     git cat-file -e "${sha}^{commit}" 2>/dev/null || { echo "not a commit: $sha"; bad=1; }
-  done < <(grep -oE "\| \`[0-9a-f]{7,40}\` \|" TRANSLATIONS.md | tr -d "|\` ")
+  done < <(grep -E "^\|.*docs/i18n/[a-zA-Z-]+/README\.md" TRANSLATIONS.md)
+  # An empty or truncated table must not pass by having nothing left to check. The English
+  # row is excluded on purpose: it is the source, so it tracks no commit of itself.
+  if [ "$rows" -lt 11 ]; then
+    echo "expected 11 translation rows, found $rows"; bad=1
+  fi
   exit $bad'
 # shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
-check "translations are not stale against README.md" bash -c '
-  stale=0
+# Judged per row, because the whole-file version excused an undeclared row using OTHER
+# rows' declarations: its regex only matched a SHA cell ending immediately in "|", so the
+# ten rows reading "`sha` — **STALE**" were invisible to it and the one undeclared row was
+# the only thing it read. It found that row stale, then `grep -q STALE` matched the ten
+# other rows and it exited 0. Vietnamese sat undeclared-stale through a green suite,
+# shipping a licence list missing two components. Each row now answers for itself.
+check "every stale translation declares itself STALE" bash -c '
+  bad=0
   latest=$(git log -1 --format=%h -- README.md)
-  while read -r sha; do
-    git merge-base --is-ancestor "$sha" HEAD 2>/dev/null || continue
-    if ! git merge-base --is-ancestor "$latest" "$sha" 2>/dev/null; then
-      echo "README.md moved at $latest; a translation still tracks $sha"; stale=1
+  while IFS= read -r row; do
+    sha=$(printf "%s" "$row" | grep -oE "\`[0-9a-f]{7,}\`" | tail -1 | tr -d "\`")
+    [ -n "$sha" ] || continue
+    # An unreachable SHA must fail loudly. Skipping it here would let a fabricated or
+    # orphaned commit exempt a row from the staleness rule entirely.
+    if ! git merge-base --is-ancestor "$sha" HEAD 2>/dev/null; then
+      echo "tracked commit $sha is not reachable from HEAD: $row"; bad=1; continue
     fi
-  done < <(grep -oE "\| \`[0-9a-f]{7,40}\` \|" TRANSLATIONS.md | tr -d "|\` " | sort -u)
-  # A translation may lag, but it must SAY so. Undeclared staleness is the failure; a row
-  # marked STALE is an honest, published debt.
-  [ "$stale" = 0 ] && exit 0
-  grep -q "STALE" TRANSLATIONS.md || exit 1
-  echo "(stale translations are declared in TRANSLATIONS.md)"; exit 0' 
+    git merge-base --is-ancestor "$latest" "$sha" 2>/dev/null && continue
+    case "$row" in
+      *"— **STALE**"*) ;;
+      *) echo "README.md moved at $latest; this row still tracks $sha and does not say STALE:"
+         echo "  $row"; bad=1 ;;
+    esac
+  done < <(grep -E "^\|.*\`[0-9a-f]{7,40}\`" TRANSLATIONS.md)
+  exit $bad'
+else
+  skip "every translation records a real commit SHA (not a git checkout of this repo)"
+  skip "every stale translation declares itself STALE (not a git checkout of this repo)"
+fi
 # shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
 check "every shipped file has a Last-touched line" bash -c '
   missing=0

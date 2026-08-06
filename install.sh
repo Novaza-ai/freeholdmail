@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-05 — senior review: restructured to the Google Shell Style Guide
-# (main function, readonly constants, errors to STDERR). Behaviour unchanged.
+# Last-touched: 2026-08-06 — replace non-portable `cp -n` so a clean first run prints no
+# warning. Structure follows the Google Shell Style Guide (main function, readonly
+# constants, errors to STDERR).
 #
 # Generates .env with STRONG RANDOM secrets (nothing hardcoded), wires the chosen
 # edition, and brings the stack up. Re-run with --force to regenerate .env.
@@ -134,9 +135,14 @@ main() {
   chmod 600 "${ENV_FILE}"
   echo "✅ Wrote ${ENV_FILE} (mode 600)."
 
-  # Materialise config from templates.
-  cp -n "${REPO_DIR}/config/stalwart/config.toml.example" \
-        "${REPO_DIR}/config/stalwart/config.toml"
+  # Materialise config from templates. Never clobber an existing config: a re-run with
+  # --force rotates secrets, it does not throw away the operator's tuning. `cp -n` did this
+  # too, but GNU cp warns that -n is non-portable, so a clean first run printed a warning
+  # that looked like something had gone wrong.
+  if [[ ! -f "${REPO_DIR}/config/stalwart/config.toml" ]]; then
+    cp "${REPO_DIR}/config/stalwart/config.toml.example" \
+       "${REPO_DIR}/config/stalwart/config.toml"
+  fi
   if [[ "${edition}" == "2" ]]; then
     install_config "${REPO_DIR}/config/nginx/mail.sso.conf.example" \
                    "${REPO_DIR}/config/nginx/mail.sso.conf"

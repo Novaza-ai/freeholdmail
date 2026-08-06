@@ -1,5 +1,5 @@
-<!-- Last-touched: 2026-08-05 — named the team behind the org rather than only the legal
-     entity, and recorded why the GitHub contributor graph does not yet show them. -->
+<!-- Last-touched: 2026-08-06 — commits are authored by the person who made them; copyright
+     stays with the company. Corrected the Contributors explanation to match. -->
 # Maintainers and team
 
 Who to expect a reply from, who can merge, and who is behind this.
@@ -28,12 +28,21 @@ Contact: `admin@novaza.ai`. For anything with a security dimension use the priva
 flow instead — see [`SECURITY.md`](SECURITY.md). Never report a vulnerability in a public
 issue.
 
-## Why GitHub's Contributors list is empty, and how to appear in it
+## Who a commit is credited to, and how to appear in the Contributors list
 
-If you look at **Insights → Contributors**, or at the avatars GitHub shows on the repository
-home page, you will see `dependabot` and nobody else. That is not a statement about who did
-the work. It is a mechanical consequence of how GitHub attributes commits, and it is worth
-understanding before you contribute, because the same thing can happen to you.
+**Commits are authored by the person who made them.** Each maintainer sets `user.name` and
+`user.email` to their own details, using an address verified on their GitHub account.
+Copyright is separate and does not change: [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) name
+**Novaza Solution JSC**.
+
+Earlier commits were made under the company identity, `Novaza Solution JSC
+<admin@novaza.ai>`. That address is not verified on any GitHub account, so GitHub does not
+credit those commits to anyone, and for a while `dependabot` was the only name under
+**Insights → Contributors**. Those commits are already published, so they are left as they
+are.
+
+The mechanism is worth knowing before you contribute, because the same thing can happen to
+your own commits.
 
 **How GitHub decides who wrote a commit.** Git stores an author *name and email* in every
 commit — that is all. GitHub then looks up that **email address** among the verified emails
@@ -44,24 +53,24 @@ but it belongs to no account, so it counts toward nobody.
 **What that means here, measured rather than assumed:**
 
 ```bash
-# Every human commit is authored by the company identity
+# The older commits carry the company identity; new ones carry a person
 $ git log --format='%an <%ae>' | sort | uniq -c
-     14 Novaza Solution JSC <admin@novaza.ai>
+      1 Daika Ginza <54053998+daikaginza@users.noreply.github.com>
+     15 Novaza Solution JSC <admin@novaza.ai>
       3 dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-# That address is not a verified email on any GitHub account
+# The company address is not a verified email on any GitHub account
 $ gh api "search/users?q=admin@novaza.ai+in:email" --jq .total_count
 0
 
-# So the Contributors API returns only the bot
+# So those commits count toward nobody
 $ gh api repos/Novaza-ai/freeholdmail/contributors --jq '.[].login'
 dependabot[bot]
 ```
 
-We chose the company identity deliberately, so that the copyright line, the `NOTICE` file and
-the commit author all say the same thing. The cost is this: the humans are invisible in
-GitHub's own UI. Naming them in this file is the fix for readers; the fixes below are for the
-graph.
+**Making an organisation membership public does not affect this.** That setting lists a
+member at `github.com/orgs/Novaza-ai/people`. The Contributors graph on a repository is
+built only from commit author emails, so publishing a membership does not add anyone to it.
 
 **If you contribute, do this** — it takes one minute and it is the only thing that makes
 GitHub credit you:
@@ -75,17 +84,16 @@ git commit --amend --reset-author   # if you already committed with the wrong on
 Check the address first at **GitHub → Settings → Emails**. GitHub's `@users.noreply.github.com`
 address works and keeps your real address private.
 
-**For the maintainers, three ways to fix it, in increasing order of disruption:**
+**What this project does, and what is left over:**
 
-| Option | What it does | Cost |
-|--------|--------------|------|
-| Add `admin@novaza.ai` as a **verified email** on a GitHub account (Settings → Emails) | Retroactively credits **all 14 existing commits** to that account | One click, no history rewrite. **This is the recommended one.** |
-| Add a `Co-authored-by:` trailer to future commits | Credits a second person per commit, going forward only | One line per commit, nothing retroactive |
-| Have each person commit under their own identity | Correct attribution from here on | Loses the single company author line |
+| Option | What it does | Status here |
+|--------|--------------|-------------|
+| Each person commits under their own identity | Correct attribution from here on | **Adopted.** The repository no longer has a single author line |
+| Add `admin@novaza.ai` as a **verified email** on a GitHub account (Settings → Emails) | Credits the **15 older commits** to that account | Available. One setting, and the only option that reaches commits already published |
+| Add a `Co-authored-by:` trailer | Credits an additional person on one commit | Used when two people worked on the same change |
 
-Nothing above rewrites history, and none of it is required for the project to function — an
-empty Contributors list is cosmetic. It is documented because a reader who sees one bot and
-no humans reasonably concludes the project is abandoned, and that conclusion would be wrong.
+None of these rewrite history. The commits made under the company identity are left as they
+are, because other people have already cloned them.
 
 ## The honest bus factor
 

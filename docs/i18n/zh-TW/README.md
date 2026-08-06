@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-05 — initial Traditional Chinese translation. -->
+<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 [English](../../../README.md) · **繁體中文** — 以英文版為準，請參閱 [`TRANSLATIONS.md`](../../../TRANSLATIONS.md)
 
 > **本翻譯僅供參考。** 若與英文版有任何衝突，一律以英文版為準。翻譯內容可能落後於英文原文。
@@ -46,8 +46,9 @@ Webmail 內建一段導覽。以下就是那段導覽，錄製自一套真實運
 ## 為什麼會有這個專案
 
 自架電子郵件通常只有兩種結果：花一個週末把 Postfix、Dovecot、Rspamd 和某個 Webmail 黏在一起；
-或者用代管信箱，讓別人讀你的中繼資料。Freehold Mail 是第三個選項：用一個儲存庫，組裝出一套現代、
-記憶體安全的系統，由你自己在你掌控的機器上執行。
+或者用代管信箱，讓別人讀你的中繼資料。Freehold Mail 是第三個選項：用一個儲存庫，組裝出一套現代的
+系統，由你自己在你掌控的機器上執行。郵件伺服器與 Webmail 使用記憶體安全的語言；nginx 與
+PostgreSQL 是 C 寫的，所以「記憶體安全」描述的是我們所選的那部分，而不是整套系統。
 
 **它是什麼：** 編排（orchestration）。Compose 檔案、一份 nginx 設定、一個安裝程式，以及誠實的文件。
 **它不是什麼：** 任何人郵件伺服器的分支或重寫。
@@ -144,9 +145,11 @@ Mailu、Mailcow 與 docker-mailserver 都很優秀，而且久經實戰考驗。
 
 - **本儲存庫**（編排、設定、安裝程式、文件）：**MIT** —— 見 [`LICENSE`](../../../LICENSE)。
 - **它部署的程式各自保留自己的授權條款**，並以已發佈的映像檔形式拉取；本儲存庫不含它們的任何原始碼：
-  - Stalwart Mail Server —— **AGPL-3.0**
-  - Bulwark Webmail —— **AGPL-3.0**
-  - Keycloak —— **Apache-2.0**
+  - Stalwart Mail Server —— **AGPL-3.0-only OR SELv1**（雙重授權，不是 "or later"）
+  - Bulwark Webmail —— **AGPL-3.0-only**
+  - Keycloak —— **Apache-2.0**（SSO 版）
+  - PostgreSQL —— **PostgreSQL License**（SSO 版）
+  - nginx —— **BSD-2-Clause**
 
 如果你**修改** Stalwart 或 Bulwark 並對外提供服務，AGPL 要求你公開*該元件*修改後的原始碼。
 執行未經修改的映像檔則不需要。詳情見

@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-04 — translation policy for the public repo. -->
+<!-- Last-touched: 2026-08-06 — declare the Vietnamese row STALE; it tracks the same pre-fix commit as the other ten. -->
 # Translations
 
 **English is the source of truth.** Every file in this repository is written in English, and
@@ -59,7 +59,7 @@ correct the original.
 | Language | Tag | File | Tracks (commit of `README.md`) |
 |----------|-----|------|--------|
 | English (source) | `en` | [`README.md`](README.md) | — |
-| Vietnamese | `vi` | [`docs/i18n/vi/README.md`](docs/i18n/vi/README.md) | `1ed15b3` |
+| Vietnamese | `vi` | [`docs/i18n/vi/README.md`](docs/i18n/vi/README.md) | `1ed15b3` — **STALE** |
 | Japanese | `ja` | [`docs/i18n/ja/README.md`](docs/i18n/ja/README.md) | `1ed15b3` — **STALE** |
 | Chinese (Simplified) | `zh-CN` | [`docs/i18n/zh-CN/README.md`](docs/i18n/zh-CN/README.md) | `1ed15b3` — **STALE** |
 | Chinese (Traditional) | `zh-TW` | [`docs/i18n/zh-TW/README.md`](docs/i18n/zh-TW/README.md) | `1ed15b3` — **STALE** |
@@ -79,17 +79,37 @@ that actually misleads.
 
 ### Known stale, stated rather than hidden
 
-**Ten of the eleven translations are behind the English right now.** The English `README.md`
-changed after they were written — the roadmap paragraph now names the **Agentic Mail**
-milestone, and the licence list gained **nginx** and **PostgreSQL** and corrected Stalwart to
-its dual `AGPL-3.0-only OR SELv1`. Only `vi` has been brought forward. The rest still carry
-the superseded roadmap wording and the three-component licence list.
+**All eleven translations are behind the English right now**, and every row above says so.
 
-That is a real defect, and it is exactly the drift this file warned about. It is recorded
-here, and `tests/test_config.sh` now fails when a translation's tracked commit falls behind
-`README.md`, so this cannot happen silently again. **The licence list is the part that
-matters most** — a public repo stating component licences incompletely in ten languages is a
-legal-accuracy problem, not a style one. Correcting PRs are welcome and are the fastest fix.
+**Two claims that were wrong in every language have been corrected in all eleven:**
+
+- **The licence list.** Each named three of the five programs this stack deploys. **nginx**
+  (BSD-2-Clause) and **PostgreSQL** were absent, and Stalwart was flattened to a bare
+  `AGPL-3.0` where it is dual `AGPL-3.0-only OR SELv1`. Stating component licences
+  incompletely on a public repo is a legal-accuracy problem, not a style one.
+- **"Memory-safe".** Every translation described the whole stack that way. The English was
+  corrected to say what is actually true — the mail server and webmail are memory-safe
+  languages, nginx and PostgreSQL are C — and the correction had reached none of the eleven.
+  A security-posture claim is not prose, so it was fixed in the same pass.
+
+**What is still behind**, and is genuinely prose: ten of the eleven do not name the
+**Agentic Mail** milestone in the roadmap line (`vi` does), and all eleven carry the older,
+shorter note about GitHub's contributor graph. Correcting PRs are welcome.
+
+**Do not read the tracked-commit column as proof of fidelity.** It records the commit a
+translation was filed against, not a verified match. Measured: `README.md` already named
+Agentic Mail at `1ed15b3`, yet ten of the rows recording `1ed15b3` never carried it — so for
+those ten the column was optimistic from the day it was written. The `STALE` markers are the
+honest signal; the column is a starting point for whoever re-translates.
+
+Two things let the licence gap hide longer than it should have. The Vietnamese row was stale
+and did **not** carry a `STALE` marker, and the guard meant to catch that read the file as a
+whole: it found the one undeclared row, then saw the word `STALE` elsewhere in the table and
+passed. `tests/test_config.sh` now judges **each row on its own** — a row whose tracked commit
+is behind `README.md` must carry its own marker, no other row's honesty can cover for it, an
+unreachable or malformed commit fails loudly instead of exempting the row, and a table with
+fewer than eleven translation rows fails rather than passing because there was nothing left
+to check.
 
 **These translations have not been reviewed by native speakers.** They were produced against
 the English source and checked for structure, not for idiom. If you speak one of these

@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-05 — initial Japanese translation. -->
+<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 [English](../../../README.md) · **日本語** — 英語版が正典です。[`TRANSLATIONS.md`](../../../TRANSLATIONS.md) を参照してください
 
 > **この翻訳は参考用です。** 内容が英語版と矛盾する場合は、常に英語版が優先されます。
@@ -47,8 +47,9 @@ Webmail にはガイドツアーが内蔵されています。以下はそのツ
 
 メールの自己ホストは通常、Postfix・Dovecot・Rspamd・Webmail を週末かけて繋ぎ合わせるか、
 あるいは誰かがあなたのメタデータを読むホスティング型メールボックスを使うかの二択です。
-Freehold Mail は第三の選択肢です — モダンでメモリ安全なスタックを、あなたが管理するマシン上で
-自分で動かすための単一リポジトリです。
+Freehold Mail は第三の選択肢です — モダンなスタックを、あなたが管理するマシン上で自分で動かす
+ための単一リポジトリです。メールサーバーと Webmail はメモリ安全な言語で書かれていますが、nginx と
+PostgreSQL は C です。つまり「メモリ安全」はスタック全体ではなく、私たちが選んだ部分を指します。
 
 **これは何か:** オーケストレーションです。Compose ファイル、nginx 設定、インストーラー、そして正直なドキュメント。
 **これは何ではないか:** 誰かのメールサーバーのフォークでも書き直しでもありません。
@@ -155,9 +156,11 @@ JMAP 上の MCP サーバーと、ボットにパスワードを渡す代わり�
   [`LICENSE`](../../../LICENSE) を参照。
 - **デプロイされるプログラムはそれぞれ自身のライセンスを保持**し、公開イメージとして取得されます。
   このリポジトリにそれらのソースは一切含まれません:
-  - Stalwart Mail Server — **AGPL-3.0**
-  - Bulwark Webmail — **AGPL-3.0**
-  - Keycloak — **Apache-2.0**
+  - Stalwart Mail Server — **AGPL-3.0-only OR SELv1**（デュアルライセンス。"or later" ではない）
+  - Bulwark Webmail — **AGPL-3.0-only**
+  - Keycloak — **Apache-2.0**（SSO 版）
+  - PostgreSQL — **PostgreSQL License**（SSO 版）
+  - nginx — **BSD-2-Clause**
 
 Stalwart または Bulwark を**改変して**他者に提供する場合、AGPL は*そのコンポーネントの*改変後ソースの
 公開を要求します。未改変のイメージを実行するだけなら要求されません。詳細は

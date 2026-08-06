@@ -1,6 +1,6 @@
 # Changelog
 
-<!-- Last-touched: 2026-08-04 — created during pre-public QA. -->
+<!-- Last-touched: 2026-08-06 — record the licence, memory-safety, guard and commit-authorship changes. -->
 
 All notable changes to this repo. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -27,10 +27,8 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   to the English**. That last one caught the Vietnamese file translating shell comments —
   a small thing that is how "never translate commands" erodes.
 - **The team is named.** `MAINTAINERS.md` and the README now credit the people behind this,
-  not only the legal entity. It also records why GitHub's contributor graph shows only
-  `dependabot`: commits are authored under a company identity not linked to any GitHub
-  account, so the graph credits nobody. That is an artefact of how we sign, not a measure of
-  who worked.
+  not only the legal entity, and explain how GitHub attributes a commit — see the authorship
+  change below for what that explanation now says.
 
 ### Security
 - **Every container now drops all Linux capabilities** and adds back only what it provably
@@ -59,6 +57,41 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   unmatched Host `200` + nginx welcome page → `301` to HTTPS.
 
 ### Fixed
+- **Eleven translations understated the component licences.** Each listed three of the five
+  programs the stack deploys: **nginx** (BSD-2-Clause) and **PostgreSQL** were absent, and
+  Stalwart was flattened to a bare `AGPL-3.0` where it is dual `AGPL-3.0-only OR SELv1` —
+  the "or later" ambiguity the English text explicitly warns against. All eleven now carry
+  the full list. Licence identifiers are left untranslated on purpose: they are legal
+  identifiers, not prose.
+- **The staleness guard excused an undeclared file using other files' declarations.** Its
+  regex only matched a SHA cell ending immediately in `|`, so the ten rows reading
+  `` `sha` — **STALE** `` were invisible to it and the single undeclared row was the only
+  thing it read. It correctly found that row stale, then `grep -q STALE` matched the ten
+  other rows and it exited 0. The Vietnamese translation sat undeclared-stale through a green
+  suite while shipping the incomplete licence list above. Each row is now judged on its own.
+- **The suite failed on every correctly installed system.** `no committed secrets` scanned
+  the whole working tree, so the `.env` that `install.sh` writes at mode 600 — gitignored,
+  untracked, never committed — was reported as a leaked secret: `189 passed` became
+  `188 passed, 1 failed` for anyone who followed the hosting playbook and then ran the tests
+  the README invites them to run. It now searches tracked content only — a secret pasted into
+  a tracked file is still caught, staged or not. The tradeoff is stated rather than buried:
+  an untracked file that is *not* gitignored is no longer scanned, so a stray `notes.txt`
+  holding a token would pass. The `.gitignore` checks alongside it cover `.env`, keys,
+  certificates and dumps by name, not arbitrary filenames.
+- **Eleven translations called the whole stack "memory-safe".** The English was corrected to
+  say that the mail server and webmail are memory-safe languages while nginx and PostgreSQL
+  are C; the correction reached none of the translations. All eleven now carry it. A claim
+  about what is and is not memory-safe is a security-posture claim, not prose.
+- **Two more guards that could not fail.** `every translation records a real commit SHA` used
+  the same regex as the staleness guard, so once the last row gained a `STALE` marker it
+  matched **zero** rows: every tracked SHA could be fabricated and the suite stayed green.
+  It now reads each row, rejects an unresolvable or malformed commit, and fails when the
+  table holds fewer than eleven translation rows rather than passing on an empty table. Both
+  translation guards and the secret scan now `skip` — loudly, exiting non-zero — outside a
+  git checkout of this repository, instead of passing vacuously in a tarball export.
+- **`install.sh` printed a warning on a clean first run.** `cp -n` draws
+  `behavior of -n is non-portable` from GNU cp; the existence test it stood for is now
+  explicit.
 - **The admin API was unreachable, so nobody could complete the first step.** Every
   document tells the operator to `curl http://127.0.0.1:8080/api/principal` to create their
   domain and first mailbox, but port 8080 was never published and nginx routes only `/jmap`.
@@ -80,6 +113,14 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   final 200).
 
 ### Changed
+- **Commits are now authored by the person who made them**, not by the company identity. The
+  15 earlier commits are authored as `Novaza Solution JSC <admin@novaza.ai>`. That address is
+  not verified on any GitHub account, so GitHub did not credit them to anyone and the
+  Contributors list showed only `dependabot`. Copyright is unchanged: `LICENSE` and `NOTICE`
+  name Novaza Solution JSC. The published commits are left as they are, because other people
+  have already cloned them. `MAINTAINERS.md` also now records that making an organisation
+  membership public lists a person on the org page but does not add them to a repository's
+  Contributors graph, which is built only from commit author emails.
 - **`SECURITY.md` rewritten to the OpenSSF Scorecard criteria**, which score a policy on
   whether a reporter can actually find a way to reach you. It scored 4/10 because it named
   no URL and no email — the two things worth 6 of the 10 points. It now carries the private

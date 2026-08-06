@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-05 — initial Spanish translation. -->
+<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 [English](../../../README.md) · **Español** — La versión en inglés es la autoritativa, consulte [`TRANSLATIONS.md`](../../../TRANSLATIONS.md)
 
 > **Esta traducción es una cortesía.** Si algo en ella entra en conflicto con la versión en inglés,
@@ -52,8 +52,10 @@ Todas las imágenes que aparecen aquí se regeneran mediante scripts, nunca se r
 
 Autoalojar el correo suele ser o bien un fin de semana pegando Postfix, Dovecot, Rspamd y un
 webmail, o bien un buzón alojado donde otra persona lee sus metadatos. Freehold Mail es la tercera
-opción: un único repositorio que ensambla una pila moderna y segura en memoria que usted mismo
-ejecuta, en una máquina que controla.
+opción: un único repositorio que ensambla una pila moderna que usted mismo ejecuta, en una máquina
+que controla. El servidor de correo y el webmail están escritos en lenguajes seguros en memoria;
+nginx y PostgreSQL están en C, así que «seguro en memoria» describe las partes que elegimos, no la
+pila entera.
 
 **Qué es:** orquestación. Archivos Compose, una configuración de nginx, un instalador y
 documentación honesta. **Qué no es:** un fork ni una reescritura del servidor de correo de nadie.
@@ -162,9 +164,11 @@ en el trabajo sobre agentes: consulte "Help wanted" en la hoja de ruta.**
 - **Este repositorio** (orquestación, configuración, instalador, documentación): **MIT** — consulte [`LICENSE`](../../../LICENSE).
 - **Los programas que despliega conservan sus propias licencias** y se obtienen como imágenes
   publicadas; este repositorio no contiene nada de su código fuente:
-  - Stalwart Mail Server — **AGPL-3.0**
-  - Bulwark Webmail — **AGPL-3.0**
-  - Keycloak — **Apache-2.0**
+  - Stalwart Mail Server — **AGPL-3.0-only OR SELv1** *(licencia dual; no "or later")*
+  - Bulwark Webmail — **AGPL-3.0-only**
+  - Keycloak — **Apache-2.0** *(edición SSO)*
+  - PostgreSQL — **PostgreSQL License** *(edición SSO)*
+  - nginx — **BSD-2-Clause**
 
 Si **modifica** Stalwart o Bulwark y lo ofrece a terceros, la AGPL le exige publicar el código
 fuente modificado *de ese componente*. Ejecutar las imágenes sin modificar no lo exige.
