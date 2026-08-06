@@ -57,6 +57,13 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   unmatched Host `200` + nginx welcome page → `301` to HTTPS.
 
 ### Fixed
+- **GitHub did not recognise this project as MIT-licensed.** A "SCOPE OF THIS LICENSE" note
+  appended to `LICENSE` meant the file no longer matched the MIT text, so GitHub's licence
+  detection returned `NOASSERTION` / "Other": the sidebar showed no licence, and the
+  repository was excluded from `license:mit` searches. `LICENSE` is now the MIT text and
+  nothing else. The scope of that licence — that it covers the orchestration in this
+  repository and not the programs it deploys — is unchanged and is stated in `NOTICE`,
+  `THIRD_PARTY_LICENSES.md` and the README, which is where it belongs.
 - **Eleven translations understated the component licences.** Each listed three of the five
   programs the stack deploys: **nginx** (BSD-2-Clause) and **PostgreSQL** were absent, and
   Stalwart was flattened to a bare `AGPL-3.0` where it is dual `AGPL-3.0-only OR SELv1` —

@@ -19,17 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
--------------------------------------------------------------------------------
-SCOPE OF THIS LICENSE
-
-This MIT license covers ONLY the original work in this repository: the
-orchestration, configuration, installer scripts, documentation and any glue
-code authored here.
-
-It does NOT cover the third-party software this project deploys (e.g. the mail
-server, the webmail frontend, the identity provider). Those are separate,
-independently-licensed programs that are downloaded as their own container
-images at install time and are governed by their own licenses. See NOTICE and
-THIRD_PARTY_LICENSES.md.
--------------------------------------------------------------------------------
