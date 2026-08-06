@@ -218,10 +218,13 @@ MIT-licensed; see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).
 Full team, how decisions get made, and how to join:
 [`MAINTAINERS.md`](MAINTAINERS.md) · [`GOVERNANCE.md`](GOVERNANCE.md).
 
-> GitHub's contributor graph currently credits only `dependabot`, because our commits are
-> authored under a company identity that is not linked to a GitHub account. If you
-> contribute, commit under your own name and email — you will be credited there properly.
-> `MAINTAINERS.md` explains how we are fixing this for the team.
+> **Why GitHub's Contributors list shows only `dependabot`.** Git records an author *email*,
+> and GitHub credits a commit only when that email is verified on a GitHub account. Our 14
+> human commits are authored as `Novaza Solution JSC <admin@novaza.ai>`, which belongs to no
+> account — so they count toward nobody. The people are real; the graph is a lookup miss.
+> If you contribute, commit with an email verified on your own account and you will be
+> credited properly. [`MAINTAINERS.md`](MAINTAINERS.md#why-githubs-contributors-list-is-empty-and-how-to-appear-in-it)
+> has the commands and the three ways we can fix it on our side.
 
 ---
 

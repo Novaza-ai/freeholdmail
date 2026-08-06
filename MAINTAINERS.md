@@ -28,22 +28,64 @@ Contact: `admin@novaza.ai`. For anything with a security dimension use the priva
 flow instead — see [`SECURITY.md`](SECURITY.md). Never report a vulnerability in a public
 issue.
 
-## Why GitHub's contributor graph does not show us yet
+## Why GitHub's Contributors list is empty, and how to appear in it
 
-Worth stating plainly, because it looks like nobody works on this: every commit so far is
-authored as `Novaza Solution JSC <admin@novaza.ai>`, a company identity that is not linked
-to any GitHub account. GitHub attributes commits by email, so its contributor list currently
-shows only `dependabot`. That is an artefact of how we sign commits, not a measure of who
-did the work.
+If you look at **Insights → Contributors**, or at the avatars GitHub shows on the repository
+home page, you will see `dependabot` and nobody else. That is not a statement about who did
+the work. It is a mechanical consequence of how GitHub attributes commits, and it is worth
+understanding before you contribute, because the same thing can happen to you.
 
-If you contribute, commit under **your own** name and email so the graph credits you. There
-are two ways for team members to get the same:
+**How GitHub decides who wrote a commit.** Git stores an author *name and email* in every
+commit — that is all. GitHub then looks up that **email address** among the verified emails
+on user accounts. If it finds one, the commit is credited to that account and the person
+appears in Contributors. If it finds none, the commit still exists and still shows the name,
+but it belongs to no account, so it counts toward nobody.
+
+**What that means here, measured rather than assumed:**
 
 ```bash
-# 1. Add admin@novaza.ai as a verified email on a GitHub account, or
-# 2. Co-author, which credits a second person on a commit authored by the company identity:
-git commit -m "…" -m "Co-authored-by: Name <email@example.com>"
+# Every human commit is authored by the company identity
+$ git log --format='%an <%ae>' | sort | uniq -c
+     14 Novaza Solution JSC <admin@novaza.ai>
+      3 dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+# That address is not a verified email on any GitHub account
+$ gh api "search/users?q=admin@novaza.ai+in:email" --jq .total_count
+0
+
+# So the Contributors API returns only the bot
+$ gh api repos/Novaza-ai/freeholdmail/contributors --jq '.[].login'
+dependabot[bot]
 ```
+
+We chose the company identity deliberately, so that the copyright line, the `NOTICE` file and
+the commit author all say the same thing. The cost is this: the humans are invisible in
+GitHub's own UI. Naming them in this file is the fix for readers; the fixes below are for the
+graph.
+
+**If you contribute, do this** — it takes one minute and it is the only thing that makes
+GitHub credit you:
+
+```bash
+git config user.name  "Your Name"
+git config user.email "the-email-verified-on-your-github-account"
+git commit --amend --reset-author   # if you already committed with the wrong one
+```
+
+Check the address first at **GitHub → Settings → Emails**. GitHub's `@users.noreply.github.com`
+address works and keeps your real address private.
+
+**For the maintainers, three ways to fix it, in increasing order of disruption:**
+
+| Option | What it does | Cost |
+|--------|--------------|------|
+| Add `admin@novaza.ai` as a **verified email** on a GitHub account (Settings → Emails) | Retroactively credits **all 14 existing commits** to that account | One click, no history rewrite. **This is the recommended one.** |
+| Add a `Co-authored-by:` trailer to future commits | Credits a second person per commit, going forward only | One line per commit, nothing retroactive |
+| Have each person commit under their own identity | Correct attribution from here on | Loses the single company author line |
+
+Nothing above rewrites history, and none of it is required for the project to function — an
+empty Contributors list is cosmetic. It is documented because a reader who sees one bot and
+no humans reasonably concludes the project is abandoned, and that conclusion would be wrong.
 
 ## The honest bus factor
 
