@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — commit authorship is now per-person; corrected the Contributors note. -->
+<!-- Last-touched: 2026-08-06 — Contributors note updated: the older commits are now credited. -->
 **English** · [Tiếng Việt](docs/i18n/vi/README.md) · [日本語](docs/i18n/ja/README.md) · [简体中文](docs/i18n/zh-CN/README.md) · [繁體中文](docs/i18n/zh-TW/README.md) · [ไทย](docs/i18n/th/README.md) · [Bahasa Indonesia](docs/i18n/id/README.md) · [हिन्दी](docs/i18n/hi/README.md) · [Français](docs/i18n/fr/README.md) · [Español](docs/i18n/es/README.md) · [Português](docs/i18n/pt/README.md) · [Русский](docs/i18n/ru/README.md)
 — English is authoritative, see [`TRANSLATIONS.md`](TRANSLATIONS.md)
 
@@ -223,10 +223,10 @@ Full team, how decisions get made, and how to join:
 > verified on their GitHub account. Copyright is separate and does not change:
 > [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) name Novaza Solution JSC. Earlier commits were
 > made under the company identity, `Novaza Solution JSC <admin@novaza.ai>`. That address is
-> not verified on any GitHub account, so GitHub does not credit those commits to anyone, and
-> its Contributors list showed only `dependabot`. They are already published and are left as
-> they are. If you contribute, commit with an email verified on your own account and you
-> will be credited.
+> verified on no GitHub account for a while, so those commits were credited to nobody and the
+> Contributors list showed only `dependabot`. Verifying the address on a maintainer's account
+> fixed all fifteen at once, without touching the commits. If you contribute, commit with an
+> email verified on your own account and you will be credited.
 > [`MAINTAINERS.md`](MAINTAINERS.md#who-a-commit-is-credited-to-and-how-to-appear-in-the-contributors-list)
 > has the commands.
 

@@ -1,5 +1,5 @@
-<!-- Last-touched: 2026-08-06 — commits are authored by the person who made them; copyright
-     stays with the company. Corrected the Contributors explanation to match. -->
+<!-- Last-touched: 2026-08-06 — the company address is now a verified email, so all fifteen
+     older commits are credited; measured block updated to match. -->
 # Maintainers and team
 
 Who to expect a reply from, who can merge, and who is behind this.
@@ -36,10 +36,11 @@ Copyright is separate and does not change: [`LICENSE`](LICENSE) and [`NOTICE`](N
 **Novaza Solution JSC**.
 
 Earlier commits were made under the company identity, `Novaza Solution JSC
-<admin@novaza.ai>`. That address is not verified on any GitHub account, so GitHub does not
-credit those commits to anyone, and for a while `dependabot` was the only name under
-**Insights → Contributors**. Those commits are already published, so they are left as they
-are.
+<admin@novaza.ai>`. For a while that address was verified on no GitHub account, so those
+commits were credited to nobody and `dependabot` was the only name under
+**Insights → Contributors**. Adding the address to a maintainer's verified emails fixed it
+for all fifteen at once, with no change to the commits themselves. They are published, and
+rewriting them was never on the table.
 
 The mechanism is worth knowing before you contribute, because the same thing can happen to
 your own commits.
@@ -53,20 +54,26 @@ but it belongs to no account, so it counts toward nobody.
 **What that means here, measured rather than assumed:**
 
 ```bash
-# The older commits carry the company identity; new ones carry a person
+# Two author identities in the history: the company on older commits, a person on newer ones
 $ git log --format='%an <%ae>' | sort | uniq -c
-      1 Daika Ginza <54053998+daikaginza@users.noreply.github.com>
+      4 Daika Ginza <54053998+daikaginza@users.noreply.github.com>
      15 Novaza Solution JSC <admin@novaza.ai>
       3 dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-# The company address is not a verified email on any GitHub account
-$ gh api "search/users?q=admin@novaza.ai+in:email" --jq .total_count
-0
+# Both addresses now resolve, so every commit is credited: 19 + 3 = 22, the whole history
+$ gh api repos/Novaza-ai/freeholdmail/contributors --jq '.[] | "\(.login) \(.contributions)"'
+daikaginza 19
+dependabot[bot] 3
 
-# So those commits count toward nobody
-$ gh api repos/Novaza-ai/freeholdmail/contributors --jq '.[].login'
-dependabot[bot]
+# Including commits written long before the address was verified
+$ gh api repos/Novaza-ai/freeholdmail/commits/ae4de00 --jq .author.login
+daikaginza
 ```
+
+Verifying the address did that; the commits were not touched. Note that
+`gh api "search/users?q=admin@novaza.ai+in:email"` still returns `0` — user search only
+indexes addresses set to **public**, and a verified address can stay private. Verified is
+what attribution needs; public is not.
 
 **Making an organisation membership public does not affect this.** That setting lists a
 member at `github.com/orgs/Novaza-ai/people`. The Contributors graph on a repository is
@@ -89,7 +96,7 @@ address works and keeps your real address private.
 | Option | What it does | Status here |
 |--------|--------------|-------------|
 | Each person commits under their own identity | Correct attribution from here on | **Adopted.** The repository no longer has a single author line |
-| Add `admin@novaza.ai` as a **verified email** on a GitHub account (Settings → Emails) | Credits the **15 older commits** to that account | Available. One setting, and the only option that reaches commits already published |
+| Add `admin@novaza.ai` as a **verified email** on a GitHub account (Settings → Emails) | Credits the **15 older commits** to that account | **Done.** One setting, and the only option that reaches commits already published |
 | Add a `Co-authored-by:` trailer | Credits an additional person on one commit | Used when two people worked on the same change |
 
 None of these rewrite history. The commits made under the company identity are left as they
