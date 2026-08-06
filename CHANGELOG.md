@@ -1,11 +1,20 @@
 # Changelog
 
-<!-- Last-touched: 2026-08-06 — record the licence, memory-safety, guard and commit-authorship changes. -->
+<!-- Last-touched: 2026-08-06 — cut 0.2.0 from the accumulated Unreleased entries. -->
 
 All notable changes to this repo. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+Nothing yet.
+
+## [0.2.0] — 2026-08-06
+
+Trustworthiness release. Everything below was found by auditing the 0.1.0 release rather
+than by adding features: a webmail pinned below a security patch floor, a first run that
+could not complete, container hardening, and several guards in the test suite that could
+not fail. The component licence lists were also wrong in eleven languages.
 
 ### Added
 - **A hosting playbook** — `docs/HOSTING.md`. From a freshly rented VPS to a working mailbox,
