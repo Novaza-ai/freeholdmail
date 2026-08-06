@@ -61,8 +61,8 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   programs the stack deploys: **nginx** (BSD-2-Clause) and **PostgreSQL** were absent, and
   Stalwart was flattened to a bare `AGPL-3.0` where it is dual `AGPL-3.0-only OR SELv1` —
   the "or later" ambiguity the English text explicitly warns against. All eleven now carry
-  the full list. Licence identifiers are left untranslated on purpose: they are legal
-  identifiers, not prose.
+  the full list. Licence identifiers are left in English because they are legal
+  identifiers.
 - **The staleness guard excused an undeclared file using other files' declarations.** Its
   regex only matched a SHA cell ending immediately in `|`, so the ten rows reading
   `` `sha` — **STALE** `` were invisible to it and the single undeclared row was the only
@@ -80,8 +80,8 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   certificates and dumps by name, not arbitrary filenames.
 - **Eleven translations called the whole stack "memory-safe".** The English was corrected to
   say that the mail server and webmail are memory-safe languages while nginx and PostgreSQL
-  are C; the correction reached none of the translations. All eleven now carry it. A claim
-  about what is and is not memory-safe is a security-posture claim, not prose.
+  are C; the correction reached none of the translations. All eleven now carry it. This is
+  a statement about the security properties of the software, so it was treated as one.
 - **Two more guards that could not fail.** `every translation records a real commit SHA` used
   the same regex as the staleness guard, so once the last row gained a `STALE` marker it
   matched **zero** rows: every tracked SHA could be fabricated and the suite stayed green.

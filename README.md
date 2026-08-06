@@ -170,7 +170,8 @@ Details: [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md) and [`NOTICE`](NOT
 ## Security
 
 Open relay is denied, submission requires authentication, and password mechanisms
-(`PLAIN`/`LOGIN`) are only offered after STARTTLS — all measured, not assumed. There
+(`PLAIN`/`LOGIN`) are only offered after STARTTLS. Each of these was measured against a
+running stack. There
 are also real weaknesses you must plan around, including an upstream admin API that
 returns account passwords in cleartext. **Read [`SECURITY.md`](SECURITY.md) before
 exposing this to the internet.**

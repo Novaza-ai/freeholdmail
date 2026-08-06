@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-04 — created during pre-public QA. -->
+<!-- Last-touched: 2026-08-06 — prose: replaced aphoristic closers with plain statements. -->
 # Runbook
 
 > **Pre-1.0.** This document describes day-2 operations as if the stack were mature. It is
@@ -110,8 +110,8 @@ docker exec freeholdmail-idp-db pg_dump -U keycloak keycloak \
 ```
 
 Restore is the inverse — stop the stack, untar into the volume, `docker compose up -d`.
-**Test your restore on a throwaway host before you need it.** A backup you have never
-restored is a hypothesis, not a backup.
+**Test your restore on a throwaway host before you need it.** Until a backup has been
+restored at least once, you do not know whether it works.
 
 ---
 

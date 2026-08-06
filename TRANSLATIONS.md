@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — declare the Vietnamese row STALE; it tracks the same pre-fix commit as the other ten. -->
+<!-- Last-touched: 2026-08-06 — licence and memory-safety corrections recorded; the Vietnamese row declared STALE; tracked-commit column explained. -->
 # Translations
 
 **English is the source of truth.** Every file in this repository is written in English, and
@@ -86,11 +86,11 @@ that actually misleads.
 - **The licence list.** Each named three of the five programs this stack deploys. **nginx**
   (BSD-2-Clause) and **PostgreSQL** were absent, and Stalwart was flattened to a bare
   `AGPL-3.0` where it is dual `AGPL-3.0-only OR SELv1`. Stating component licences
-  incompletely on a public repo is a legal-accuracy problem, not a style one.
+  incompletely on a public repo is a legal accuracy problem.
 - **"Memory-safe".** Every translation described the whole stack that way. The English was
   corrected to say what is actually true — the mail server and webmail are memory-safe
   languages, nginx and PostgreSQL are C — and the correction had reached none of the eleven.
-  A security-posture claim is not prose, so it was fixed in the same pass.
+  This describes the security properties of the software, so it was corrected in the same pass.
 
 **What is still behind**, and is genuinely prose: ten of the eleven do not name the
 **Agentic Mail** milestone in the roadmap line (`vi` does), and all eleven carry the older,
@@ -120,7 +120,7 @@ path from "machine-accurate" to "actually good".
 
 The move to `docs/i18n/<tag>/` happened at 12 languages. The rest of that original advice
 still stands and is now the live problem: **hand-maintained translations drift silently.**
-Eleven files cannot be kept in step with the English by willpower.
+Keeping eleven files in step with the English by hand has not worked so far.
 
 The next step, before adding a thirteenth language, is a translation platform —
 [Weblate](https://weblate.org/) or [Crowdin](https://crowdin.com/), both free for open-source

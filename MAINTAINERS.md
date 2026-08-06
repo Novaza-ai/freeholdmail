@@ -105,11 +105,11 @@ in production, so it is stated here rather than left to be discovered:
 - The project is MIT-licensed and the stack it assembles is upstream software under its own
   licences. If this repository stopped being maintained tomorrow, your running installation
   would keep working, and anyone could fork it without asking permission. That is the
-  intended safety net, not an afterthought.
+  intended safety net for this risk.
 - [`GOVERNANCE.md`](GOVERNANCE.md) states what happens if the maintainer steps away, and
   how the maintainer list grows.
 
-Growing this list is wanted, not merely tolerated. The path is in
+We want to add maintainers. The path is in
 [`GOVERNANCE.md`](GOVERNANCE.md#becoming-a-maintainer).
 
 ## Response expectations

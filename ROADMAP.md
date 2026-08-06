@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-04 — created during pre-public QA; states direction and asks for help. -->
+<!-- Last-touched: 2026-08-06 — prose: replaced aphoristic closers with plain statements. -->
 # Roadmap
 
 This file separates three things that are easy to blur: **what works today and was
@@ -19,7 +19,7 @@ Measured on a throwaway stack built from this repo (see `tests/`):
 
 ## v0.1 — make the boring parts trustworthy
 
-The unglamorous work that has to land before anything else matters.
+Work that has to land before the rest of the roadmap is worth starting.
 
 - ~~Pin every image by digest, including the webmail.~~ **Done in 0.1.0** — all five
   images ship pinned to a version tag and a `sha256` digest.
@@ -43,7 +43,7 @@ The unglamorous work that has to land before anything else matters.
 The direction has a name now: **Agentic Mail** — mail infrastructure a software agent can be
 given safely, rather than mail infrastructure an agent has to be handed your password to use.
 
-**It is a destination, not a description of this release.** Nothing in this section exists in
+**This section describes where the project is going, not what it does today.** Nothing in it exists in
 the repository today; `grep -ri "mcp\|agent" --include='*.py' --include='*.sh' .` finds no
 implementation, and the version that ships it is the version that may claim it.
 

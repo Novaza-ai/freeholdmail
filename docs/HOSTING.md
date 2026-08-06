@@ -1,5 +1,6 @@
-<!-- Last-touched: 2026-08-05 — hosting playbook: from a freshly rented VPS to a working
-     mailbox, with server sizing taken from measurements rather than guesses. -->
+<!-- Last-touched: 2026-08-06 — hosting playbook: from a freshly rented VPS to a working
+     mailbox, with server sizing taken from measurements. Prose: plain statements in place
+     of aphoristic closers. -->
 # Hosting playbook
 
 You rented a server. This is everything from there to a working mailbox, in order, with the
@@ -103,7 +104,7 @@ messages until they are purged.
 ### What to actually rent
 
 These recommendations add headroom over the measured idle figures for the OS, page cache,
-mail bursts, backups and log churn. The measured idle number is the floor, not the target.
+mail bursts, backups and log churn. Size above the measured idle number, not at it.
 
 | Scenario | vCPU | RAM | Disk | Notes |
 |----------|------|-----|------|-------|

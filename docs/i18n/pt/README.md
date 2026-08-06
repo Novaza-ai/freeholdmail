@@ -53,7 +53,7 @@ Auto-hospedar e-mail costuma ser uma de duas coisas: um fim de semana inteiro pa
 Dovecot, Rspamd e um webmail — ou uma caixa de correio alojada onde outra pessoa lê os seus
 metadados. O Freehold Mail é a terceira opção: um único repositório que monta uma stack moderna que executa
 você mesmo, numa máquina que controla. O servidor de e-mail e o webmail são escritos em linguagens
-com segurança de memória; o nginx e o PostgreSQL são em C, por isso «segurança de memória» descreve
+com segurança de memória; o nginx e o PostgreSQL são escritos em C, por isso «segurança de memória» descreve
 as partes que escolhemos, não a stack inteira.
 
 **O que é:** orquestração. Ficheiros Compose, uma configuração nginx, um instalador e documentação

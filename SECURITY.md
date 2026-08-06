@@ -1,8 +1,8 @@
 # Security Policy
 
-<!-- Last-touched: 2026-08-05 — reporting channels made explicit and machine-readable
-     (a policy an automated checker cannot find is one a reporter cannot find either),
-     with a coordinated-disclosure timeline stated in days rather than implied. -->
+<!-- Last-touched: 2026-08-06 — reporting channels explicit and machine-readable, with a
+     coordinated-disclosure timeline stated in days. Prose: plain statements in place of
+     aphoristic closers. -->
 
 ## Reporting a vulnerability
 
@@ -44,7 +44,7 @@ disclosed bug. If you disagree with our assessment, tell us — we would rather 
 wrong quietly.
 
 **Credit.** We will name you in the advisory and in `CHANGELOG.md` unless you ask us not to.
-We do not run a paid bug-bounty programme and will not pretend otherwise.
+We do not run a paid bug-bounty programme.
 
 **Safe harbour.** Test against your own installation. We will not pursue or support legal
 action against anyone who reports in good faith, stays within their own systems, avoids
@@ -70,7 +70,7 @@ than reporting here:
 If you are unsure which side of that line something falls on, report it here and we will
 route it.
 
-## Known security properties (measured, not assumed)
+## Known security properties, and how each was measured
 
 Verified on a throwaway stack built from this repo. **First measured 2026-08-04,
 independently re-measured 2026-08-05** — every response string below was reproduced
