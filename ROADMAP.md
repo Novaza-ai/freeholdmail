@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — prose: replaced aphoristic closers with plain statements. -->
+<!-- Last-touched: 2026-08-07 — 0.13.4 landed; the mail-server item now points at 0.16 only. -->
 # Roadmap
 
 This file separates three things that are easy to blur: **what works today and was
@@ -25,8 +25,11 @@ Work that has to land before the rest of the roadmap is worth starting.
   images ship pinned to a version tag and a `sha256` digest.
 - ~~Verify the SSO edition on the Keycloak version we actually ship.~~ **Done** — the suite
   now runs against the shipped 26.7.0, 15/15. The browser login round-trip remains open.
-- Move to the current upstream mail-server release line (the image was renamed and its
-  config and data paths moved; see `CHANGELOG.md` "Known gaps").
+- Move to the current upstream mail-server line. The move to 0.13.4 is done and closed a
+  High advisory; 0.16 is the open part, and it is a redesign rather than a bump — typed JSON
+  config, and the REST management API this project's first-run steps use is gone. See
+  `CHANGELOG.md` "Known gaps". Existing v0.11.x installs also still need a verified
+  migration path; `docs/RUNBOOK.md` §6 records why the in-place one does not work.
 - Measure deliverability against a real domain and publish the score, good or bad.
 - Backup/restore rehearsed and documented end to end, not just written down.
 
@@ -86,8 +89,9 @@ starting something large, so two people don't build it twice.
 **Bigger pieces, in rough priority order**
 
 1. Verify and fix the SSO edition on the current Keycloak, including the browser login flow.
-2. The upstream mail-server major upgrade: new image name, new config and data paths, E2E
-   green afterwards.
+2. A verified migration path for existing v0.11.x installs. The 0.13.4 upgrade is shipped
+   and green for fresh installs; upgrading in place corrupts the database, and the
+   export/import route upstream documents is untested here. See `docs/RUNBOOK.md` §6.
 3. A prototype MCP server over JMAP — even a read-only one that lists and searches mail
    would settle the design questions.
 4. Scoped, revocable per-agent credentials. Start with the threat model, not the code.

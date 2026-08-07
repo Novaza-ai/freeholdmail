@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-04 — end-to-end: stand the real stack up, send a real message,
-# read it back, assert the security defaults, then destroy everything.
+# Last-touched: 2026-08-07 — JMAP discovery guard made version-independent and
+# origin-checked. End-to-end: stand the real stack up, send a real message, read it back,
+# assert the security defaults, then destroy everything.
 #
 # Everything runs in a throwaway compose project on loopback-only ports, with its own
 # volumes and a self-signed certificate, so it cannot collide with a real deployment on
@@ -278,12 +279,22 @@ else
   bad "proxy hijacks the webmail's /api routes (http $code on /api/config)"
 fi
 
-# JMAP discovery must still reach the mail server. 401 unauthenticated is the correct answer.
-code="$(curl -sk -o /dev/null -w '%{http_code}' --max-time 15 "https://127.0.0.1:${HTTPS_PORT}/.well-known/jmap")"
+# JMAP discovery must reach the mail server. What "reached it" looks like is version-dependent
+# and this check used to hardcode one version's answer: 0.11.x replied 401 to an
+# unauthenticated probe, 0.13.x replies 307 to /jmap/session, which is what RFC 8620 §2.2
+# describes. Both prove the route lands on the mail server; a 404 or a redirect to the webmail
+# would not. Assert the property, not the status code of whichever release was current.
+probe="$(curl -sk -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 15 \
+  "https://127.0.0.1:${HTTPS_PORT}/.well-known/jmap")"
+code="${probe%% *}"; target="${probe#* }"
+# The redirect target is matched against this origin, not just its suffix: `*/jmap/session`
+# alone would accept https://evil.example.com/jmap/session, which is a redirect off the box.
 if [[ "$code" == "401" ]]; then
   ok "JMAP discovery reaches the mail server (http $code)"
+elif [[ "$code" == "30"[0-8] && "$target" == "https://127.0.0.1:${HTTPS_PORT}/"*"jmap/session" ]]; then
+  ok "JMAP discovery reaches the mail server (http $code → $target)"
 else
-  bad "JMAP discovery not routed to the mail server (http $code)"
+  bad "JMAP discovery not routed to the mail server (http $code, redirect '$target')"
 fi
 
 if (( WITH_SSO )); then

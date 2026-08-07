@@ -1,13 +1,46 @@
 # Changelog
 
-<!-- Last-touched: 2026-08-06 — cut 0.2.0 from the accumulated Unreleased entries. -->
+<!-- Last-touched: 2026-08-07 — record the Stalwart 0.13.4 upgrade and the advisory it closes. -->
 
 All notable changes to this repo. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-Nothing yet.
+### Security
+- **The mail server moves to `stalwartlabs/stalwart:v0.13.4`, closing a High,
+  pre-authentication advisory.** `v0.11.8` was below the patch floor for
+  [GHSA-8jqj-qj5p-v5rr](https://github.com/stalwartlabs/stalwart/security/advisories/GHSA-8jqj-qj5p-v5rr)
+  — unbounded memory allocation in the IMAP server, `CVSS AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H`,
+  exploitable by anyone who can open a connection to port 993. Fixed upstream in 0.13.4.
+  Measured after the upgrade: static **189/0**, e2e **14/0**, e2e `--sso` **15/0** — a real
+  message still travels SMTP → mailbox → IMAP, relay is still refused `550`, unauthenticated
+  submission still `503`.
+  The upstream image was renamed from `stalwartlabs/mail-server` at the same time and its
+  volume moved from `/opt/stalwart-mail` to `/opt/stalwart`, so this is a compose change, not
+  a tag bump; `config/stalwart/config.toml.example` had a hardcoded `/opt/stalwart-mail/data`
+  store path that moves with it.
+  **⚠️ Existing installs must not upgrade in place.** We tested it: starting 0.13.4 against a
+  0.11.x database reports `Archive integrity compromised`, serves **zero accounts**, and
+  writes a schema marker that then makes the data unreadable by 0.12.5 as well
+  (`Unknown database schema version, expected 2 or below, found 3`). Stepping through 0.12.5
+  first fails identically. Upstream documents the migration as automatic; in this deployment
+  it is not. `docs/RUNBOOK.md` §6 records the measurements and the safe order — back up,
+  migrate to a separate volume with upstream's export/import utility, verify, then cut over.
+  **Fresh installs are unaffected**, which is what the e2e figures above cover.
+- **Two lessons from finding it, recorded in `SECURITY.md` weakness 6 for anyone auditing
+  their own pins.** `vulnerable_version_range` carries no lower bound, so
+  `GHSA-xv4r-q6gr-6pfg` (`< 0.13.3`) matches a pin it never applied to — its text limits it
+  to 0.12.0–0.13.2 because CalDAV did not exist earlier. Read the advisory body. And
+  advisories are not the whole picture: upstream also fixes security bugs without filing one,
+  and does not backport them.
+
+### Fixed
+- **The JMAP discovery check asserted one release's status code.** `tests/test_e2e.sh`
+  required exactly `401` from `/.well-known/jmap`, which was 0.11's answer to an
+  unauthenticated probe. 0.13 answers `307` to `/jmap/session`, which is what RFC 8620
+  describes. The check now accepts either and verifies the redirect target, so it tests that
+  the route reaches the mail server rather than which version is running.
 
 ## [0.2.0] — 2026-08-06
 
@@ -319,11 +352,15 @@ First public release.
    the official Keycloak documentation and are **not** measured here. Re-run the SSO
    stack against 26.0 on a host with registry access before relying on it.
    The OIDC login round-trip through the webmail (browser flow) is also untested.
-2. **The mail server is pinned to a version line upstream has moved past.** Upstream
-   renamed the image to `stalwartlabs/stalwart` and, from v0.16, moved config to
-   `/etc/stalwart` and data to `/var/lib/stalwart`. This repo targets the v0.11.x
-   layout because that is what was actually tested here. Upgrading requires changing
-   the image name **and** both volume paths, then re-running the E2E test.
+2. **The mail server is on 0.13.4, not the current 0.16 line.** 0.13.4 is the patch floor
+   for GHSA-8jqj-qj5p-v5rr, so no known advisory affects what ships. Upstream is at
+   `v0.16.16`, and following it is a redesign rather than a tag bump: 0.16.0 replaces the
+   TOML configuration with a typed JSON schema, moves config to `/etc/stalwart` and data to
+   `/var/lib/stalwart`, runs as a non-root user, and **replaces the REST management API with
+   a JMAP one — so `POST /api/principal`, which every first-run instruction in this repo
+   uses, no longer exists**. Until that is redesigned and tested, this line stays. Note that
+   advisories are not the only reason to move: upstream fixes security bugs without filing
+   one, and does not backport them to older lines.
 3. **Pins do not self-update.** Every image ships pinned to a version tag *and* a digest,
    which is what makes an install reproducible — and also what stops it drifting onto an
    upstream security fix. Watch the upstream advisories and re-pin deliberately;

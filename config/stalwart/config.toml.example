@@ -1,4 +1,4 @@
-# Last-touched: 2026-08-04 — GATE-3 QA: added the storage/store/directory blocks the server
+# Last-touched: 2026-08-07 — store path follows the v0.13 volume move to /opt/stalwart.
 # REQUIRES to boot (without them Stalwart crash-loops with "Store not configured"), the
 # submission listener on 587, and a bootstrap admin. Verified by a real send+receive E2E.
 #
@@ -44,7 +44,7 @@ private-key = "%{file:/opt/tls/privkey.pem}%"
 # ─────────────────────────────────────────────────────────────────────────────
 [store."db"]
 type = "rocksdb"
-path = "/opt/stalwart-mail/data"
+path = "/opt/stalwart/data"
 compression = "lz4"
 
 [storage]

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-06 — per-row staleness guard; SHA guard repaired; secret scan tracked-only.
+# Last-touched: 2026-08-07 — new guard: install.sh image defaults must match .env.example.
+# Also: per-row staleness guard, repaired SHA guard, secret scan limited to tracked files.
 #
 # Fast (seconds, no images pulled). Run this before every commit; CI runs it on every push.
 # For the checks that need a running stack, see tests/test_e2e.sh.
@@ -139,6 +140,27 @@ if (( total > 0 )) && grep -qE ':latest([[:space:]]|@|$)' <<<"$resolved"; then
 else
   ok "no :latest among the resolved images"
 fi
+
+# install.sh writes its own defaults into .env; docker-compose.yml then interpolates them.
+# Nothing tied the two together, so when the mail server moved to `stalwartlabs/stalwart`
+# and v0.13.4, `.env.example` was updated and install.sh was not — leaving the documented
+# primary install path producing `stalwartlabs/stalwart:v0.11.8@sha256:a5ce…`, a reference
+# that has never existed, because the rename happened at 0.12.0. Every suite stayed green:
+# the e2e runs read `.env.example`, never install.sh. Compare them directly.
+# shellcheck disable=SC2016  # body is deliberately unexpanded; it runs in the child shell
+check "install.sh image defaults match .env.example" bash -c '
+  bad=0
+  for key in STALWART BULWARK NGINX KEYCLOAK POSTGRES; do
+    for field in IMAGE VERSION DIGEST; do
+      inst=$(sed -n "s/^readonly ${key}_${field}_DEFAULT=\"\(.*\)\"$/\1/p" install.sh)
+      envx=$(sed -n "s/^${key}_${field}=\(.*\)$/\1/p" .env.example)
+      [ -n "$inst" ] || continue          # not every image defines every field; only Bulwark has IMAGE
+      if [ "$inst" != "$envx" ]; then
+        echo "${key}_${field}: install.sh=[$inst] .env.example=[$envx]"; bad=1
+      fi
+    done
+  done
+  exit $bad'
 
 echo "== hardening =="
 for svc_file in docker-compose.yml docker-compose.sso.yml; do

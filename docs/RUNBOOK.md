@@ -1,10 +1,10 @@
-<!-- Last-touched: 2026-08-06 — prose: replaced aphoristic closers with plain statements. -->
+<!-- Last-touched: 2026-08-07 — §6: in-place upgrade from v0.11.x is destructive; measured and documented. -->
 # Runbook
 
 > **Pre-1.0.** This document describes day-2 operations as if the stack were mature. It is
 > not: the SSO edition's browser login round-trip is unverified, and the admin API used
 > below returns account passwords in cleartext. Read [`../SECURITY.md`](../SECURITY.md)
-> first. — operating Freehold Mail
+> first.
 
 Day-2 operations. Every command here is meant to be copy-pasted on the host running the
 stack. Commands that touch secrets never print them.
@@ -151,9 +151,96 @@ tests/test_e2e.sh
 Rollback: put the previous tag and digest back in `.env` and repeat. This is why the
 digest is pinned — the old bytes are still addressable even if the tag moved.
 
-**Before crossing a major mail-server version**, read `CHANGELOG.md` "Known gaps": the
-upstream image was renamed and its config and data paths moved, so a major upgrade needs
-compose changes, not just a new tag.
+### Upgrading an existing install from the v0.11.x mail server
+
+Releases up to and including `v0.2.0` shipped `stalwartlabs/mail-server:v0.11.8`. This repo
+now ships `stalwartlabs/stalwart:v0.13.4`, which closes GHSA-8jqj-qj5p-v5rr — a High,
+pre-authentication advisory. **A fresh install needs nothing from this section.**
+
+> ⚠️ **Do not upgrade an existing install in place. We tested it and it destroys the
+> database.** Read this whole section before touching a server that holds mail.
+
+**What we measured**, on a throwaway stack, on 2026-08-07:
+
+| Attempt | Result |
+|---|---|
+| 0.11.8 data → start 0.13.4 on the same volume, config path updated | Starts, listeners healthy, but `GET /api/principal` → **HTTP 500** and `ERROR Data corruption detected … "Archive integrity compromised"` at `crates/store/src/write/serialize.rs:71` |
+| Same, but stepping through 0.12.5 first | Identical corruption error, **HTTP 500**. No migration ever ran |
+| Same, but leaving the config pointed at the old `/opt/stalwart-mail/data` | Admin authentication itself fails, **HTTP 401** — the server quietly creates an empty database at the stale path while the real data sits unreferenced |
+| **Rolling back to 0.11.8 afterwards** | **Works.** Accounts read back in full, `HTTP 200`, zero errors in the log |
+
+0.13.4 cannot deserialize a 0.11.x principal record — the payload in the corruption log
+decodes to the account itself, so it is the storage format that changed, not the path.
+
+**Your data is not destroyed by a failed attempt.** We tested the rollback that §6 above
+already describes — put the previous tag and digest back in `.env` — and v0.11.8 read
+everything back. Going *forward* to 0.12.5 after 0.13.4 has touched the volume does not work
+(`panicked: Unknown database schema version, expected 2 or below, found 3`), so roll back to
+the version you came from, not to an intermediate.
+
+Upstream's `UPGRADING/v0_12.md` states the migration is automatic on startup. In this
+deployment it was not. We are reporting what our own measurements show; if you find a
+configuration where the in-place path works, we want the correction.
+
+**There is no migration path this project has verified.** That is the honest position, and
+it leaves you two options: stay on `v0.11.8` with the mitigations below, or attempt
+upstream's export/import on a *copy* of your data, at your own risk. What follows is the
+least-bad order for the second option, not a procedure we have walked end to end.
+
+1. **Stop the mail server and take a backup you have actually read back.**
+   ```bash
+   docker compose stop mailserver
+   docker run --rm -v freeholdmail_mailserver_data:/data -v /var/backups:/backup alpine \
+     tar czf /backup/mailserver-pre-0.13-$(date +%F).tar.gz -C /data .
+   # Verify it, do not just look at its size — a truncated archive has a size too.
+   tar tzf /var/backups/mailserver-pre-0.13-*.tar.gz | head
+   tar tzf /var/backups/mailserver-pre-0.13-*.tar.gz | wc -l    # expect hundreds of entries
+   ```
+   If you run compose with `-p <name>`, the volume is `<name>_mailserver_data` — check with
+   `docker volume ls` rather than trusting the name above.
+2. **Record what you have, so you can tell afterwards whether anything is missing.**
+   ```bash
+   ADMIN="admin:$(grep '^STALWART_FALLBACK_ADMIN_SECRET=' .env | cut -d= -f2-)"
+   curl -s -u "$ADMIN" 'http://127.0.0.1:8080/api/principal?limit=1000' \
+     | python3 -c 'import sys,json; d=json.load(sys.stdin)["data"]; print("principals:", d["total"])'
+   ```
+   Write that number down. Also note the message count in at least one busy mailbox from
+   your own client.
+3. **Do not point 0.13.4 at that volume.** Stand up the new version beside the old one, on a
+   copy of the data or on an empty volume, and migrate accounts and mail across using
+   upstream's export/import utility — see
+   <https://stalw.art/docs/management/migration>. **We have not verified that path**; our
+   attempt to run `--export` through the 0.11.8 Docker entrypoint did not complete, so treat
+   upstream's instructions as the authority and test on a copy first.
+4. **Verify against your own migrated instance before you cut over.** Not with
+   `tests/test_e2e.sh` — that suite stands up a *throwaway* stack from `.env.example`, with
+   its own project name, its own volumes and its own certificate. It proves the shipped
+   defaults work; it says nothing about your data. Check the thing you actually care about:
+   ```bash
+   # same query as step 2, against the migrated instance — the number must match
+   curl -s -u "$ADMIN" 'http://127.0.0.1:8080/api/principal?limit=1000' \
+     | python3 -c 'import sys,json; d=json.load(sys.stdin)["data"]; print("principals:", d["total"])'
+   ```
+   Then log in as a real account, confirm the folder and message counts you noted in step 2,
+   and send one message in and one out. Only then cut over.
+
+**If you cannot migrate yet**, staying on `v0.11.8` means staying exposed to
+GHSA-8jqj-qj5p-v5rr, which needs no credentials and only a reachable IMAP port. Restrict
+source addresses on 993 at the firewall (`ufw allow from <range> to any port 993`) until you
+can move.
+
+**What changed besides the version.** The image was renamed from `stalwartlabs/mail-server`
+to `stalwartlabs/stalwart`, and its volume moved from `/opt/stalwart-mail` to
+`/opt/stalwart` — so `config/stalwart/config.toml` needs its `store."db".path` updated to
+`/opt/stalwart/data`, which the shipped example already does. None of the settings renamed in
+0.12.0 appear in the config this repo ships. One visible behaviour change: `/.well-known/jmap`
+answered `401` on 0.11 and answers `307` to `/jmap/session` on 0.13, which is what RFC 8620
+describes; `tests/test_e2e.sh` accepts both.
+
+**Before crossing to v0.16 or later**, read `CHANGELOG.md` "Known gaps". That is a different
+kind of upgrade again: the TOML configuration becomes a typed JSON schema and v0.16.0 replaces
+the REST management API with a JMAP one, so `POST /api/principal` — the call every first-run
+instruction here uses — no longer exists.
 
 ---
 

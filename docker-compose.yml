@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-04 — GATE-1/2/3 QA: real verified image coordinates, digest pinning,
-# container hardening, healthchecks, and a persistent volume for webmail settings.
+# Last-touched: 2026-08-07 — mail server moved to stalwartlabs/stalwart v0.13.4, closing
+# GHSA-8jqj-qj5p-v5rr. Verified image coordinates, digest pinning, container hardening,
+# healthchecks, and a persistent volume for webmail settings.
 #
 # Base edition = "Full Mail" (mail server + webmail, native login, NO Keycloak).
 # For the SSO edition (adds Keycloak + OAuth), also include docker-compose.sso.yml:
@@ -15,19 +16,22 @@
 
 services:
   mailserver:
-    # Verified coordinate: Docker Hub `stalwartlabs/mail-server`. NOTE: upstream has since
-    # renamed the repo to `stalwartlabs/stalwart` and moved config to /etc/stalwart +
-    # data to /var/lib/stalwart from v0.16. This file targets the v0.11.x layout, which is
-    # what has been E2E-tested here. See CHANGELOG "Known gaps" before upgrading.
-    image: stalwartlabs/mail-server:${STALWART_VERSION}${STALWART_DIGEST}
+    # Verified coordinate: Docker Hub `stalwartlabs/stalwart` (renamed from
+    # `stalwartlabs/mail-server`, which stops at v0.11.8). Pinned at the patch floor for
+    # GHSA-8jqj-qj5p-v5rr — below 0.13.4 the IMAP server can be driven out of memory
+    # without authentication. Upgrading an existing install migrates the database and
+    # cannot be undone: docs/RUNBOOK.md §6.
+    # Not yet on the current 0.16 line: it replaces this TOML config with a typed JSON
+    # schema and drops the REST management API this project's first-run steps use.
+    image: stalwartlabs/stalwart:${STALWART_VERSION}${STALWART_DIGEST}
     container_name: freeholdmail-mailserver
     restart: unless-stopped
     environment:
       STALWART_HOSTNAME: ${MAIL_DOMAIN}
       STALWART_FALLBACK_ADMIN_SECRET: ${STALWART_FALLBACK_ADMIN_SECRET}
     volumes:
-      - ./config/stalwart/config.toml:/opt/stalwart-mail/etc/config.toml:ro
-      - mailserver_data:/opt/stalwart-mail
+      - ./config/stalwart/config.toml:/opt/stalwart/etc/config.toml:ro
+      - mailserver_data:/opt/stalwart
       - ${TLS_FULLCHAIN}:/opt/tls/fullchain.pem:ro
       - ${TLS_PRIVKEY}:/opt/tls/privkey.pem:ro
     ports:

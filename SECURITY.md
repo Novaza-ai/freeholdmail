@@ -1,8 +1,7 @@
 # Security Policy
 
-<!-- Last-touched: 2026-08-06 — reporting channels explicit and machine-readable, with a
-     coordinated-disclosure timeline stated in days. Prose: plain statements in place of
-     aphoristic closers. -->
+<!-- Last-touched: 2026-08-07 — the mail-server advisory is closed by the 0.13.4 upgrade;
+     weakness 6 now records both pin failures and how the second was missed. -->
 
 ## Reporting a vulnerability
 
@@ -115,11 +114,23 @@ is not exercised at all (the suite never maps port 465). Treat every string here
    initialises its own data directory, and shipping them untested would be worse
    than saying so here.
 6. **A digest pin does not receive upstream fixes.** That is the trade-off for a
-   reproducible install, and it is not theoretical: this project shipped a webmail
-   pinned below the patch floor for five High advisories until 2026-08-05 —
-   CVE-2026-34834 (authentication bypass), CVE-2026-34833 (password disclosure)
-   and CVE-2026-35389/35390/35391. Watch the upstream
-   advisories for every component you pin, and re-pin deliberately.
+   reproducible install, and it has now caught this project twice. The webmail shipped
+   below the patch floor for five High advisories until 2026-08-05 — CVE-2026-34834
+   (authentication bypass), CVE-2026-34833 (password disclosure) and
+   CVE-2026-35389/35390/35391. The mail server shipped below the floor for
+   GHSA-8jqj-qj5p-v5rr (High, unbounded memory allocation in the IMAP server, exploitable
+   without authentication) until 2026-08-07. Both were found by auditing rather than by
+   being told. Watch the upstream advisories for every component you pin, and re-pin
+   deliberately.
+
+   Two things that made the second one harder to see, worth knowing if you audit your own
+   pins. **`vulnerable_version_range` has no lower bound**: `GHSA-xv4r-q6gr-6pfg` publishes
+   `< 0.13.3`, which matches every older release, while its text says *"Affected: 0.12.0 to
+   0.13.2. CalDAV support was introduced in version 0.12.0"* — it never applied to the pin
+   we shipped. Read the advisory body, not just the range. And **advisories are not the
+   whole picture**: upstream also fixes security bugs without filing one — loopback SMTP
+   delivery has been refused since 0.12.0, for instance — and those fixes are not
+   backported to older lines.
 
 ## Supported versions
 

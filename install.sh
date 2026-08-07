@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-06 — replace non-portable `cp -n` so a clean first run prints no
-# warning. Structure follows the Google Shell Style Guide (main function, readonly
-# constants, errors to STDERR).
+# Last-touched: 2026-08-07 — mail-server defaults moved to stalwartlabs/stalwart v0.13.4,
+# the patch floor for GHSA-8jqj-qj5p-v5rr. Structure follows the Google Shell Style Guide
+# (main function, readonly constants, errors to STDERR).
 #
 # Generates .env with STRONG RANDOM secrets (nothing hardcoded), wires the chosen
 # edition, and brings the stack up. Re-run with --force to regenerate .env.
@@ -16,8 +16,13 @@ readonly ENV_FILE="${REPO_DIR}/.env"
 # Image coordinates verified 2026-08-05 against each registry. Change deliberately, and
 # re-pin the digest when you do: a tag can be moved by whoever can push, a digest cannot.
 # Every image here is pinned — no `latest`, no empty digest.
-readonly STALWART_VERSION_DEFAULT="v0.11.8"
-readonly STALWART_DIGEST_DEFAULT="@sha256:a5ce0615640b29a01c0a55b9fff6dd2c9dfa261ec87862c22e4db7e0254cdb1f"
+# These MUST match .env.example: install.sh writes them into .env and docker-compose.yml
+# interpolates them. A mismatch produces an image reference that does not resolve, and the
+# suite guards it ("install.sh image defaults match .env.example").
+# Stalwart is pinned at 0.13.4, the patch floor for GHSA-8jqj-qj5p-v5rr. The image was
+# renamed from stalwartlabs/mail-server at 0.12.0, so older tags do NOT exist under this name.
+readonly STALWART_VERSION_DEFAULT="v0.13.4"
+readonly STALWART_DIGEST_DEFAULT="@sha256:5d0e3a332dfb3db8852d9fabb76c1b479b5ee11aa45607d7d48fb7e9b2d3a1bc"
 readonly BULWARK_IMAGE_DEFAULT="ghcr.io/bulwarkmail/webmail"
 # Patch floor is 1.4.11: anything below it carries CVE-2026-34834 (auth bypass) and
 # CVE-2026-34833 (password disclosure). See SECURITY.md before changing this.
