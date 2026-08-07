@@ -105,6 +105,21 @@ writes your `.env` — `install.sh` — is **not** reachable by CodeQL. `shellch
 CI and is enforced there, but shellcheck is a linter, not a taint-tracking analyser. If you
 are relying on "this repo runs CodeQL" as assurance about the installer, do not.
 
+**One consequence worth stating, because it makes a clean CodeQL result misleading.**
+`scripts/seed_demo.py` writes its generated demo password to `.demo-password` at mode 600,
+and CodeQL flags that as `py/clear-text-storage-sensitive-data`. It is right: the password is
+stored in the clear. But `install.sh` does **exactly the same thing** — it writes
+`STALWART_FALLBACK_ADMIN_SECRET` and `WEBMAIL_SESSION_SECRET` into `.env` in the clear, at
+mode 600 — and is never flagged, because CodeQL cannot read Shell. The difference between the
+two files is not the risk; it is which language the analyser supports.
+
+The alert on `seed_demo.py` is dismissed as *won't fix*, for a reason that applies to both
+files: a credential an operator has to be able to use has to be retrievable, and every
+mechanism that makes it retrievable is clear-text storage by this rule's definition. What can
+be done — a file at mode 600 rather than a terminal, gitignored, easy to delete — is done.
+Do not read the dismissal as "this is fine"; read it as "this is the same trade-off `.env`
+already makes, now visible because the language happens to be analysable."
+
 Verify the split yourself:
 
 ```bash

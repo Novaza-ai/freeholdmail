@@ -5,6 +5,7 @@
 # Secrets and per-host configuration
 .env
 .env.*
+.demo-password
 !.env.example
 
 # Materialised config (carries your domain; the mail server also rewrites config.toml)

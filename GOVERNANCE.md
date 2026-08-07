@@ -1,5 +1,5 @@
-<!-- Last-touched: 2026-08-05 — created for the 0.1.0 release: state who decides, and what
-     happens to users if the sponsoring company loses interest. -->
+<!-- Last-touched: 2026-08-07 — the approval rule now matches what a one-person project can
+     actually enforce, and names what IS enforced on main. -->
 # Governance
 
 This project is small and openly says so. This document exists because the question
@@ -18,8 +18,25 @@ close.
 
 ## How decisions are made
 
-1. **Ordinary changes** — open a pull request. It needs one maintainer approval and green
-   CI. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+1. **Ordinary changes** — open a pull request. It needs **green CI**, and **one maintainer
+   approval once there is a second maintainer to give it**. See
+   [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+   That second clause is not a loophole, it is the honest state of a one-person project.
+   Requiring an approval nobody can give would stop the project, and pretending the rule is
+   enforced when it cannot be is worse than saying so. What *is* enforced today, on `main`
+   and on administrators too:
+
+   - every change arrives as a pull request — direct pushes are refused;
+   - all five CI checks must pass before merge;
+   - CodeQL, `shellcheck`, `yamllint` and the 191-check static suite run on the pull
+     request, not after the fact.
+
+   Between 2026-08-05 and 2026-08-07 this document said approval was required while every
+   commit went straight to `main`. That gap is closed by making the enforceable part real
+   and stating the rest plainly, rather than by leaving an aspiration in a governing
+   document. When `MAINTAINERS.md` lists two people, required approval turns on and this
+   paragraph goes.
 2. **Changes to scope, security posture, or licensing** — open an issue first and let it
    sit long enough for objections. These are the changes that are expensive to reverse
    after a release.

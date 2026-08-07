@@ -14,6 +14,7 @@
 #   FREEHOLD_API=http://127.0.0.1:8080 FREEHOLD_SUBMISSION_PORT=587 scripts/seed_demo.py
 
 import base64
+import pathlib
 import json
 import os
 import secrets
@@ -173,7 +174,20 @@ def main():
     send_messages()
     print(f"\nDone. Sign in as {OWNER}@{DOMAIN}")
     if not os.environ.get("FREEHOLD_DEMO_PASSWORD"):
-        print(f"Generated demo password: {DEMO_PASSWORD}")
+        # Written, not printed. install.sh established this pattern for every secret it
+        # generates: umask 077, then chmod 600, and the value never reaches a terminal.
+        # A password on stdout survives in scrollback, in `script` logs and in any CI job
+        # that ever runs this — CodeQL flags it as py/clear-text-logging-sensitive-data and
+        # is right to. Reading it back is one command; leaking it is silent.
+        path = pathlib.Path(".demo-password")
+        prev = os.umask(0o077)
+        try:
+            path.write_text(DEMO_PASSWORD + "\n", encoding="utf-8")
+        finally:
+            os.umask(prev)
+        path.chmod(0o600)
+        print(f"Generated demo password written to {path} (mode 600).")
+        print(f"Read it with:  cat {path}")
         print("Set FREEHOLD_DEMO_PASSWORD to choose your own on the next run.")
     return 0
 
