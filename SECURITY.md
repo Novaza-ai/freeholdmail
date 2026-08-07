@@ -1,7 +1,7 @@
 # Security Policy
 
-<!-- Last-touched: 2026-08-07 — the mail-server advisory is closed by the 0.13.4 upgrade;
-     weakness 6 now records both pin failures and how the second was missed. -->
+<!-- Last-touched: 2026-08-07 — CodeQL enabled; records what static analysis covers and,
+     more importantly, that Shell (the installer) is outside it. -->
 
 ## Reporting a vulnerability
 
@@ -87,6 +87,31 @@ is not exercised at all (the suite never maps port 465). Treat every string here
 | Implicit TLS on 465 | **TLS 1.3**, `TLS_AES_256_GCM_SHA384` | `openssl s_client -connect :465` |
 | Secrets in the repo | **None** | `grep -rnE '(SECRET\|PASSWORD\|TOKEN\|API_KEY)=[A-Za-z0-9+/=_-]{8,}'` |
 | `.env` permissions | **0600**, created under `umask 077` | `install.sh` |
+
+## What static analysis actually covers
+
+CodeQL runs on every push and pull request via GitHub's default setup. **It does not cover
+most of this repository**, and the difference matters more than the badge does:
+
+| Language | Bytes | Analysed by |
+|----------|-------|-------------|
+| **Shell** — `install.sh`, `tests/test_config.sh`, `tests/test_e2e.sh`, `scripts/make_gif.sh` | **53,536** | **`shellcheck` only. CodeQL has no Shell support.** |
+| Python — `tests/e2e_mail.py`, `scripts/seed_demo.py` | 10,725 | CodeQL + `pycodestyle` |
+| JavaScript — `scripts/capture_tour.mjs` | 4,157 | CodeQL |
+| GitHub Actions workflows | — | CodeQL (`actions` pack) |
+
+So the largest single file in this project, and the one that generates your secrets and
+writes your `.env` — `install.sh` — is **not** reachable by CodeQL. `shellcheck` runs on it in
+CI and is enforced there, but shellcheck is a linter, not a taint-tracking analyser. If you
+are relying on "this repo runs CodeQL" as assurance about the installer, do not.
+
+Verify the split yourself:
+
+```bash
+gh api repos/Novaza-ai/freeholdmail/code-scanning/analyses \
+  --jq '[.[] | select(.tool.name=="CodeQL") | .category] | unique'
+gh api repos/Novaza-ai/freeholdmail/languages
+```
 
 ## Known weaknesses you must plan around
 
