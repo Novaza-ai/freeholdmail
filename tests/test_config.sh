@@ -110,7 +110,7 @@ else
 fi
 # RUNBOOK §4 makes operators produce mail-store archives, database dumps and a copy of
 # .env. Any of those inside the working tree is one `git add -A` from being published.
-for pattern in '.env' '.env.*' '*.pem' '*.key' '*.crt' 'certs/' \
+for pattern in '.env' '.env.*' '.demo-password' '*.pem' '*.key' '*.crt' 'certs/' \
                'config/nginx/mail.conf' 'config/nginx/mail.sso.conf' \
                'config/stalwart/config.toml' \
                'backup/' 'backups/' '*.bak' '*.tar.gz' '*.sql' '*.sql.gz' '*.dump'; do
