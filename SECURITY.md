@@ -1,8 +1,9 @@
 # Security Policy
 
-<!-- Last-touched: 2026-08-13 — new section: the controls this project does not claim, and why
-     each one is absent (release signing, fuzzing, two plan-gated secret-scanning features, and
-     Dependabot's blindness to variable-interpolated image pins). -->
+<!-- Last-touched: 2026-08-13 — pin currency is no longer a manual duty: records
+     scripts/check_pins.py and the three things it refuses to do (fail-open, range-matching,
+     non-expiring acknowledgements). Same-day earlier edit added the controls-not-claimed
+     section (release signing, fuzzing, two plan-gated secret-scanning features). -->
 
 ## Reporting a vulnerability
 
@@ -202,10 +203,35 @@ returns `404`. So we do not ship that config, because a config that produces no 
 while appearing to watch your images is the same failure as a workflow that looks like a scanner
 and only uploads a file.
 
-**Pin currency is therefore a manual duty on this project**, and weakness 6 records that the duty
-was missed twice. Until a scheduled check exists that compares each pin in `.env.example` against
-upstream releases and advisories, read "watch the upstream advisories" as a real task needing a
-real owner, not a sentence in a policy.
+**Pin currency was therefore a manual duty on this project**, and weakness 6 records that the duty
+was missed twice. Since 2026-08-13 it is automated by `scripts/check_pins.py`, run weekly by
+`.github/workflows/pin-currency.yml` — see below. Dependabot still cannot do it; this check reads
+the pins out of `.env.example` itself.
+
+### The pin-currency check, and what it refuses to do
+
+```bash
+scripts/check_pins.py        # 0 = current, 1 = a pin is behind, 2 = a pin could not be checked
+```
+
+`scripts/pin_sources.json` declares, per image, where upstream lives and which version line this
+project follows. No component name, URL or policy sits in the script, so changing what is
+followed is a change to data. Three design choices are worth stating because each one is a
+failure mode this project has already met:
+
+- **An unreachable upstream exits `2`, which fails.** A currency check that goes green when it
+  could not reach the registry teaches you to trust a board that measured nothing.
+- **Advisories are printed as context and never decide the exit code.** GitHub's
+  `vulnerable_version_range` carries no lower bound (weakness 6), so range-matching alone would
+  report advisories against releases they never applied to. A human reads the list.
+- **A deliberate lag must be declared and must expire.** `acknowledged_lag` carries a reason and
+  a `review_by` date; before that date the lag reports and passes, on it the check **fails** so
+  the decision is re-argued. An acknowledgement that never expires is a muted alarm. Narrowing a
+  component's `line` to the version already pinned would also silence the check — do not.
+
+The suite asserts the check's own coverage: every `*_DIGEST` in `.env.example` must appear in
+`pin_sources.json`, so adding an image without declaring it fails CI rather than quietly
+shrinking what is watched.
 
 ## Known weaknesses you must plan around
 
