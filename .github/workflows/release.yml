@@ -1,0 +1,88 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Novaza Solution JSC
+# Last-touched: 2026-08-13 — new: the first three releases carried ZERO assets. A consumer had
+# nothing to check a download against, nothing saying which images the release pins, and no
+# statement of where the artifact came from. GitHub's auto-generated source tarball is not a
+# substitute: it is generated on request and is not covered by anything.
+#
+# What this attaches to every release, and why each one:
+#   *.tar.gz             a source archive built from the tag with `git archive`, so it is
+#                        byte-reproducible from the tag alone rather than generated on demand.
+#   sbom.spdx.json       which five images this release pins, at which digests, under which
+#                        licences. For a deployment project the images ARE the bill of
+#                        materials — a list of the shell scripts would describe nothing.
+#   SHA256SUMS           so a download can be checked without trusting the transport.
+#   *.intoto.jsonl       SLSA build provenance: a signed statement, from GitHub's own OIDC
+#                        identity, of which workflow at which commit produced those bytes.
+#                        This is what makes the checksums worth anything — a checksum file
+#                        published beside the artifact by an attacker matches just as well.
+#
+# Deliberately NOT a GPG signature over the tag: that needs a long-lived private key held by
+# one person, and losing or leaking it is a worse failure than the problem it solves. Sigstore
+# provenance is keyless and verifiable by anyone with `gh attestation verify`.
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  artifacts:
+    name: Build, attest and attach
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write       # upload assets onto the release
+      id-token: write       # request the OIDC token the attestation is signed against
+      attestations: write   # record the provenance
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          persist-credentials: false
+
+      - name: Build the artifacts
+        id: build
+        env:
+          # Through the environment, never interpolated into the script body: a tag is
+          # attacker-influenced text, and `${{ }}` inside a run block is a shell injection.
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          # The tag's own commit date, so re-running this workflow produces the same document
+          # rather than one that differs only by when it was built.
+          created="$(git log -1 --format=%cI "$TAG")"
+          git archive --format=tar.gz \
+            --prefix="freeholdmail-${TAG}/" -o "dist/freeholdmail-${TAG}.tar.gz" "$TAG"
+          scripts/make_sbom.py --version "$TAG" --created "$created" > dist/sbom.spdx.json
+          ( cd dist && sha256sum ./*.tar.gz sbom.spdx.json > SHA256SUMS )
+          cat dist/SHA256SUMS
+
+      - name: Attest build provenance
+        id: attest
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: 'dist/*.tar.gz, dist/sbom.spdx.json'
+
+      - name: Attach everything to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+          BUNDLE: ${{ steps.attest.outputs.bundle-path }}
+        run: |
+          set -euo pipefail
+          # Scorecard's Signed-Releases check looks for a provenance file by NAME among the
+          # release assets (*.intoto.jsonl), so the bundle is attached under that name as
+          # well as being recorded in the attestations API.
+          cp "$BUNDLE" "dist/freeholdmail-${TAG}.intoto.jsonl"
+          gh release upload "$TAG" \
+            "dist/freeholdmail-${TAG}.tar.gz" \
+            dist/sbom.spdx.json \
+            dist/SHA256SUMS \
+            "dist/freeholdmail-${TAG}.intoto.jsonl" \
+            --clobber
+          echo "attached:"; gh release view "$TAG" --json assets --jq '.assets[].name'

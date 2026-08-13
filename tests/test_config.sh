@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-07 — new guard: install.sh image defaults must match .env.example.
+# Last-touched: 2026-08-13 — four guards added for defects an audit found, each of which had
+# been claimed somewhere and asserted nowhere: the shipped .env.example must not resolve to a
+# runnable config; only JMAP may reach the mail server through nginx; every workflow must
+# parse, not just ci.yml; the SBOM must describe every pinned image.
+# Before that, 2026-08-07 — new guard: install.sh image defaults must match .env.example.
 # Also: per-row staleness guard, repaired SHA guard, secret scan limited to tracked files.
 #
 # Fast (seconds, no images pulled). Run this before every commit; CI runs it on every push.
@@ -44,12 +48,18 @@ check "tests/test_e2e.sh parses" bash -n tests/test_e2e.sh
 # repo, so the test would dirty the tree it is checking.
 check "e2e_mail.py parses" \
   python3 -c "import ast; ast.parse(open('tests/e2e_mail.py').read())"
-# A workflow that does not parse never runs, so CI would go silently green-by-absence.
-check "CI workflow is valid YAML" \
-  python3 -c "import yaml,sys; yaml.safe_load(open('.github/workflows/ci.yml'))"
+# A workflow that does not parse never runs, so CI would go silently green-by-absence. Every
+# workflow, not just ci.yml: this named one file, so the three added since were unchecked —
+# the same shrinking-list failure the Python lint step already had to be fixed for.
+check "every workflow is valid YAML" \
+  python3 -c "
+import glob, sys, yaml
+files = sorted(glob.glob('.github/workflows/*.yml'))
+sys.exit(1) if not files else [yaml.safe_load(open(f)) for f in files]"
 if command -v shellcheck >/dev/null 2>&1; then
   check "shellcheck install.sh" shellcheck install.sh
-  check "shellcheck tests/*.sh" shellcheck tests/test_config.sh tests/test_e2e.sh
+  check "shellcheck tests/*.sh" \
+    shellcheck tests/test_config.sh tests/test_e2e.sh tests/lint_env.sh
 else
   skip "shellcheck install.sh (shellcheck not installed)"
   skip "shellcheck tests/*.sh (shellcheck not installed)"
@@ -61,14 +71,50 @@ else
 fi
 
 echo "== compose =="
-check "base edition validates" \
-  docker compose --env-file .env.example -f docker-compose.yml config -q
-check "SSO edition validates" \
+# Everything below lints the SHAPE of the compose files, which must not require real secrets.
+# Since the services now mark their secrets required (${VAR:?...}), .env.example alone no
+# longer resolves — deliberately — so linting needs an env with those filled in. The list of
+# what to fill is read out of the compose files by tests/lint_env.sh, never restated.
+LINT_ENV="$(mktemp)"
+trap 'rm -f "$LINT_ENV"' EXIT
+if ! tests/lint_env.sh "$LINT_ENV" 2>/dev/null; then
+  bad "could not build the lint env (tests/lint_env.sh) — the compose checks did NOT run"
+fi
+
+# The defect this pins down: `cp .env.example .env` (which CONTRIBUTING.md documents) used to
+# produce a stack with an EMPTY session key and an EMPTY admin secret, and compose resolved it
+# without a word. Measured 2026-08-13: the webmail then starts and serves traffic, so nothing
+# downstream catches it either. The shipped example must not be startable.
+refute "the shipped .env.example alone cannot resolve a runnable config" \
   docker compose --env-file .env.example -f docker-compose.yml -f docker-compose.sso.yml config -q
+
+# A variable marked required in compose but shipped with a VALUE in .env.example would satisfy
+# the guard above while handing every operator the same published secret — worse than empty.
+# shellcheck disable=SC2317  # both helpers run indirectly, through check()
+required_compose_vars() {
+  # Comment lines first, or a header that mentions the ${VAR:?} form in prose is read as a
+  # variable named VAR. That is not hypothetical: it is how this check first went red.
+  grep -hv '^[[:space:]]*#' docker-compose.yml docker-compose.sso.yml \
+    | grep -oE '\$\{[A-Z_]+:\?' | sed 's/^\${//; s/:?$//' | sort -u
+}
+# shellcheck disable=SC2317  # runs indirectly, through check()
+every_required_var_ships_empty() {
+  local v missing=0
+  while read -r v; do
+    grep -qE "^${v}=$" .env.example || { echo "not shipped empty: $v"; missing=1; }
+  done < <(required_compose_vars)
+  return "$missing"
+}
+check "every required compose secret ships empty in .env.example" every_required_var_ships_empty
+
+check "base edition validates" \
+  docker compose --env-file "$LINT_ENV" -f docker-compose.yml config -q
+check "SSO edition validates" \
+  docker compose --env-file "$LINT_ENV" -f docker-compose.yml -f docker-compose.sso.yml config -q
 
 # The SSO edition once pointed KC_DB_URL at a `db` host that no service defined, so it
 # could never start. Assert the service exists rather than trusting the file to look right.
-services="$(docker compose --env-file .env.example -f docker-compose.yml -f docker-compose.sso.yml config --services 2>/dev/null | sort | tr '\n' ' ')"
+services="$(docker compose --env-file "$LINT_ENV" -f docker-compose.yml -f docker-compose.sso.yml config --services 2>/dev/null | sort | tr '\n' ' ')"
 if [[ "$services" == *"db"* && "$services" == *"idp"* ]]; then
   ok "SSO edition defines db and idp (got: ${services% })"
 else
@@ -121,7 +167,7 @@ refute "runbook keeps backups out of the working tree" \
   grep -q 'PWD/backup' docs/RUNBOOK.md
 
 echo "== supply chain =="
-resolved="$(docker compose --env-file .env.example -f docker-compose.yml -f docker-compose.sso.yml config 2>/dev/null | grep -E '^[[:space:]]+image:')"
+resolved="$(docker compose --env-file "$LINT_ENV" -f docker-compose.yml -f docker-compose.sso.yml config 2>/dev/null | grep -E '^[[:space:]]+image:')"
 pinned="$(grep -c '@sha256:' <<<"$resolved")"
 total="$(grep -c 'image:' <<<"$resolved")"
 # Assert against the RESOLVED config, never the raw compose files: those contain
@@ -171,7 +217,7 @@ refute "no privileged containers" grep -rq 'privileged:[[:space:]]*true' docker-
 # Container hardening, asserted on the RESOLVED config so an overlay cannot quietly drop it.
 # Every service must drop ALL capabilities, cap its memory and pids, and rotate its logs —
 # an unbounded container log fills the host disk and takes the mail server down with it.
-hardening="$(docker compose --env-file .env.example \
+hardening="$(docker compose --env-file "$LINT_ENV" \
   -f docker-compose.yml -f docker-compose.sso.yml config 2>/dev/null)"
 if [[ -z "$hardening" ]]; then
   bad "could not resolve compose config for the hardening checks (docker available?)"
@@ -196,6 +242,29 @@ print(f'{len(have)} {len(svcs)}')
   refute "no service keeps SYS_ADMIN" grep -q 'SYS_ADMIN' <<<"$hardening"
 fi
 
+# The mail server's admin API lives on the same port as JMAP (8080), so what keeps it off the
+# internet is one nginx location pattern and nothing else. Compared as a STRING, not matched as
+# a regex: any widening at all — an added alternative, a dropped anchor, a trailing .* — has to
+# fail, and a regex written to allow "roughly this" would allow exactly the mistake it guards.
+# shellcheck disable=SC2317  # runs indirectly, through check()
+only_jmap_reaches_mailserver() {
+  local conf="$1" line found=0
+  local expected='location ~ ^/(jmap|\.well-known/jmap) {'
+  while IFS= read -r line; do
+    line="${line#"${line%%[![:space:]]*}"}"          # strip leading indentation
+    if [[ "$line" != "$expected" ]]; then
+      echo "$conf proxies to the mail server from an unexpected location: $line"
+      return 1
+    fi
+    found=1
+  done < <(awk '/^[[:space:]]*location /{loc=$0}
+                /proxy_pass[[:space:]]+http:\/\/mailserver/{print loc}' "$conf")
+  # No route at all is also a failure: it means the JMAP location was renamed or removed and
+  # this guard would otherwise pass by having nothing left to inspect.
+  [[ "$found" -eq 1 ]] || { echo "$conf: nothing routes to the mail server"; return 1; }
+  return 0
+}
+
 # The two nginx templates must not drift apart: the SSO edition is the one users reach for
 # when they care about identity, so it must never be the laxer of the two. nginx's own
 # defaults enable TLSv1/TLSv1.1 and a 1m body limit, so every directive below is a
@@ -217,6 +286,12 @@ for conf in config/nginx/mail.conf.example config/nginx/mail.sso.conf.example; d
     grep -qE '^\s*client_max_body_size\s+[0-9]+m;' "$conf"
   refute "$(basename "$conf") does not hardcode Connection: upgrade" \
     grep -q 'proxy_set_header Connection "upgrade"' "$conf"
+  # The property this file itself calls load-bearing — "the mail server's admin API must
+  # never be reachable from the public internet" — and, until 2026-08-13, the only nginx
+  # property with no guard at all. Eight others were asserted; widening the location to
+  # ^/(jmap|api) would have passed every one of them.
+  check "$(basename "$conf") routes only JMAP to the mail server" \
+    only_jmap_reaches_mailserver "$conf"
 done
 refute "keycloak database is not published to the host" \
   bash -c "grep -A12 '^  db:' docker-compose.sso.yml | grep -qE '^[[:space:]]+ports:'"
@@ -482,11 +557,34 @@ sys.exit(1 if missing or extra else 0)'
   check "nothing outside the publish allow-list (scripts/check_disclosure.py)" \
     python3 scripts/check_disclosure.py
   check "scripts/check_disclosure.py compiles" python3 -m py_compile scripts/check_disclosure.py
+  check "scripts/make_sbom.py compiles" python3 -m py_compile scripts/make_sbom.py
+  # The SBOM is a release artifact, so it is only ever built at release time — where a broken
+  # generator would be found by a red release, after the tag exists. Build one here, on every
+  # push, and assert it actually describes the images this repository pins. An SBOM that
+  # silently lists fewer components than the stack runs is worse than shipping none.
+  # shellcheck disable=SC2317  # runs indirectly, through check()
+  sbom_describes_every_pinned_image() {
+    python3 - <<'PYEOF'
+import json, subprocess, sys
+out = subprocess.run(["scripts/make_sbom.py", "--version", "v0.0.0-test",
+                      "--created", "2026-01-01T00:00:00Z"],
+                     capture_output=True, text=True)
+if out.returncode != 0:
+    print(out.stderr.strip()); sys.exit(1)
+document = json.loads(out.stdout)
+pinned = {c["digest_var"] for c in json.load(open("scripts/pin_sources.json"))["components"]}
+# one package per pinned image, plus the repository itself
+sys.exit(0 if len(document["packages"]) == len(pinned) + 1 else 1)
+PYEOF
+  }
+  check "the SBOM describes every pinned image" sbom_describes_every_pinned_image
 else
   skip "every pinned image in .env.example is covered by scripts/pin_sources.json (no python3)"
   skip "scripts/check_pins.py compiles (no python3)"
   skip "nothing outside the publish allow-list (no python3)"
   skip "scripts/check_disclosure.py compiles (no python3)"
+  skip "scripts/make_sbom.py compiles (no python3)"
+  skip "the SBOM describes every pinned image (no python3)"
 fi
 
 echo

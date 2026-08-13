@@ -1,10 +1,12 @@
 # Security Policy
 
-<!-- Last-touched: 2026-08-13 — state the secret-scanning tier requirement without naming this
-     account's billing tier, and drop the org-scoped probe command: neither is needed to explain
-     why the two features are off, and an org's plan is not public data. Same-day earlier edits
-     recorded scripts/check_pins.py and its three refusals, and added the controls-not-claimed
-     section (release signing, fuzzing, the two tier-gated secret-scanning features). -->
+<!-- Last-touched: 2026-08-13 (later same day) — records the empty-secret defect and its fix,
+     reverses the "releases will ship no assets" position with the reason it no longer holds,
+     and re-measures the static-analysis table, which named 2 Python files when there were 4
+     and was 10,431 bytes light on Shell. Earlier the same day: stated the secret-scanning tier
+     requirement without naming this account's billing tier and dropped the org-scoped probe
+     command; before that, recorded scripts/check_pins.py and its three refusals, and added the
+     controls-not-claimed section (release signing, fuzzing, tier-gated secret scanning). -->
 
 ## Reporting a vulnerability
 
@@ -90,6 +92,31 @@ is not exercised at all (the suite never maps port 465). Treat every string here
 | Implicit TLS on 465 | **TLS 1.3**, `TLS_AES_256_GCM_SHA384` | `openssl s_client -connect :465` |
 | Secrets in the repo | **None** | `grep -rnE '(SECRET\|PASSWORD\|TOKEN\|API_KEY)=[A-Za-z0-9+/=_-]{8,}'` |
 | `.env` permissions | **0600**, created under `umask 077` | `install.sh` |
+| Starting with empty secrets | **Refused**, naming the variable — measured exit 15 | `docker compose --env-file .env.example config -q` |
+
+### A stack with no secrets used to start, and say nothing (fixed 2026-08-13)
+
+`CONTRIBUTING.md` documented `cp .env.example .env` as an alternative to running the installer.
+The example ships every secret empty, and compose interpolated them without complaint, so that
+path produced a running stack whose session signing key, mail-server admin secret, OAuth client
+secret and Keycloak/database passwords were all the empty string. Nothing downstream caught it
+either: the webmail image at its pinned digest starts with `SESSION_SECRET=""`, answers HTTP,
+and logs nothing about it — measured on 2026-08-13.
+
+Both compose files now mark those five variables required (`${VAR:?…}`). Copying the example
+and running `up` stops with the name of the first variable that needs a value. Three checks
+hold the fix in place, because the fix is one deletion away from being undone:
+
+- `tests/test_config.sh` asserts the shipped `.env.example` **cannot** resolve a runnable config;
+- it also asserts every required variable still ships *empty*, since shipping a real value would
+  satisfy the first check while handing every operator the same published secret;
+- `.github/workflows/ci.yml` repeats the refusal as its own step, so a green board cannot mean
+  "the markers were removed".
+
+What is **not** claimed: that an empty `SESSION_SECRET` was exploitable. The webmail is a
+third-party image and nothing in it references that variable by name where it can be read from
+outside, so the consequence was never established. The defect being fixed is that this project
+shipped a documented path to a silently misconfigured stack — not a proven forgery.
 
 ## What static analysis actually covers
 
@@ -98,9 +125,15 @@ most of this repository**, and the difference matters more than the badge does:
 
 | Language | Bytes | Analysed by |
 |----------|-------|-------------|
-| **Shell** — `install.sh`, `tests/test_config.sh`, `tests/test_e2e.sh`, `scripts/make_gif.sh` | **53,536** | **`shellcheck` only. CodeQL has no Shell support.** |
-| Python — `tests/e2e_mail.py`, `scripts/seed_demo.py` | 10,725 | CodeQL + `pycodestyle` |
+| **Shell** — 5 files: `install.sh`, `tests/test_config.sh`, `tests/test_e2e.sh`, `tests/lint_env.sh`, `scripts/make_gif.sh` | **63,967** | **`shellcheck` only. CodeQL has no Shell support.** |
+| Python — 5 files: `tests/e2e_mail.py`, `scripts/seed_demo.py`, `scripts/check_pins.py`, `scripts/check_disclosure.py`, `scripts/make_sbom.py` | 39,819 | CodeQL + `pycodestyle` |
 | JavaScript — `scripts/capture_tour.mjs` | 4,157 | CodeQL |
+
+<!-- These byte counts are measured, not estimated:
+     git ls-files '*.sh' | xargs cat | wc -c    (and '*.py', '*.mjs')
+     The previous version of this table named two Python files when the repository already
+     had four, and was 10,431 bytes light on Shell — a table that is only rewritten when
+     someone remembers is a claim that decays. Re-measure it when adding a file. -->
 | GitHub Actions workflows | — | CodeQL (`actions` pack) |
 
 So the largest single file in this project, and the one that generates your secrets and
@@ -138,20 +171,44 @@ might reasonably expect, each is visible as a gap in an automated audit, and non
 done. The reason is stated so you can judge it instead of taking it on trust. Measured
 2026-08-13.
 
-### Release artefacts are not signed, because there are none
+### Release artefacts: the position here changed on 2026-08-13
 
-OpenSSF Scorecard reports `Signed-Releases` as inconclusive (`-1`) for this repository, and it
-will stay that way. The latest tag ships zero assets:
+This section used to argue that releases would ship **no** assets, on the grounds that the
+install path is a clone rather than a download, that attaching a tarball would create an
+artefact nobody installs from, and that such an artefact could drift from the commit it claims
+to represent. The first two points still hold. The third does not, and it was carrying the
+argument: `git archive` derives the tarball **from the tag**, deterministically, so it cannot
+drift from the commit — reproducing it is one command.
+
+What actually moved the decision is that a release now carries something a clone cannot give
+you. `.github/workflows/release.yml` attaches four files to every published release:
+
+| Asset | Why it exists |
+|-------|---------------|
+| `freeholdmail-<tag>.tar.gz` | `git archive` from the tag — reproducible from the tag alone |
+| `sbom.spdx.json` | the five images this release pins, at their digests, with licences |
+| `SHA256SUMS` | check a download without trusting the transport |
+| `freeholdmail-<tag>.intoto.jsonl` | SLSA provenance: a signed statement of which workflow, at which commit, produced those bytes |
+
+The SBOM is the one that justifies the rest. For a deployment project the images **are** the
+bill of materials, and "which digests would this release actually run?" is a question a
+consumer cannot answer from a clone without running tooling. The provenance is what makes the
+checksums worth anything: a `SHA256SUMS` file published beside an artefact by whoever published
+the artefact proves nothing on its own.
+
+Verify a release without trusting this repository's word for any of it:
 
 ```bash
-gh api repos/Novaza-ai/freeholdmail/releases --jq '.[] | "\(.tag_name) assets=\(.assets|length)"'
+gh attestation verify freeholdmail-<tag>.tar.gz --repo Novaza-ai/freeholdmail
+sha256sum -c SHA256SUMS
+git archive --format=tar.gz --prefix=freeholdmail-<tag>/ <tag> | sha256sum   # must match
 ```
 
-The documented install path is a clone, not a download — `git clone … && ./install.sh`. This
-repository builds no binary; it is compose files, configuration templates and a shell installer.
-Attaching a tarball so that something could be signed would create an artefact nobody installs
-from, which can then drift from the commit it claims to represent. A signature over the wrong
-thing is worse than no signature. If you want to verify what you cloned, verify the commit.
+**Still not claimed:** the git tags themselves are not GPG-signed, and are not going to be.
+That needs a long-lived private key held by one person; losing or leaking it is a worse failure
+than the problem it solves. Commits on `main` are signed and GitHub-verified (the ruleset
+requires it), and release provenance is keyless via Sigstore. If you want to verify what you
+cloned, verify the commit.
 
 ### There is no fuzzing harness, and adding one would be theatre
 

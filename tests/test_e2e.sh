@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-07 — JMAP discovery guard made version-independent and
+# Last-touched: 2026-08-13 — corrected the claim that this exercises "the defaults users get":
+# it exercises the shipped image pins and wiring, and generates every secret. The empty-secret
+# path it never covered is now refused by compose and asserted in tests/test_config.sh.
+# Before that, 2026-08-07 — JMAP discovery guard made version-independent and
 # origin-checked. End-to-end: stand the real stack up, send a real message, read it back,
 # assert the security defaults, then destroy everything.
 #
@@ -60,7 +63,14 @@ ADMIN_SECRET="$(gen)"
 ALICE_PW="$(gen)"
 BOB_PW="$(gen)"
 
-# Start from the shipped .env.example so the test exercises the defaults users get.
+# Start from the shipped .env.example so the test exercises the shipped IMAGE PINS, ports and
+# service wiring. It does NOT exercise the shipped secrets: every one of them is generated
+# below, because the example ships them empty and a stack with an empty session key is not the
+# thing under test here. That distinction used to be missing from this comment, which claimed
+# the test covered "the defaults users get" — it never covered the empty-secret path, which is
+# how an operator following `cp .env.example .env` reached a running stack with no session key
+# and nothing anywhere said a word. That path is now refused by compose itself
+# (${VAR:?} in both compose files) and asserted in tests/test_config.sh.
 sed -e "s|^MAIL_DOMAIN=.*|MAIL_DOMAIN=${MAIL_HOST}|" \
     -e "s|^TLS_FULLCHAIN=.*|TLS_FULLCHAIN=${WORK}/certs/fullchain.pem|" \
     -e "s|^TLS_PRIVKEY=.*|TLS_PRIVKEY=${WORK}/certs/privkey.pem|" \
