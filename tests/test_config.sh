@@ -476,9 +476,17 @@ for name in sorted(extra):
     print("%s is declared in pin_sources.json but no longer pinned in .env.example" % name)
 sys.exit(1 if missing or extra else 0)'
   check "scripts/check_pins.py compiles" python3 -m py_compile scripts/check_pins.py
+  # A public repository is a published surface. The manual pre-push checklist missed an
+  # account-level disclosure twice, because a checklist only covers what somebody thought to
+  # forbid. This asserts the inverse — nothing outside the publish allow-list — on every push.
+  check "nothing outside the publish allow-list (scripts/check_disclosure.py)" \
+    python3 scripts/check_disclosure.py
+  check "scripts/check_disclosure.py compiles" python3 -m py_compile scripts/check_disclosure.py
 else
   skip "every pinned image in .env.example is covered by scripts/pin_sources.json (no python3)"
   skip "scripts/check_pins.py compiles (no python3)"
+  skip "nothing outside the publish allow-list (no python3)"
+  skip "scripts/check_disclosure.py compiles (no python3)"
 fi
 
 echo

@@ -1,8 +1,8 @@
 # Changelog
 
-<!-- Last-touched: 2026-08-13 — record the pin-currency check and the three behind-pins its first
-     run found. Same-day earlier edit cut 0.3.0 (advisory fix, CodeQL, governance split,
-     controls this project declines to claim). -->
+<!-- Last-touched: 2026-08-13 — record the publish allow-list check and CI linting every tracked
+     Python file. Same-day earlier edits recorded the pin-currency check and cut 0.3.0 (advisory
+     fix, CodeQL, governance split, controls this project declines to claim). -->
 
 All notable changes to this repo. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -30,6 +30,22 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Both were found by `scripts/check_pins.py` on its first run, not by an audit.
 
 ### Added
+- **A publish allow-list, enforced on every push.** `scripts/check_disclosure.py` fails the static
+  suite when the tree mentions an email domain, host or IP address that
+  `scripts/disclosure_policy.json` does not list, or matches a shape that is wrong to publish
+  whoever owns it — an organisation-scoped API probe, a billing-plan field, an absolute home
+  directory.
+  It is an **allow-list on purpose**. A deny-list would have to name the hosts and projects it
+  guards against, and a public file naming them *is* the disclosure it claims to prevent. An
+  allow-list contains only values already meant to be public, so publishing the policy costs
+  nothing — and the categories nobody thought to forbid are covered by construction.
+  `--history` scans every version of every file in every commit, for a periodic audit; a public
+  repository's history is a published surface too. Missing or malformed policy exits **2**, and
+  scanning zero files refuses to report success. Static suite **194 → 196**.
+- **CI now lints every tracked Python file** instead of two named by hand. Two scripts added this
+  month were invisible to that step because nobody remembered to add them; a hand-maintained lint
+  list shrinks silently every time the repository grows. The step fails if it finds no Python at
+  all, rather than passing on an empty list.
 - **The pin-currency gap is now automated.** `scripts/check_pins.py`, run weekly by
   `.github/workflows/pin-currency.yml`, reads every image pin out of `.env.example` and compares
   it against the upstream line declared in `scripts/pin_sources.json`. It closes the gap
