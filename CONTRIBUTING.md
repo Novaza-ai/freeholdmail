@@ -1,8 +1,8 @@
 # Contributing to Freehold Mail
 
-<!-- Last-touched: 2026-08-13 — "Checks that must pass" listed lint but not the three test
-     suites CI actually gates on, so a contributor could follow this file exactly and still
-     fail. Adds the suites, the two guards, and the expected output for each. -->
+<!-- Last-touched: 2026-08-13 — documents what the ruleset on `main` enforces, including the new
+     signed-commit requirement and the fact that GitHub signs the squash-merge so contributors need
+     no key of their own. Earlier the same day: named the three suites CI actually gates on. -->
 
 Thanks for helping. This repo is **orchestration only** — compose files, nginx config,
 an installer, and docs. Please read this before opening a PR, because where a change
@@ -104,6 +104,26 @@ grep -rnE '(SECRET|PASSWORD|TOKEN|API_KEY)=[A-Za-z0-9+/=_-]{8,}' . # must return
   from `.env`. If you need a new knob, add it to `.env.example` with a comment.
 - Pin images by digest. A tag is not a version.
 - Commit messages: imperative mood, one logical change per commit.
+
+## How `main` is protected
+
+A repository ruleset guards the default branch. Knowing what it enforces saves you a surprise at
+merge time:
+
+| Rule | What it means for you |
+|---|---|
+| Pull requests required | A direct push to `main` is refused. Work on a branch |
+| 5 status checks required | The suites in the section above — they must be green |
+| Linear history, no force-push, no deletion | `main` only ever moves forward |
+| **Signed commits required** | Only commits landing on `main` are checked. **GitHub signs the squash-merge for you**, so the normal pull-request flow satisfies this with no key of your own |
+| Conversation resolution required | Resolve review threads before merging |
+
+**Your branch commits do not need to be signed** — the rule applies to the default branch, not to
+yours. If you prefer to sign your own work anyway, GitHub's docs on commit signature verification
+cover GPG, SSH and S/MIME keys.
+
+Review approval is deliberately **not** required, because a single-maintainer project cannot approve
+its own work. `GOVERNANCE.md` says when that changes.
 
 ## Reporting security issues
 

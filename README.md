@@ -1,4 +1,5 @@
-<!-- Last-touched: 2026-08-06 — Contributors note updated: the older commits are now credited. -->
+<!-- Last-touched: 2026-08-13 — adds the OpenSSF Scorecard badge, now that the workflow
+     actually runs and has a score to show. -->
 **English** · [Tiếng Việt](docs/i18n/vi/README.md) · [日本語](docs/i18n/ja/README.md) · [简体中文](docs/i18n/zh-CN/README.md) · [繁體中文](docs/i18n/zh-TW/README.md) · [ไทย](docs/i18n/th/README.md) · [Bahasa Indonesia](docs/i18n/id/README.md) · [हिन्दी](docs/i18n/hi/README.md) · [Français](docs/i18n/fr/README.md) · [Español](docs/i18n/es/README.md) · [Português](docs/i18n/pt/README.md) · [Русский](docs/i18n/ru/README.md)
 — English is authoritative, see [`TRANSLATIONS.md`](TRANSLATIONS.md)
 
@@ -12,6 +13,7 @@ web client.
 > your data.
 
 [![CI](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg)](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Novaza-ai/freeholdmail/badge)](https://scorecard.dev/viewer/?uri=github.com/Novaza-ai/freeholdmail)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Components: AGPL-3.0](https://img.shields.io/badge/components-AGPL--3.0-orange.svg)](THIRD_PARTY_LICENSES.md)
 [![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-yellow.svg)](CHANGELOG.md)
