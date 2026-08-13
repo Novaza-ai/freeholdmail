@@ -1,4 +1,12 @@
 <!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
+    <img src="../../../docs/media/logo.png" width="460"
+         alt="Freehold Mail — lifelong ownership, secure connection">
+  </picture>
+</p>
+
 [English](../../../README.md) · **Bahasa Indonesia** — Versi bahasa Inggris adalah acuan resmi, lihat [`TRANSLATIONS.md`](../../../TRANSLATIONS.md)
 
 > **Terjemahan ini disediakan sebagai bentuk kemudahan.** Jika isinya bertentangan dengan versi bahasa Inggris,
