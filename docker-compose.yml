@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-07 — mail server moved to stalwartlabs/stalwart v0.13.4, closing
+# Last-touched: 2026-08-13 — secrets are now REQUIRED variables (${VAR:?}). Copying
+# .env.example to .env used to yield an empty session key and an empty admin secret, and the
+# stack started anyway without a word; compose now refuses and names the variable.
+# Before that, 2026-08-07: mail server moved to stalwartlabs/stalwart v0.13.4, closing
 # GHSA-8jqj-qj5p-v5rr. Verified image coordinates, digest pinning, container hardening,
 # healthchecks, and a persistent volume for webmail settings.
 #
@@ -28,7 +31,10 @@ services:
     restart: unless-stopped
     environment:
       STALWART_HOSTNAME: ${MAIL_DOMAIN}
-      STALWART_FALLBACK_ADMIN_SECRET: ${STALWART_FALLBACK_ADMIN_SECRET}
+      # Required, not defaulted: `cp .env.example .env` used to hand the mail server an EMPTY
+      # admin secret and start anyway, silently. `:?` makes compose refuse instead, naming the
+      # variable. Run ./install.sh, which generates it.
+      STALWART_FALLBACK_ADMIN_SECRET: ${STALWART_FALLBACK_ADMIN_SECRET:?unset or empty — run ./install.sh}
     volumes:
       - ./config/stalwart/config.toml:/opt/stalwart/etc/config.toml:ro
       - mailserver_data:/opt/stalwart
@@ -77,7 +83,10 @@ services:
     environment:
       APP_NAME: ${APP_NAME}
       JMAP_SERVER_URL: "https://${MAIL_DOMAIN}"
-      SESSION_SECRET: ${WEBMAIL_SESSION_SECRET}
+      # The session signing key. Measured 2026-08-13: the webmail starts happily with this
+      # empty and logs nothing about it, so nothing downstream will catch the mistake — the
+      # refusal has to happen here.
+      SESSION_SECRET: ${WEBMAIL_SESSION_SECRET:?unset or empty — run ./install.sh}
       # Full Mail edition: native login against the mail server, OAuth OFF.
       OAUTH_ENABLED: "false"
       # Without this volume+path, user settings are lost on every container replacement.

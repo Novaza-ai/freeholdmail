@@ -1,5 +1,15 @@
-<!-- Last-touched: 2026-08-13 — adds the OpenSSF Scorecard badge, now that the workflow
-     actually runs and has a score to show. -->
+<!-- Last-touched: 2026-08-13 — brand lockup at the head. Two files, not one: the wordmark is
+     navy and disappears on a dark background, so <picture> serves a lightened variant to
+     dark-mode readers. Keep the alt text descriptive — it is what a screen reader announces
+     for the project. -->
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/logo-dark.png">
+    <img src="docs/media/logo.png" width="460"
+         alt="Freehold Mail — lifelong ownership, secure connection">
+  </picture>
+</p>
+
 **English** · [Tiếng Việt](docs/i18n/vi/README.md) · [日本語](docs/i18n/ja/README.md) · [简体中文](docs/i18n/zh-CN/README.md) · [繁體中文](docs/i18n/zh-TW/README.md) · [ไทย](docs/i18n/th/README.md) · [Bahasa Indonesia](docs/i18n/id/README.md) · [हिन्दी](docs/i18n/hi/README.md) · [Français](docs/i18n/fr/README.md) · [Español](docs/i18n/es/README.md) · [Português](docs/i18n/pt/README.md) · [Русский](docs/i18n/ru/README.md)
 — English is authoritative, see [`TRANSLATIONS.md`](TRANSLATIONS.md)
 

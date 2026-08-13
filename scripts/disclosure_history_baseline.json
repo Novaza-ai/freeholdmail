@@ -1,0 +1,115 @@
+{
+  "_comment": [
+    "Findings that are already public and cannot be unpublished.",
+    "",
+    "These are versions of SECURITY.md, in commits that shipped before 2026-08-13, which",
+    "named the maintainer account's plan and queried organisation-scoped API fields. HEAD is",
+    "clean; the working-tree scan that CI runs on every push reports zero. What remains is",
+    "history, and rewriting history would NOT remove it: the old blobs stay reachable by",
+    "commit SHA until GitHub garbage-collects them, which only support can trigger. So the",
+    "decision on record is to leave the history intact and to state plainly what it contains.",
+    "",
+    "This file is an ALLOW-list of accepted, already-published findings, not a way to silence",
+    "the check. scripts/check_disclosure.py --history --baseline <this file> fails on anything",
+    "NOT listed here, and reports any entry here that no longer matches as a stale exemption.",
+    "Adding a line is a deliberate act: it says 'this is public, we know, and we accept it'."
+  ],
+  "accepted": [
+    [
+      "21c757b:SECURITY.md",
+      "forbidden pattern (?i)\\b(?:this|our)\\s+(?:org|organisation|organization|account)\\s+is\\s+on\\s+the\\b — Names the tier or plan this account holds. Say that a paid tier is required and link the vendor's documentation; which tier is held adds nothing a reader can act on."
+    ],
+    [
+      "21c757b:SECURITY.md",
+      "forbidden pattern \\.plan\\.name — GET /orgs/{org} returns the billing plan only to members. Publishing it discloses account information no reader of this repository needs."
+    ],
+    [
+      "21c757b:SECURITY.md",
+      "forbidden pattern advanced_security_enabled — An organisation-wide security posture field. State this repository's own security_and_analysis instead."
+    ],
+    [
+      "21c757b:SECURITY.md",
+      "forbidden pattern gh api orgs/ — An organisation-scoped API call reads account state that is wider than this repository and, for some fields, is visible only to members. Scope verification commands to the repository."
+    ],
+    [
+      "48f52f4:SECURITY.md",
+      "forbidden pattern (?i)\\b(?:this|our)\\s+(?:org|organisation|organization|account)\\s+is\\s+on\\s+the\\b — Names the tier or plan this account holds. Say that a paid tier is required and link the vendor's documentation; which tier is held adds nothing a reader can act on."
+    ],
+    [
+      "48f52f4:SECURITY.md",
+      "forbidden pattern \\.plan\\.name — GET /orgs/{org} returns the billing plan only to members. Publishing it discloses account information no reader of this repository needs."
+    ],
+    [
+      "48f52f4:SECURITY.md",
+      "forbidden pattern advanced_security_enabled — An organisation-wide security posture field. State this repository's own security_and_analysis instead."
+    ],
+    [
+      "48f52f4:SECURITY.md",
+      "forbidden pattern gh api orgs/ — An organisation-scoped API call reads account state that is wider than this repository and, for some fields, is visible only to members. Scope verification commands to the repository."
+    ],
+    [
+      "69b1288:SECURITY.md",
+      "forbidden pattern (?i)\\b(?:this|our)\\s+(?:org|organisation|organization|account)\\s+is\\s+on\\s+the\\b — Names the tier or plan this account holds. Say that a paid tier is required and link the vendor's documentation; which tier is held adds nothing a reader can act on."
+    ],
+    [
+      "69b1288:SECURITY.md",
+      "forbidden pattern \\.plan\\.name — GET /orgs/{org} returns the billing plan only to members. Publishing it discloses account information no reader of this repository needs."
+    ],
+    [
+      "69b1288:SECURITY.md",
+      "forbidden pattern advanced_security_enabled — An organisation-wide security posture field. State this repository's own security_and_analysis instead."
+    ],
+    [
+      "69b1288:SECURITY.md",
+      "forbidden pattern gh api orgs/ — An organisation-scoped API call reads account state that is wider than this repository and, for some fields, is visible only to members. Scope verification commands to the repository."
+    ],
+    [
+      "8fd8c6b:SECURITY.md",
+      "forbidden pattern (?i)\\b(?:this|our)\\s+(?:org|organisation|organization|account)\\s+is\\s+on\\s+the\\b — Names the tier or plan this account holds. Say that a paid tier is required and link the vendor's documentation; which tier is held adds nothing a reader can act on."
+    ],
+    [
+      "8fd8c6b:SECURITY.md",
+      "forbidden pattern \\.plan\\.name — GET /orgs/{org} returns the billing plan only to members. Publishing it discloses account information no reader of this repository needs."
+    ],
+    [
+      "8fd8c6b:SECURITY.md",
+      "forbidden pattern advanced_security_enabled — An organisation-wide security posture field. State this repository's own security_and_analysis instead."
+    ],
+    [
+      "8fd8c6b:SECURITY.md",
+      "forbidden pattern gh api orgs/ — An organisation-scoped API call reads account state that is wider than this repository and, for some fields, is visible only to members. Scope verification commands to the repository."
+    ],
+    [
+      "a8fceb3:SECURITY.md",
+      "forbidden pattern (?i)\\b(?:this|our)\\s+(?:org|organisation|organization|account)\\s+is\\s+on\\s+the\\b — Names the tier or plan this account holds. Say that a paid tier is required and link the vendor's documentation; which tier is held adds nothing a reader can act on."
+    ],
+    [
+      "a8fceb3:SECURITY.md",
+      "forbidden pattern \\.plan\\.name — GET /orgs/{org} returns the billing plan only to members. Publishing it discloses account information no reader of this repository needs."
+    ],
+    [
+      "a8fceb3:SECURITY.md",
+      "forbidden pattern advanced_security_enabled — An organisation-wide security posture field. State this repository's own security_and_analysis instead."
+    ],
+    [
+      "a8fceb3:SECURITY.md",
+      "forbidden pattern gh api orgs/ — An organisation-scoped API call reads account state that is wider than this repository and, for some fields, is visible only to members. Scope verification commands to the repository."
+    ],
+    [
+      "eb4bfa1:SECURITY.md",
+      "forbidden pattern (?i)\\b(?:this|our)\\s+(?:org|organisation|organization|account)\\s+is\\s+on\\s+the\\b — Names the tier or plan this account holds. Say that a paid tier is required and link the vendor's documentation; which tier is held adds nothing a reader can act on."
+    ],
+    [
+      "eb4bfa1:SECURITY.md",
+      "forbidden pattern \\.plan\\.name — GET /orgs/{org} returns the billing plan only to members. Publishing it discloses account information no reader of this repository needs."
+    ],
+    [
+      "eb4bfa1:SECURITY.md",
+      "forbidden pattern advanced_security_enabled — An organisation-wide security posture field. State this repository's own security_and_analysis instead."
+    ],
+    [
+      "eb4bfa1:SECURITY.md",
+      "forbidden pattern gh api orgs/ — An organisation-scoped API call reads account state that is wider than this repository and, for some fields, is visible only to members. Scope verification commands to the repository."
+    ]
+  ]
+}

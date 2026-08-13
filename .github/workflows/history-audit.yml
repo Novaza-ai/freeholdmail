@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Novaza Solution JSC
+# Last-touched: 2026-08-13 — new: nobody was watching the history.
+#
+# CI scans the WORKING TREE on every push. That is the right gate for a pull request, and it is
+# the one that keeps HEAD clean — but a public repository publishes its history too, and the
+# history scan (`--history`) had no schedule, no trigger and no owner. It was a mode of a script
+# that existed and was never run.
+#
+# Why this is scheduled rather than a required pull-request check: it reads every version of
+# every file in every commit (~2,500 blobs today) and it can only ever report on commits that
+# are already public. Failing a contributor's PR over something published months earlier would
+# be blaming the wrong person for something they cannot fix.
+#
+# It runs against scripts/disclosure_history_baseline.json, which records the findings that are
+# already public and accepted. New findings fail; a baseline entry that stops matching is
+# reported as stale. See that file for why the accepted ones are not being rewritten away.
+#
+# Note: GitHub disables scheduled workflows in a repository with no activity for 60 days. If
+# this stops reporting, check that it is still enabled before trusting the silence.
+name: History audit
+
+on:
+  schedule:
+    # Mondays, 05:43 UTC. Off the hour, and off pin-currency's slot, so the two do not queue
+    # behind each other on shared runners.
+    - cron: '43 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  disclosure:
+    name: Published history vs the allow-list
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The whole point is the history: a shallow clone would scan almost nothing and
+          # report success, which is the worst outcome a check like this can produce.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: scripts/check_disclosure.py --history
+        run: |
+          scripts/check_disclosure.py --history \
+            --baseline scripts/disclosure_history_baseline.json

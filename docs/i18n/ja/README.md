@@ -1,4 +1,12 @@
 <!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
+    <img src="../../../docs/media/logo.png" width="460"
+         alt="Freehold Mail — lifelong ownership, secure connection">
+  </picture>
+</p>
+
 [English](../../../README.md) · **日本語** — 英語版が正典です。[`TRANSLATIONS.md`](../../../TRANSLATIONS.md) を参照してください
 
 > **この翻訳は参考用です。** 内容が英語版と矛盾する場合は、常に英語版が優先されます。

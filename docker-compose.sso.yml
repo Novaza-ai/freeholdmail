@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-04 — GATE-2/3 QA: added the PostgreSQL service Keycloak requires
+# Last-touched: 2026-08-13 — the four secrets this overlay adds are now REQUIRED variables
+# (${VAR:?}), so a copied .env.example cannot start Keycloak or its database with empty
+# credentials. Before that, 2026-08-04 — GATE-2/3 QA: added the PostgreSQL service Keycloak requires
 # (the overlay pointed KC_DB_URL at a `db` host that did not exist, so the SSO edition
 # could never start), switched to the Keycloak 26 bootstrap-admin variables, and replaced
 # the hardcoded JDBC string with host/port/database parts.
@@ -17,12 +19,12 @@ services:
     environment:
       APP_NAME: ${APP_NAME}
       JMAP_SERVER_URL: "https://${MAIL_DOMAIN}"
-      SESSION_SECRET: ${WEBMAIL_SESSION_SECRET}
+      SESSION_SECRET: ${WEBMAIL_SESSION_SECRET:?unset or empty — run ./install.sh}
       SETTINGS_DATA_DIR: /data/settings
       OAUTH_ENABLED: "true"
       OAUTH_ONLY: "true"
       OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}
-      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET}
+      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET:?unset or empty — run ./install.sh}
       OAUTH_ISSUER_URL: ${OAUTH_ISSUER_URL}
 
   proxy:
@@ -53,7 +55,7 @@ services:
     environment:
       POSTGRES_DB: ${KC_DB_NAME}
       POSTGRES_USER: ${KC_DB_USERNAME}
-      POSTGRES_PASSWORD: ${KC_DB_PASSWORD}
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD:?unset or empty — run ./install.sh}
     volumes:
       - idp_db_data:/var/lib/postgresql/data
     security_opt:
@@ -92,14 +94,14 @@ services:
       KC_HOSTNAME_STRICT: "true"
       # Keycloak 26 renamed these; KEYCLOAK_ADMIN/KEYCLOAK_ADMIN_PASSWORD are deprecated.
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER}
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?unset or empty — run ./install.sh}
       KC_DB: postgres
       # Parts instead of a JDBC string, so the database name is not written twice.
       KC_DB_URL_HOST: db
       KC_DB_URL_PORT: "5432"
       KC_DB_URL_DATABASE: ${KC_DB_NAME}
       KC_DB_USERNAME: ${KC_DB_USERNAME}
-      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:?unset or empty — run ./install.sh}
       KC_PROXY_HEADERS: xforwarded
       KC_HTTP_ENABLED: "true"
       KC_HEALTH_ENABLED: "true"

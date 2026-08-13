@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-04 — created during pre-public QA (GATE 1).
+# Last-touched: 2026-08-13 — checkouts no longer persist the job token; compose linting uses a
+# generated env because .env.example deliberately no longer resolves; and that refusal is
+# itself asserted here, so the required-variable markers cannot be dropped unnoticed.
+# Created 2026-08-04 during pre-public QA (GATE 1).
 name: CI
 
 on:
@@ -23,6 +26,9 @@ jobs:
           # do — checkout defaults to fetch-depth 1 and `git cat-file` then fails on every
           # recorded SHA. This guard was green locally and red here for exactly that reason.
           fetch-depth: 0
+          # The token is not needed once the tree is here, and leaving it in .git/config is
+          # a credential sitting in the workspace for every later step to read.
+          persist-credentials: false
       # The suite SKIPS checks whose tool is missing, and a skip exits non-zero — so every
       # tool it needs has to be here or the job fails for the right reason. ImageMagick is
       # not on a stock runner and the media checks need it.
@@ -43,6 +49,11 @@ jobs:
     # not boot at all.
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The checkout action stores the job token in .git/config unless told
+          # not to. Nothing here needs it, and scorecard.yml/pin-currency.yml
+          # already refuse it — this job was the odd one out.
+          persist-credentials: false
       - name: tests/test_e2e.sh
         run: tests/test_e2e.sh
 
@@ -55,6 +66,11 @@ jobs:
     # folklore the moment the shipped Keycloak version moves.
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The checkout action stores the job token in .git/config unless told
+          # not to. Nothing here needs it, and scorecard.yml/pin-currency.yml
+          # already refuse it — this job was the odd one out.
+          persist-credentials: false
       - name: tests/test_e2e.sh --sso
         env:
           FREEHOLDMAIL_TEST_KC_HOSTNAME_VALUE: https://id.qa.test
@@ -67,6 +83,11 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The checkout action stores the job token in .git/config unless told
+          # not to. Nothing here needs it, and scorecard.yml/pin-currency.yml
+          # already refuse it — this job was the odd one out.
+          persist-credentials: false
 
       - name: Shell syntax
         run: bash -n install.sh
@@ -80,7 +101,8 @@ jobs:
         # list: it must match the local suite, or the two gates drift apart.
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
-          shellcheck -S style install.sh tests/test_config.sh tests/test_e2e.sh scripts/make_gif.sh
+          shellcheck -S style install.sh tests/test_config.sh tests/test_e2e.sh \
+            tests/lint_env.sh scripts/make_gif.sh
 
       - name: Python syntax and style
         # Every tracked .py file, not a hardcoded list: two scripts added in August were invisible
@@ -94,11 +116,33 @@ jobs:
           sudo apt-get install -y -qq pycodestyle
           pycodestyle --max-line-length=100 "${PY[@]}"
 
+      # .env.example ships every secret empty and the compose files mark them required, so it
+      # no longer resolves on its own — that refusal is the point, and tests/test_config.sh
+      # asserts it. Linting the file's shape is a different question, so build an env whose
+      # required values are present and obviously fake. The list is read out of the compose
+      # files by the script, never restated here: a hand-copied list is how two gates drift.
+      - name: Build the lint env
+        run: tests/lint_env.sh "$RUNNER_TEMP/lint.env"
+
       - name: Compose config (base edition)
-        run: docker compose --env-file .env.example -f docker-compose.yml config -q
+        run: docker compose --env-file "$RUNNER_TEMP/lint.env" -f docker-compose.yml config -q
 
       - name: Compose config (SSO edition)
-        run: docker compose --env-file .env.example -f docker-compose.yml -f docker-compose.sso.yml config -q
+        run: |
+          docker compose --env-file "$RUNNER_TEMP/lint.env" \
+            -f docker-compose.yml -f docker-compose.sso.yml config -q
+
+      # The refusal itself is a security control, so CI has to see it fail. Without this, the
+      # required-variable markers could be dropped and every other check would stay green.
+      - name: The shipped example alone must not resolve
+        run: |
+          if docker compose --env-file .env.example \
+               -f docker-compose.yml -f docker-compose.sso.yml config -q 2>/dev/null; then
+            echo '::error::.env.example resolved a runnable config: the required-variable
+          markers have been dropped, so copying the example yields empty secrets silently'
+            exit 1
+          fi
+          echo "refused, as intended"
 
       - name: No unresolved placeholders
         # Match placeholder VALUES in files that configure the stack — not prose in
@@ -141,7 +185,7 @@ jobs:
           fi
           # Assert against the resolved config, not the raw files: those hold
           # ${BULWARK_VERSION}, so grepping them for `:latest` inspects a placeholder.
-          resolved=$(docker compose --env-file .env.example \
+          resolved=$(docker compose --env-file "$RUNNER_TEMP/lint.env" \
             -f docker-compose.yml -f docker-compose.sso.yml config | grep -E '^[[:space:]]+image:')
           total=$(grep -c 'image:' <<<"$resolved")
           pinned=$(grep -c '@sha256:' <<<"$resolved")
@@ -160,6 +204,11 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The checkout action stores the job token in .git/config unless told
+          # not to. Nothing here needs it, and scorecard.yml/pin-currency.yml
+          # already refuse it — this job was the odd one out.
+          persist-credentials: false
       # From the distro, not pip: an unpinned `pip install` is an unpinned dependency, and
       # OpenSSF Scorecard flags it (PinnedDependenciesID) in a repo whose own rule is that
       # everything is pinned. apt packages come from the runner image, which IS pinned.

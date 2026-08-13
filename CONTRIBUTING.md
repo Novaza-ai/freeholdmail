@@ -41,10 +41,16 @@ every file "looked right". Artifacts are not evidence; measurements are.
 
 ```bash
 git clone https://github.com/Novaza-ai/freeholdmail && cd freeholdmail
-cp .env.example .env         # or run ./install.sh
+./install.sh                 # generates .env with strong random secrets, mode 600
 # point the *_VERSION / *_DIGEST vars at images you can pull
 docker compose --env-file .env up -d
 ```
+
+`cp .env.example .env` is **not** a shortcut around that step. The example ships every secret
+empty, and the compose files mark them required, so copying it and running `up` stops with the
+name of the first variable you have to set. That refusal is deliberate: until 2026-08-13 the
+copy produced a stack with an empty session key and an empty admin secret, and started anyway
+without a word. Fill them by hand if you prefer, but nothing will start until you do.
 
 To test without touching a real mail setup, override the published ports
 (compose **merges** port lists, so use the `!override` tag):
@@ -90,8 +96,11 @@ Lint and validation:
 
 ```bash
 bash -n install.sh && shellcheck install.sh
-docker compose --env-file .env.example config -q
-docker compose --env-file .env.example -f docker-compose.yml -f docker-compose.sso.yml config -q
+# .env.example alone no longer resolves, by design — build a lint env whose required values
+# are present and obviously fake. The list of what to fill is read out of the compose files.
+LINT_ENV="$(mktemp)" && tests/lint_env.sh "$LINT_ENV"
+docker compose --env-file "$LINT_ENV" config -q
+docker compose --env-file "$LINT_ENV" -f docker-compose.yml -f docker-compose.sso.yml config -q
 grep -rnE '(SECRET|PASSWORD|TOKEN|API_KEY)=[A-Za-z0-9+/=_-]{8,}' . # must return nothing
 ```
 

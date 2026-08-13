@@ -1,4 +1,12 @@
 <!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
+    <img src="../../../docs/media/logo.png" width="460"
+         alt="Freehold Mail — lifelong ownership, secure connection">
+  </picture>
+</p>
+
 [English](../../../README.md) · **हिन्दी** — अंग्रेज़ी संस्करण ही प्रामाणिक है, देखें [`TRANSLATIONS.md`](../../../TRANSLATIONS.md)
 
 > **यह अनुवाद केवल सुविधा के लिए है।** यदि इसमें और अंग्रेज़ी संस्करण में कोई विरोधाभास हो, तो

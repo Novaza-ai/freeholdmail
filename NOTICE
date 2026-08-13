@@ -36,4 +36,14 @@ source code of your modified version available to those users. Deploying the
 official unmodified images imposes no such obligation on you beyond what the
 upstream projects already provide.
 
+TRADEMARKS AND BRAND ASSETS — NOT covered by the MIT License:
+The name "Freehold Mail", the shield mark, and the artwork in docs/media/logo.png,
+docs/media/logo-dark.png and docs/media/icon.png are the identity of this project
+and remain the property of Novaza Solution JSC. The MIT grant above covers the
+code, configuration and documentation; it does not grant permission to use the
+name or the marks to brand a fork, imply endorsement, or identify a different
+product. Forking the code is welcome and needs no permission — please give your
+fork its own name and its own artwork. Nominative use (saying truthfully that
+your work is based on Freehold Mail) is fine and always was.
+
 See THIRD_PARTY_LICENSES.md for full details, source links and how to comply.

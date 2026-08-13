@@ -1,4 +1,12 @@
 <!-- Last-touched: 2026-08-06 — bổ sung đủ danh sách giấy phép và đính chính khẳng định "memory-safe". -->
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
+    <img src="../../../docs/media/logo.png" width="460"
+         alt="Freehold Mail — lifelong ownership, secure connection">
+  </picture>
+</p>
+
 [English](../../../README.md) · **Tiếng Việt** — bản tiếng Anh là bản có thẩm quyền, xem [`TRANSLATIONS.md`](../../../TRANSLATIONS.md)
 
 > ⚠️ Bản dịch có thể lạc hậu so với bản gốc. Khi có mâu thuẫn, [`README.md`](../../../README.md)

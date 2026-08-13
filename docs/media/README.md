@@ -1,15 +1,42 @@
-<!-- Last-touched: 2026-08-05 — how the images in the project README are produced. -->
+<!-- Last-touched: 2026-08-13 — brand assets added, and the "nothing here is a mockup" claim
+     narrowed to the screenshots it was always about. The logo is artwork, not a capture. -->
 # Media, and how to regenerate it
 
-Every image in this repository is a screenshot of this stack actually running, taken by a
-script in `scripts/`. None of it is a mockup, and none of it is borrowed from an upstream
-project's marketing. If a screenshot ever stops matching reality, regenerate it — do not
-retouch it.
+Two kinds of image live here, and they are held to different standards.
+
+**Screenshots** are captures of this stack actually running, taken by a script in `scripts/`.
+None of them is a mockup, and none is borrowed from an upstream project's marketing. If a
+screenshot ever stops matching reality, regenerate it — do not retouch it.
+
+**Brand assets** are artwork. They depict nothing, so there is nothing for them to misrepresent.
 
 | File | What it is | Produced by |
 |------|------------|-------------|
 | `inbox.png` | The mailbox after `scripts/seed_demo.py`, 1200 px wide | `scripts/capture_tour.mjs` (frame `00-inbox`) |
 | `tour.gif` | The in-product tour, one frame per step, 1000 px wide | `scripts/capture_tour.mjs` → `scripts/make_gif.sh` |
+| `logo.png` | Horizontal lockup, transparent, 1015×348 | Brand artwork — see below |
+| `logo-dark.png` | The same lockup, lightened for dark backgrounds | Derived from `logo.png` |
+| `icon.png` | The shield mark alone, square, 512×512 | Cropped from `logo.png` |
+
+## The brand assets
+
+The lockup was extracted from the supplied brand artwork, which arrived as a presentation
+mockup — the logo printed on textured paper, with a drop shadow, a vignette and ghosted
+watermarks in the corners. None of that belongs in a README, so the mark and wordmark were
+isolated onto transparency and everything the mockup added was removed.
+
+`logo-dark.png` exists because the wordmark is navy: on a dark background it recedes into the
+page. It is the same artwork with a lightness lift weighted by how dark each pixel is, so the
+teal and orange of the mark survive untouched while the navy comes up to a readable blue. The
+READMEs select between them with `<picture media="(prefers-color-scheme: dark)">`, which GitHub
+honours.
+
+All three are stripped of metadata. The source artwork carried C2PA content credentials; those
+are provenance for the artwork, not for this repository, and shipping them would publish a
+record nobody reading this needs.
+
+**These files are not covered by the MIT licence** — see `NOTICE`. The code is yours to reuse;
+the identity is not.
 
 `docs/media/frames/` holds the intermediate PNGs and is gitignored: the scripts regenerate
 them, so there is no reason to carry ~2 MB of duplicates in history.

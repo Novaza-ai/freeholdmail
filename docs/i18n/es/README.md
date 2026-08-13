@@ -1,4 +1,12 @@
 <!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
+    <img src="../../../docs/media/logo.png" width="460"
+         alt="Freehold Mail — lifelong ownership, secure connection">
+  </picture>
+</p>
+
 [English](../../../README.md) · **Español** — La versión en inglés es la autoritativa, consulte [`TRANSLATIONS.md`](../../../TRANSLATIONS.md)
 
 > **Esta traducción es una cortesía.** Si algo en ella entra en conflicto con la versión en inglés,
