@@ -1,15 +1,26 @@
 # Changelog
 
-<!-- Last-touched: 2026-08-13 (later same day) — records the seven findings of the gold-standard
-     audit and their fixes: the empty-secret start, the unguarded nginx admin route, the phantom
-     metadata audit, the unwatched history, release artefacts, persist-credentials, and the brand
-     assets. Earlier the same day: the ruleset, the signed-commit requirement and its merge
-     gotcha, and the Scorecard badge. Before that, cut 0.4.0 and 0.3.0. -->
+<!-- Last-touched: 2026-08-13 (later same day) — cuts 0.5.0, which is the seven findings of the
+     gold-standard audit and their fixes: the empty-secret start, the unguarded nginx admin route,
+     the phantom metadata audit, the unwatched history, release artefacts, persist-credentials,
+     and the brand assets. Earlier the same day: the ruleset, the signed-commit requirement and
+     its merge gotcha, and the Scorecard badge. Before that, cut 0.4.0 and 0.3.0. -->
 
 All notable changes to this repo. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+Nothing yet.
+
+## [0.5.0] — 2026-08-13
+
+An audit against public-repo standards found seven things, and this release is all seven closed.
+None was being exploited. All seven were the same shape: a claim made somewhere and asserted
+nowhere — a setup path the docs offered and nothing tested, a security property the nginx config
+called load-bearing and no check enforced, a "metadata audit" that existed only as a comment, a
+history scan with no schedule. Two of the guards written here found their own bugs while being
+written, which is the argument for having them rather than trusting the claim.
 
 ### Security
 - **A documented setup path produced a stack with empty secrets, and started it anyway.**
