@@ -1,8 +1,8 @@
 # Changelog
 
-<!-- Last-touched: 2026-08-13 — record the publish allow-list check and CI linting every tracked
-     Python file. Same-day earlier edits recorded the pin-currency check and cut 0.3.0 (advisory
-     fix, CodeQL, governance split, controls this project declines to claim). -->
+<!-- Last-touched: 2026-08-13 — webmail to 1.8.1, which brings every pin current or declared.
+     Same-day earlier edits: the publish allow-list check, CI linting every tracked Python file,
+     the pin-currency check, and cutting 0.3.0. -->
 
 All notable changes to this repo. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -23,6 +23,17 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `26.7.0` shipped here for one week and was below that floor — the advisories were published the
   day after it was pinned. This affects the **SSO edition only**; the Full Mail edition ships no
   Keycloak. Verified after the bump: SSO e2e **15/0**.
+- **The webmail moves to `v1.8.1`.** No published advisory affects `v1.7.8` — every one has a patch
+  floor of `1.4.11` or lower, checked against the full advisory list rather than its first page — so
+  this is a currency and correctness move, not a security fix. It matters anyway on a stack that
+  signs its mail: 1.8.0 sends through the identity's own account client so **DKIM matches the From
+  domain** (upstream #461), and splits `Name <addr>` recipients into the JMAP `name` and `email`
+  fields (#672). It also adds S/MIME and PGP public-key management and Stalwart encryption-at-rest
+  control to account settings. `1.8.1` re-releases 1.8.0's code: an upstream CI incident left the
+  1.8.0 build queued and no image was ever published for that tag, so 1.8.1 is the first pullable
+  build of the line. Verified after the bump: e2e **14/0**, SSO e2e **15/0**.
+  **Every image pin is now either current or a declared, expiring lag** —
+  `scripts/check_pins.py` exits 0 for the first time: 4 current, 1 acknowledged, 0 behind.
 - **The `postgres:17-alpine` digest is re-pinned.** The tag tracks the 17 line and had been
   re-pointed upstream since it was pinned, so the digest — the only thing holding this install
   still — no longer matched what upstream serves for that tag.
