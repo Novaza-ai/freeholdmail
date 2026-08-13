@@ -1,7 +1,8 @@
 # Security Policy
 
-<!-- Last-touched: 2026-08-07 — CodeQL enabled; records what static analysis covers and,
-     more importantly, that Shell (the installer) is outside it. -->
+<!-- Last-touched: 2026-08-13 — new section: the controls this project does not claim, and why
+     each one is absent (release signing, fuzzing, two plan-gated secret-scanning features, and
+     Dependabot's blindness to variable-interpolated image pins). -->
 
 ## Reporting a vulnerability
 
@@ -127,6 +128,84 @@ gh api repos/Novaza-ai/freeholdmail/code-scanning/analyses \
   --jq '[.[] | select(.tool.name=="CodeQL") | .category] | unique'
 gh api repos/Novaza-ai/freeholdmail/languages
 ```
+
+## Controls this project does not claim, and why
+
+A policy that lists only what is done is half a policy. Each item below is a control a reader
+might reasonably expect, each is visible as a gap in an automated audit, and none of them is
+done. The reason is stated so you can judge it instead of taking it on trust. Measured
+2026-08-13.
+
+### Release artefacts are not signed, because there are none
+
+OpenSSF Scorecard reports `Signed-Releases` as inconclusive (`-1`) for this repository, and it
+will stay that way. The latest tag ships zero assets:
+
+```bash
+gh api repos/Novaza-ai/freeholdmail/releases --jq '.[] | "\(.tag_name) assets=\(.assets|length)"'
+```
+
+The documented install path is a clone, not a download — `git clone … && ./install.sh`. This
+repository builds no binary; it is compose files, configuration templates and a shell installer.
+Attaching a tarball so that something could be signed would create an artefact nobody installs
+from, which can then drift from the commit it claims to represent. A signature over the wrong
+thing is worse than no signature. If you want to verify what you cloned, verify the commit.
+
+### There is no fuzzing harness, and adding one would be theatre
+
+`Fuzzing` scores 0/10. We are declining it on the record rather than leaving it to read as an
+oversight. Fuzzing finds memory-safety and parser bugs in code that consumes untrusted input.
+The code here is shell that runs once, at install time, on the operator's own input, plus two
+test helpers. Every process that actually parses untrusted network traffic — SMTP, IMAP, JMAP,
+HTTP — lives in an upstream image this project pins and does not build. Fuzzing the installer
+would score a point and reduce no real risk. The parsers worth fuzzing are upstream.
+
+### Two secret-scanning features cannot be enabled on this plan
+
+Secret scanning and push protection are on. Two adjacent features are off and **cannot be turned
+on here** — worth knowing, because the API accepts the request and then ignores it:
+
+| Feature | State | Why |
+|---|---|---|
+| `secret_scanning_validity_checks` | off | Needs GitHub Team or Enterprise with Secret Protection; this org is on the **free** plan |
+| `secret_scanning_non_provider_patterns` | off | Same gate — and validity checks never apply to non-provider patterns even when both are available |
+
+`PATCH /repos/{owner}/{repo}` with either field returns **200 with the value still `disabled`**,
+no error and no warning. Verify the state and the reason for yourself:
+
+```bash
+gh api repos/Novaza-ai/freeholdmail --jq .security_and_analysis
+gh api orgs/Novaza-ai --jq '{plan: .plan.name, advanced_security: .advanced_security_enabled_for_new_repositories}'
+```
+
+The consequence to plan around: a credential leaked into this repository would be caught only if
+it matches a **known provider format**, and nothing will tell you whether it is still live.
+Rotate on suspicion; do not wait for a validity verdict. If you fork this into a paid org, enable
+both — the reason they are absent here is the plan, not a judgement.
+
+### Dependabot cannot see the image pins, because the pins are variables
+
+`.github/dependabot.yml` watches `github-actions` only. Adding `package-ecosystem: docker` would
+look like it closed weakness 6 below and would update nothing, because no compose file contains
+a literal image reference:
+
+```bash
+grep -nE 'image:' docker-compose.yml docker-compose.sso.yml
+# stalwartlabs/stalwart:${STALWART_VERSION}${STALWART_DIGEST}   ← no tag for Dependabot to parse
+```
+
+Versions and digests live in `.env.example` so an operator can override any of them without
+editing compose. That is the right trade for an installable stack, and it costs automated pin
+updates: Dependabot parses image tags for SemVer, and there is no literal tag here to parse.
+GitHub's dependency graph reports nothing for this repository either — `GET /dependency-graph/sbom`
+returns `404`. So we do not ship that config, because a config that produces no pull requests
+while appearing to watch your images is the same failure as a workflow that looks like a scanner
+and only uploads a file.
+
+**Pin currency is therefore a manual duty on this project**, and weakness 6 records that the duty
+was missed twice. Until a scheduled check exists that compares each pin in `.env.example` against
+upstream releases and advisories, read "watch the upstream advisories" as a real task needing a
+real owner, not a sentence in a policy.
 
 ## Known weaknesses you must plan around
 

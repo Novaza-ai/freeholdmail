@@ -1,11 +1,22 @@
 # Changelog
 
-<!-- Last-touched: 2026-08-07 — record the Stalwart 0.13.4 upgrade and the advisory it closes. -->
+<!-- Last-touched: 2026-08-13 — cut 0.3.0: the advisory fix, CodeQL, the governance split, and the
+     controls this project declines to claim. -->
 
 All notable changes to this repo. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.3.0] — 2026-08-13
+
+Security-maintenance release, and the first one developed the way this project's own
+`GOVERNANCE.md` always said it would be. It closes a High, pre-authentication advisory in the
+mail server, puts static analysis and a governed branch behind every change, and writes down the
+four controls we are **not** claiming so that no reader has to infer them from a score.
+
+**Existing 0.11.x installs must not upgrade in place** — see the mail server entry below and
+`docs/RUNBOOK.md` §6. Fresh installs are unaffected.
 
 ### Security
 - **The mail server moves to `stalwartlabs/stalwart:v0.13.4`, closing a High,
@@ -34,6 +45,18 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   to 0.12.0–0.13.2 because CalDAV did not exist earlier. Read the advisory body. And
   advisories are not the whole picture: upstream also fixes security bugs without filing one,
   and does not backport them.
+- **CodeQL now runs on every push and pull request**, via GitHub's default setup, across
+  `actions`, `python`, `javascript`, `typescript` and `javascript-typescript`. It found a real
+  High finding on its first run, fixed below. **It does not cover most of this repository** —
+  Shell, including the installer, has no CodeQL support and is reachable only by `shellcheck`.
+  `SECURITY.md` states that split as a table rather than letting the badge imply coverage, and
+  `.github/workflows/scorecard.yml` now carries a comment above its `upload-sarif` step so that
+  nobody reads an upload as a scan.
+- **Dependabot security updates are enabled**, so an advisory against a watched dependency now
+  opens a pull request instead of only raising an alert. Two adjacent secret-scanning features —
+  validity checks and non-provider patterns — **cannot** be enabled on this account's plan; the
+  API accepts the request and silently leaves them off. `SECURITY.md` records which, why, and
+  what to rotate on suspicion as a result.
 
 ### Fixed
 - **The JMAP discovery check asserted one release's status code.** `tests/test_e2e.sh`
@@ -41,6 +64,39 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   unauthenticated probe. 0.13 answers `307` to `/jmap/session`, which is what RFC 8620
   describes. The check now accepts either and verifies the redirect target, so it tests that
   the route reaches the mail server rather than which version is running.
+- **The demo seeder printed a generated password to stdout**, where it landed in terminal
+  scrollback and any CI log that captured it — CodeQL's first High finding
+  (`py/clear-text-logging-sensitive-data`, `scripts/seed_demo.py`). It now writes
+  `.demo-password` at mode 600, gitignored, following the pattern `install.sh` already used for
+  every other secret, with a suite guard so the file cannot start being tracked. CodeQL then
+  flagged the *storage*; that second alert is dismissed as won't-fix with its reason attached,
+  and `SECURITY.md` records the asymmetry that makes the dismissal honest — `install.sh` stores
+  secrets identically and escapes the alert only because CodeQL cannot read Shell.
+
+### Added
+- **`SECURITY.md` now says what this project does not do.** Four controls a reader could
+  reasonably expect are absent, and each now carries its reason: release artefacts are unsigned
+  because there are none to sign and the install path is a clone; there is no fuzzing harness
+  because every parser that touches untrusted traffic is in an upstream image this repo pins and
+  does not build; two secret-scanning features are unavailable on this plan; and Dependabot
+  cannot watch the image pins because compose refers to them through `.env` variables, so
+  shipping that config would produce no pull requests while appearing to. Pin currency is a
+  manual duty here, and the policy now says so instead of implying otherwise.
+
+### Changed
+- **`GOVERNANCE.md` no longer describes a process the history contradicts.** It required
+  reviewed pull requests while every commit had gone straight to `main`. The rule is now split
+  along what a single-maintainer project can actually enforce: pull requests, green CI and no
+  direct pushes apply now — `enforce_admins` is on, so a direct push to `main` is refused — while
+  required approval waits for a second maintainer, because one person cannot approve their own
+  work. The interim paragraph is written to be deleted when `MAINTAINERS.md` gains that person.
+- **The first pull requests in this repository's history landed in this release** — #4 and #5.
+  To be exact rather than flattering: two of the five commits in 0.3.0 came through a pull
+  request, and the three earlier ones were pushed straight to `main` before `enforce_admins` was
+  turned on. From this release forward the branch refuses that route, so the ratio is a
+  transitional artefact and not a standard being set.
+- The Contributors explanation in `MAINTAINERS.md` and `README.md` was updated: the older commits
+  are now correctly credited.
 
 ## [0.2.0] — 2026-08-06
 
