@@ -28,8 +28,8 @@ readonly STALWART_DIGEST_DEFAULT="@sha256:5d0e3a332dfb3db8852d9fabb76c1b479b5ee1
 readonly BULWARK_IMAGE_DEFAULT="ghcr.io/bulwarkmail/webmail"
 # Patch floor is 1.4.11: anything below it carries CVE-2026-34834 (auth bypass) and
 # CVE-2026-34833 (password disclosure). See SECURITY.md before changing this.
-readonly BULWARK_VERSION_DEFAULT="v1.7.8"
-readonly BULWARK_DIGEST_DEFAULT="@sha256:1ea45e292e7baf84eccdfe3d7ed96fe4487f2b95025a6ab569706915f6798979"
+readonly BULWARK_VERSION_DEFAULT="v1.8.1"
+readonly BULWARK_DIGEST_DEFAULT="@sha256:97d9d96adfb7c1d221b71b90b8380b98e2e5623f64ba62b090e45911f4ee0b3b"
 readonly NGINX_VERSION_DEFAULT="1.30.4-alpine"
 readonly NGINX_DIGEST_DEFAULT="@sha256:97d490c12ba55b4946b01546d1c3ed324e8d41ab1c9fcb2a616aa470620e5b46"
 readonly KEYCLOAK_VERSION_DEFAULT="26.7.1"
