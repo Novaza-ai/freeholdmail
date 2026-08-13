@@ -1,0 +1,40 @@
+# Last-touched: 2026-08-13 — new: reports when a pinned image falls behind its upstream line.
+#
+# Why this is scheduled and NOT a required pull-request check: it fails when *upstream* moves,
+# which has nothing to do with the change under review. Blocking a PR on it would train people
+# to merge past a red board. It runs weekly, and on demand, and its failure is a task for the
+# maintainer rather than for the contributor.
+#
+# SECURITY.md records that pin currency is a manual duty here and that the duty was missed
+# twice. Dependabot cannot cover it: compose reaches every image through an .env variable, so
+# there is no literal tag for it to parse. This is the automation that closes that gap.
+#
+# Note: GitHub disables scheduled workflows in a repository with no activity for 60 days. If
+# this stops reporting, check that it is still enabled before trusting the silence.
+name: Pin currency
+
+on:
+  schedule:
+    # Mondays, 06:17 UTC. Off the hour on purpose — the top of the hour is heavily contended
+    # on shared runners and scheduled jobs get delayed there.
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pins:
+    name: Pinned images vs upstream
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: scripts/check_pins.py
+        env:
+          # Raises the GitHub API rate limit from 60/hour to 1000/hour for this repository.
+          # Read-only, and the default token already has no more than `contents: read` here.
+          GITHUB_TOKEN: ${{ github.token }}
+        run: scripts/check_pins.py

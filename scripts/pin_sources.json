@@ -1,0 +1,73 @@
+{
+  "_comment": [
+    "Where each pinned image comes from, and which version line this project follows.",
+    "Read by scripts/check_pins.py. No component name, URL or policy lives in that script --",
+    "changing what is followed is a change to this file, not to code.",
+    "",
+    "line:  a regex the candidate version must match to be considered an upgrade. It encodes",
+    "       policy, not availability. Leave it out to accept any version. Never narrow it to",
+    "       the version already pinned -- that hides the gap instead of declaring it, which is",
+    "       what acknowledged_lag is for.",
+    "pin_style:",
+    "       exact    - the tag names one release (v0.13.4). Drift means a newer release exists.",
+    "       floating - the tag tracks a line (17-alpine) and is re-pointed upstream. The digest",
+    "                  is what freezes it, so drift means the digest moved.",
+    "acknowledged_lag:",
+    "       A deliberate decision to stay behind, with the reason and a date it must be",
+    "       re-argued. Before review_by the check reports the lag and passes. On or after",
+    "       review_by it FAILS -- an acknowledgement that never expires is just a muted alarm.",
+    "advisories:",
+    "       Listed as context for a human, never as a pass/fail signal. GitHub's",
+    "       vulnerable_version_range carries no lower bound, so it matches releases an advisory",
+    "       never applied to -- see SECURITY.md weakness 6."
+  ],
+  "components": [
+    {
+      "name": "stalwart (mail server)",
+      "version_var": "STALWART_VERSION",
+      "digest_var": "STALWART_DIGEST",
+      "pin_style": "exact",
+      "source": { "kind": "github_releases", "repo": "stalwartlabs/stalwart" },
+      "advisories": { "repo": "stalwartlabs/stalwart" },
+      "acknowledged_lag": {
+        "reason": "0.16.0 replaces the TOML config with a typed JSON schema, moves config and data paths, and replaces the REST management API with a JMAP one -- POST /api/principal, used by every first-run instruction here, no longer exists. Following it is a redesign, not a tag bump. 0.13.4 is the patch floor for GHSA-8jqj-qj5p-v5rr, so no known advisory affects what ships. Tracked in CHANGELOG.md 'Known gaps' item 2.",
+        "review_by": "2026-11-01"
+      }
+    },
+    {
+      "name": "bulwark (webmail)",
+      "version_var": "BULWARK_VERSION",
+      "digest_var": "BULWARK_DIGEST",
+      "pin_style": "exact",
+      "source": { "kind": "github_releases", "repo": "bulwarkmail/webmail" },
+      "advisories": { "repo": "bulwarkmail/webmail" }
+    },
+    {
+      "name": "nginx (front door)",
+      "version_var": "NGINX_VERSION",
+      "digest_var": "NGINX_DIGEST",
+      "pin_style": "exact",
+      "source": { "kind": "dockerhub_tags", "image": "library/nginx" },
+      "line": "^1\\.[0-9]*[02468]\\.[0-9]+-alpine$",
+      "line_reason": "nginx numbers stable branches with an even minor (1.28, 1.30) and mainline with an odd one (1.29, 1.31). A mail front door follows stable, so an odd minor is not an upgrade."
+    },
+    {
+      "name": "keycloak (SSO edition)",
+      "version_var": "KEYCLOAK_VERSION",
+      "digest_var": "KEYCLOAK_DIGEST",
+      "pin_style": "exact",
+      "source": { "kind": "github_releases", "repo": "keycloak/keycloak" },
+      "line": "^26\\.",
+      "line_reason": "26 is the current maintained line. Moving to 27 changes documented KC_* settings and needs the SSO e2e suite re-run, so it is a decision rather than a bump.",
+      "advisories": { "repo": "keycloak/keycloak" }
+    },
+    {
+      "name": "postgres (keycloak database)",
+      "version_var": "POSTGRES_VERSION",
+      "digest_var": "POSTGRES_DIGEST",
+      "pin_style": "floating",
+      "source": { "kind": "dockerhub_tags", "image": "library/postgres" },
+      "line_reason": "17-alpine tracks the 17 line and is re-pointed on every 17.x patch, so the digest is the only thing holding this install still. Version drift is not the signal here; digest drift is."
+    }
+  ]
+}

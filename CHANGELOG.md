@@ -1,12 +1,39 @@
 # Changelog
 
-<!-- Last-touched: 2026-08-13 — cut 0.3.0: the advisory fix, CodeQL, the governance split, and the
-     controls this project declines to claim. -->
+<!-- Last-touched: 2026-08-13 — record the pin-currency check and the three behind-pins its first
+     run found. Same-day earlier edit cut 0.3.0 (advisory fix, CodeQL, governance split,
+     controls this project declines to claim). -->
 
 All notable changes to this repo. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+- **The pin-currency gap is now automated.** `scripts/check_pins.py`, run weekly by
+  `.github/workflows/pin-currency.yml`, reads every image pin out of `.env.example` and compares
+  it against the upstream line declared in `scripts/pin_sources.json`. It closes the gap
+  documented one release earlier: Dependabot cannot watch these images, because compose reaches
+  them through `.env` variables and there is no literal tag to parse.
+  It is **scheduled, not a required check** — it fails when *upstream* moves, which has nothing
+  to do with the change under review, and blocking a PR on that trains people to merge past a red
+  board. Three refusals are deliberate, each one a failure mode this project has already met: an
+  unreachable upstream **fails** (exit 2) instead of reporting green; advisories are printed as
+  context and never decide the exit code, because `vulnerable_version_range` has no lower bound
+  (`SECURITY.md` weakness 6); and a deliberate lag must be declared with a `review_by` date, after
+  which the check fails so the decision is re-argued rather than muted forever.
+  The suite gained a guard asserting the check's own coverage — every `*_DIGEST` in `.env.example`
+  must be declared in `pin_sources.json` — so adding an image without declaring it fails CI
+  instead of quietly shrinking what is watched. Static suite **191 → 194**.
+- **Its first run found three pins behind, one of them a security gap.** `KEYCLOAK_VERSION=26.7.0`
+  is below the **26.7.1** patch floor for six advisories published 2026-08-06, four of them High
+  (`GHSA-95cx-vmr5-3cmr` DCR role forgery, `GHSA-95rm-h7g9-rhcf` DCR mapper type-swap privilege
+  escalation, `GHSA-fgq2-hxm5-8xg2` SAML link-only bypass, `GHSA-f8m4-v488-rmrm` SAML signature
+  validation disabled). Also behind: the webmail (`v1.7.8`, upstream `1.8.1` — no advisory affects
+  the pinned build; every published one has a patch floor of 1.4.11 or lower) and the
+  `postgres:17-alpine` digest, whose floating tag has been re-pointed upstream since it was
+  pinned. **This is weakness 6 recurring for the third time**, and the first time a check rather
+  than a manual audit caught it.
 
 ## [0.3.0] — 2026-08-13
 
@@ -419,9 +446,11 @@ First public release.
    one, and does not backport them to older lines.
 3. **Pins do not self-update.** Every image ships pinned to a version tag *and* a digest,
    which is what makes an install reproducible — and also what stops it drifting onto an
-   upstream security fix. Watch the upstream advisories and re-pin deliberately;
-   `docs/RUNBOOK.md` has the upgrade and rollback procedure. (Until 2026-08-05 this entry
-   said `BULWARK_DIGEST` was empty; that was left behind by the release that pinned it.)
+   upstream security fix. Re-pinning is still a deliberate act, but **noticing is no longer
+   manual**: `scripts/check_pins.py` runs weekly and fails when a pin falls behind the line
+   declared in `scripts/pin_sources.json`. `docs/RUNBOOK.md` has the upgrade and rollback
+   procedure. (Until 2026-08-05 this entry said `BULWARK_DIGEST` was empty; that was left
+   behind by the release that pinned it.)
 4. **No SPF/DKIM/DMARC or deliverability score has been measured** against a real
    public domain; `docs/DNS.md` is guidance, not a verified result.
 5. **`SEARCH HEADER Message-ID` returns no hits** on the tested mail server version

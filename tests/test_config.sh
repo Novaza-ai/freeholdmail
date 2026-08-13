@@ -459,6 +459,28 @@ check "every shipped file has a Last-touched line" bash -c '
   done < <(find . -type f \( -name "*.sh" -o -name "*.yml" -o -name "*.py" -o -name "*.example" \) -not -path "./.git/*")
   exit $missing'
 
+# The pin-currency check reads scripts/pin_sources.json. If someone adds an image to
+# .env.example and forgets that file, the check keeps passing while covering less — the
+# failure mode this project keeps finding in its own guards. So the coverage is asserted
+# here, on every push, without touching the network.
+if command -v python3 >/dev/null 2>&1; then
+  check "every pinned image in .env.example is covered by scripts/pin_sources.json" \
+    python3 -c '
+import json, re, sys
+declared = {c["digest_var"] for c in json.load(open("scripts/pin_sources.json"))["components"]}
+pinned = set(re.findall(r"^([A-Z0-9_]+_DIGEST)=", open(".env.example").read(), re.M))
+missing, extra = pinned - declared, declared - pinned
+for name in sorted(missing):
+    print("%s is pinned in .env.example but absent from pin_sources.json" % name)
+for name in sorted(extra):
+    print("%s is declared in pin_sources.json but no longer pinned in .env.example" % name)
+sys.exit(1 if missing or extra else 0)'
+  check "scripts/check_pins.py compiles" python3 -m py_compile scripts/check_pins.py
+else
+  skip "every pinned image in .env.example is covered by scripts/pin_sources.json (no python3)"
+  skip "scripts/check_pins.py compiles (no python3)"
+fi
+
 echo
 if (( SKIP > 0 )); then
   echo "== result: $PASS passed, $FAIL failed, $SKIP SKIPPED — install the missing tools before trusting this =="
