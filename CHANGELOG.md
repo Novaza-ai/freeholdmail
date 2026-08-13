@@ -101,7 +101,7 @@ four controls we are **not** claiming so that no reader has to infer them from a
   nobody reads an upload as a scan.
 - **Dependabot security updates are enabled**, so an advisory against a watched dependency now
   opens a pull request instead of only raising an alert. Two adjacent secret-scanning features —
-  validity checks and non-provider patterns — **cannot** be enabled on this account's plan; the
+  validity checks and non-provider patterns — **cannot** be enabled without a paid GitHub tier; the
   API accepts the request and silently leaves them off. `SECURITY.md` records which, why, and
   what to rotate on suspicion as a result.
 

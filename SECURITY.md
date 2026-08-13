@@ -1,9 +1,10 @@
 # Security Policy
 
-<!-- Last-touched: 2026-08-13 — pin currency is no longer a manual duty: records
-     scripts/check_pins.py and the three things it refuses to do (fail-open, range-matching,
-     non-expiring acknowledgements). Same-day earlier edit added the controls-not-claimed
-     section (release signing, fuzzing, two plan-gated secret-scanning features). -->
+<!-- Last-touched: 2026-08-13 — state the secret-scanning tier requirement without naming this
+     account's billing tier, and drop the org-scoped probe command: neither is needed to explain
+     why the two features are off, and an org's plan is not public data. Same-day earlier edits
+     recorded scripts/check_pins.py and its three refusals, and added the controls-not-claimed
+     section (release signing, fuzzing, the two tier-gated secret-scanning features). -->
 
 ## Reporting a vulnerability
 
@@ -168,21 +169,21 @@ on here** — worth knowing, because the API accepts the request and then ignore
 
 | Feature | State | Why |
 |---|---|---|
-| `secret_scanning_validity_checks` | off | Needs GitHub Team or Enterprise with Secret Protection; this org is on the **free** plan |
-| `secret_scanning_non_provider_patterns` | off | Same gate — and validity checks never apply to non-provider patterns even when both are available |
+| `secret_scanning_validity_checks` | off | [Requires a paid GitHub tier](https://docs.github.com/code-security/secret-scanning/introduction/about-secret-scanning) — Team or Enterprise with Secret Protection — which this repository does not run under |
+| `secret_scanning_non_provider_patterns` | off | Same gate — and validity checks never apply to non-provider patterns even where both are available |
 
 `PATCH /repos/{owner}/{repo}` with either field returns **200 with the value still `disabled`**,
-no error and no warning. Verify the state and the reason for yourself:
+no error and no warning. Read the state back rather than trusting the status code:
 
 ```bash
 gh api repos/Novaza-ai/freeholdmail --jq .security_and_analysis
-gh api orgs/Novaza-ai --jq '{plan: .plan.name, advanced_security: .advanced_security_enabled_for_new_repositories}'
 ```
 
 The consequence to plan around: a credential leaked into this repository would be caught only if
 it matches a **known provider format**, and nothing will tell you whether it is still live.
-Rotate on suspicion; do not wait for a validity verdict. If you fork this into a paid org, enable
-both — the reason they are absent here is the plan, not a judgement.
+Rotate on suspicion; do not wait for a validity verdict. If you fork this into an account that
+carries the tier, enable both — the reason they are absent here is the tier requirement, not a
+judgement about their worth.
 
 ### Dependabot cannot see the image pins, because the pins are variables
 
