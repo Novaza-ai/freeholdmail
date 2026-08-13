@@ -1,13 +1,23 @@
 # Changelog
 
-<!-- Last-touched: 2026-08-13 — webmail to 1.8.1, which brings every pin current or declared.
-     Same-day earlier edits: the publish allow-list check, CI linting every tracked Python file,
-     the pin-currency check, and cutting 0.3.0. -->
+<!-- Last-touched: 2026-08-13 — cut 0.4.0: the two new checks and everything they found (Keycloak
+     patch floor, webmail send-path fix, moved postgres digest). Same-day earlier edit cut 0.3.0. -->
 
 All notable changes to this repo. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.4.0] — 2026-08-13
+
+Everything in this release exists because a check found it, not because someone went looking. Two
+controls shipped that this project did not have — one that notices when a pinned image falls behind,
+one that refuses to publish anything outside an allow-list — and between them they surfaced a High
+security gap in the SSO edition, a webmail send-path defect, a moved digest, and an account
+disclosure of ours that had been public for an hour.
+
+**Existing 0.11.x mail-server installs still must not upgrade in place** — unchanged from 0.3.0, see
+`docs/RUNBOOK.md` §6. The mail server pin does not move in this release.
 
 ### Security
 - **Keycloak moves to `26.7.1`, the patch floor for six advisories published 2026-08-06**, four of
