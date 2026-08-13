@@ -1,12 +1,42 @@
 # Changelog
 
-<!-- Last-touched: 2026-08-13 — cut 0.4.0: the two new checks and everything they found (Keycloak
-     patch floor, webmail send-path fix, moved postgres digest). Same-day earlier edit cut 0.3.0. -->
+<!-- Last-touched: 2026-08-13 — records the ruleset, the signed-commit requirement and its
+     merge gotcha, and the Scorecard badge. Same-day earlier edits cut 0.4.0 and 0.3.0. -->
 
 All notable changes to this repo. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changed
+- **`main` is now guarded by a repository ruleset, and it requires signed commits.** Rulesets are
+  GitHub's current mechanism and carry bypass actors explicitly, which legacy branch protection
+  cannot express. The ruleset enforces pull requests, the five status checks, linear history, no
+  force-push, no deletion, conversation resolution, and **signed commits**. The legacy
+  branch-protection rule is deliberately left in place while the ruleset proves itself; both apply
+  and the most restrictive wins.
+  Signing needed care rather than enthusiasm: GitHub refuses a squash-merge on a signing-protected
+  branch when you are not the pull request's author, and there is no signing key on the maintainer's
+  machine — so "merge locally" would have produced an unsigned commit that the rule then rejects,
+  leaving no fallback. What makes it safe is that **GitHub signs the squash-merge itself**; every
+  merge commit on `main` already reported `verified=true`, including one that came from a Dependabot
+  pull request. **No signing key was generated for the project** — key custody is a maintainer
+  decision, and an unattended passphrase-less key on a server is weaker provenance than honestly
+  unsigned commits.
+  **Operational note for maintainers:** with the signature rule active, `gh pr merge` can refuse a
+  green pull request client-side because GitHub reports `mergeStateStatus: BLOCKED` while
+  `mergeable: MERGEABLE`. The merge endpoint itself accepts it —
+  `gh api -X PUT repos/:owner/:repo/pulls/N/merge -f merge_method=squash` — and the result is
+  signed and verified. This is a client-side pre-check, not a rule violation.
+- **`CONTRIBUTING.md` documents what the ruleset enforces**, including that branch commits do not
+  need signing. A protection a contributor meets first at merge time is the same defect as a check
+  they were never told to run.
+
+### Added
+- **The OpenSSF Scorecard badge is in `README.md`.** The plan was to add it only once the workflow
+  actually ran and had a score to show; it does. The badge image was fetched and confirmed to render
+  (**HTTP 200, `image/svg+xml`, 1333 bytes**) before being linked, because a badge pointing at
+  nothing is worse than no badge.
 
 ## [0.4.0] — 2026-08-13
 
