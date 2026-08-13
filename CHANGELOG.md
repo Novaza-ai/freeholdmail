@@ -9,6 +9,26 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Security
+- **Keycloak moves to `26.7.1`, the patch floor for six advisories published 2026-08-06**, four of
+  them High: `GHSA-95cx-vmr5-3cmr` (the default Dynamic Client Registration policy fails to
+  validate the claim path for User Property mappers, letting a standard user write to sensitive
+  internal claims — role forgery), `GHSA-95rm-h7g9-rhcf` (the "Allowed Protocol Mapper Types"
+  policy is not re-validated on client update, allowing a type-swap privilege escalation),
+  `GHSA-fgq2-hxm5-8xg2` (SAML idp-initiated broker login bypasses the link-only restriction) and
+  `GHSA-f8m4-v488-rmrm` (importing identity-provider metadata without key usage attributes
+  disables SAML response signature validation). Plus two medium: `GHSA-hmr6-pxx9-552p` (LDAP
+  entry-DN search escapes the configured users-DN boundary) and `GHSA-3692-rrj9-24qw` (unbounded
+  Prometheus metric cardinality from request-controlled error text).
+  `26.7.0` shipped here for one week and was below that floor — the advisories were published the
+  day after it was pinned. This affects the **SSO edition only**; the Full Mail edition ships no
+  Keycloak. Verified after the bump: SSO e2e **15/0**.
+- **The `postgres:17-alpine` digest is re-pinned.** The tag tracks the 17 line and had been
+  re-pointed upstream since it was pinned, so the digest — the only thing holding this install
+  still — no longer matched what upstream serves for that tag.
+
+Both were found by `scripts/check_pins.py` on its first run, not by an audit.
+
 ### Added
 - **The pin-currency gap is now automated.** `scripts/check_pins.py`, run weekly by
   `.github/workflows/pin-currency.yml`, reads every image pin out of `.env.example` and compares

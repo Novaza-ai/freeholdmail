@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-07 — mail-server defaults moved to stalwartlabs/stalwart v0.13.4,
-# the patch floor for GHSA-8jqj-qj5p-v5rr. Structure follows the Google Shell Style Guide
+# Last-touched: 2026-08-13 — Keycloak default to 26.7.1 (patch floor for six advisories, four
+# High) and postgres digest re-pinned; both must match .env.example, which the suite asserts.
+# Mail-server default stays stalwartlabs/stalwart v0.13.4, the patch floor for
+# GHSA-8jqj-qj5p-v5rr. Structure follows the Google Shell Style Guide
 # (main function, readonly constants, errors to STDERR).
 #
 # Generates .env with STRONG RANDOM secrets (nothing hardcoded), wires the chosen
@@ -30,10 +32,10 @@ readonly BULWARK_VERSION_DEFAULT="v1.7.8"
 readonly BULWARK_DIGEST_DEFAULT="@sha256:1ea45e292e7baf84eccdfe3d7ed96fe4487f2b95025a6ab569706915f6798979"
 readonly NGINX_VERSION_DEFAULT="1.30.4-alpine"
 readonly NGINX_DIGEST_DEFAULT="@sha256:97d490c12ba55b4946b01546d1c3ed324e8d41ab1c9fcb2a616aa470620e5b46"
-readonly KEYCLOAK_VERSION_DEFAULT="26.7.0"
-readonly KEYCLOAK_DIGEST_DEFAULT="@sha256:0f198be292568439d700cdbfb893e69a6009bb43a94a06a945b1d3d506c76b13"
+readonly KEYCLOAK_VERSION_DEFAULT="26.7.1"
+readonly KEYCLOAK_DIGEST_DEFAULT="@sha256:f1f1f01e472c8a78df40d8f2a49a925274eda4d3d80d5f6edbb5c880ee3c01c6"
 readonly POSTGRES_VERSION_DEFAULT="17-alpine"
-readonly POSTGRES_DIGEST_DEFAULT="@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6"
+readonly POSTGRES_DIGEST_DEFAULT="@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193"
 
 # Errors go to STDERR so that redirecting stdout to a log never swallows them.
 err() { printf '%s\n' "$*" >&2; }
