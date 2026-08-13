@@ -1,6 +1,8 @@
 # Contributing to Freehold Mail
 
-<!-- Last-touched: 2026-08-04 — created during pre-public QA. -->
+<!-- Last-touched: 2026-08-13 — "Checks that must pass" listed lint but not the three test
+     suites CI actually gates on, so a contributor could follow this file exactly and still
+     fail. Adds the suites, the two guards, and the expected output for each. -->
 
 Thanks for helping. This repo is **orchestration only** — compose files, nginx config,
 an installer, and docs. Please read this before opening a PR, because where a change
@@ -56,7 +58,35 @@ services:
 
 ## Checks that must pass
 
-CI runs these; run them locally first:
+CI runs these; run them locally first. **The suites are the ones that will fail your pull
+request** — the lint commands below them are the cheap early warnings.
+
+```bash
+# The static suite. Fast, needs no images, and is what CI's "Static checks" job runs.
+# Read the result line, not the colour: a SKIP means a tool is missing and that check
+# did not run, so install it and re-run rather than trusting a green board.
+tests/test_config.sh                      # expect: N passed, 0 failed, and no SKIPPED
+
+# End to end. These start containers and put a real message through SMTP → mailbox → IMAP.
+tests/test_e2e.sh                         # expect: 14 passed, 0 failed
+tests/test_e2e.sh --sso                   # expect: 15 passed, 0 failed
+```
+
+Two guards run inside the static suite and are worth running directly when you touch what
+they cover:
+
+```bash
+# Nothing outside the publish allow-list — hosts, email domains, addresses.
+# If this fires on something you added, decide whether it should be public before
+# adding it to scripts/disclosure_policy.json.
+scripts/check_disclosure.py               # expect: 0 finding(s)
+
+# Every pinned image against the upstream line declared in scripts/pin_sources.json.
+# Scheduled weekly, not a required check — it fails when upstream moves, not when you do.
+scripts/check_pins.py                     # expect: 0 behind
+```
+
+Lint and validation:
 
 ```bash
 bash -n install.sh && shellcheck install.sh
@@ -64,6 +94,8 @@ docker compose --env-file .env.example config -q
 docker compose --env-file .env.example -f docker-compose.yml -f docker-compose.sso.yml config -q
 grep -rnE '(SECRET|PASSWORD|TOKEN|API_KEY)=[A-Za-z0-9+/=_-]{8,}' . # must return nothing
 ```
+
+`tests/README.md` explains what each suite covers and what it deliberately does not.
 
 ## Conventions
 
