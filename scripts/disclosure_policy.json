@@ -1,0 +1,97 @@
+{
+  "_comment": [
+    "What this repository is allowed to say about the world outside it. Read by",
+    "scripts/check_disclosure.py, which fails when the published tree mentions anything not",
+    "listed here.",
+    "",
+    "This is an ALLOW-list on purpose. A deny-list of things that must not be published would",
+    "have to name them -- and a public file naming the private hosts and projects it is guarding",
+    "against is itself the disclosure it claims to prevent. An allow-list contains only values",
+    "already intended for publication, so publishing the policy costs nothing.",
+    "",
+    "Adding an entry is a deliberate act. If this check fails on a new address or host, the",
+    "question to answer is 'should this be public?' -- not 'how do I make the check pass?'.",
+    "",
+    "forbidden_patterns holds only vendor-generic shapes: API surfaces and filesystem shapes",
+    "that are wrong to publish regardless of who owns them. Nothing private is named here."
+  ],
+
+  "allowed_email_domains": [
+    "example.com",
+    "example.net",
+    "example.org",
+    "evil.example",
+    "evil.test",
+    "qa.test",
+    "freehold.demo",
+    "novaza.ai",
+    "users.noreply.github.com"
+  ],
+
+  "allowed_hosts": [
+    "github.com",
+    "api.github.com",
+    "docs.github.com",
+    "raw.githubusercontent.com",
+    "img.shields.io",
+    "scorecard.dev",
+    "api.scorecard.dev",
+    "www.bestpractices.dev",
+    "www.contributor-covenant.org",
+    "keepachangelog.com",
+    "semver.org",
+    "www.rfc-editor.org",
+    "hub.docker.com",
+    "auth.docker.io",
+    "registry-1.docker.io",
+    "get.docker.com",
+    "quay.io",
+    "stalw.art",
+    "nginx.org",
+    "www.postgresql.org",
+    "www.mail-tester.com",
+    "crowdin.com",
+    "weblate.org",
+    "substack.com",
+    "www.linkedin.com",
+    "novaza.ai",
+    "example.com",
+    "mail.example.com",
+    "id.example.com",
+    "evil.example.com",
+    "id.qa.test",
+    "mail.freehold.demo",
+    "127.0.0.1"
+  ],
+
+  "forbidden_patterns": [
+    {
+      "pattern": "gh api orgs/",
+      "why": "An organisation-scoped API call reads account state that is wider than this repository and, for some fields, is visible only to members. Scope verification commands to the repository."
+    },
+    {
+      "pattern": "\\.plan\\.name",
+      "why": "GET /orgs/{org} returns the billing plan only to members. Publishing it discloses account information no reader of this repository needs."
+    },
+    {
+      "pattern": "advanced_security_enabled",
+      "why": "An organisation-wide security posture field. State this repository's own security_and_analysis instead."
+    },
+    {
+      "pattern": "(?i)\\b(?:this|our)\\s+(?:org|organisation|organization|account)\\s+is\\s+on\\s+the\\b",
+      "why": "Names the tier or plan this account holds. Say that a paid tier is required and link the vendor's documentation; which tier is held adds nothing a reader can act on."
+    },
+    {
+      "pattern": "/root/",
+      "why": "An absolute path from a maintainer's own machine. Publish repository-relative paths."
+    },
+    {
+      "pattern": "/home/[a-z][a-z0-9_-]*/",
+      "why": "An absolute home directory reveals an operator account name. Publish repository-relative paths."
+    },
+    {
+      "pattern": "/Users/[A-Za-z][A-Za-z0-9_-]*/",
+      "why": "An absolute macOS home directory reveals an operator account name."
+    }
+  ]
+}

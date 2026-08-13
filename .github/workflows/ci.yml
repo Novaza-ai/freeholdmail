@@ -83,11 +83,16 @@ jobs:
           shellcheck -S style install.sh tests/test_config.sh tests/test_e2e.sh scripts/make_gif.sh
 
       - name: Python syntax and style
+        # Every tracked .py file, not a hardcoded list: two scripts added in August were invisible
+        # to this step because nobody remembered to name them here. A lint list that has to be
+        # maintained by hand shrinks silently every time the repository grows.
         run: |
-          python3 -c "import ast; ast.parse(open('tests/e2e_mail.py').read())"
-          python3 -c "import ast; ast.parse(open('scripts/seed_demo.py').read())"
+          mapfile -t PY < <(git ls-files '*.py')
+          [ "${#PY[@]}" -gt 0 ] || { echo "::error::no Python files found — refusing to pass"; exit 1; }
+          printf 'linting %d file(s): %s\n' "${#PY[@]}" "${PY[*]}"
+          for f in "${PY[@]}"; do python3 -c "import ast,sys; ast.parse(open(sys.argv[1]).read())" "$f"; done
           sudo apt-get install -y -qq pycodestyle
-          pycodestyle --max-line-length=100 tests/e2e_mail.py scripts/seed_demo.py
+          pycodestyle --max-line-length=100 "${PY[@]}"
 
       - name: Compose config (base edition)
         run: docker compose --env-file .env.example -f docker-compose.yml config -q
