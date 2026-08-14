@@ -13,6 +13,19 @@
   <a href="https://www.bestpractices.dev/projects/14076"><img src="https://www.bestpractices.dev/projects/14076/badge" alt="OpenSSF Best Practices"></a>
   <a href="https://github.com/Novaza-ai/freeholdmail/attestations"><img src="https://img.shields.io/badge/SLSA-Build%20L2-brightgreen.svg" alt="SLSA Build Level 2"></a>
   <a href="https://github.com/Novaza-ai/freeholdmail/releases/latest"><img src="https://img.shields.io/badge/SBOM-SPDX-blue.svg" alt="SBOM: SPDX"></a>
+  <a href="../../../.github/dependabot.yml"><img src="https://img.shields.io/badge/Dependabot-enabled-025E8C.svg" alt="Dependabot enabled"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/stalwartlabs/stalwart"><img src="https://img.shields.io/badge/mail%20server-Rust-orange.svg" alt="Mail server: Rust"></a>
+  <a href="https://jmap.io"><img src="https://img.shields.io/badge/JMAP-native-blueviolet.svg" alt="JMAP native"></a>
+  <a href="https://github.com/Novaza-ai/freeholdmail/releases/latest"><img src="https://img.shields.io/github/v/release/Novaza-ai/freeholdmail?label=release" alt="Latest release"></a>
+</p>
+
+<p align="center">
+  <a href="../../../CHANGELOG.md"><img src="https://img.shields.io/badge/SemVer-2.0.0-blue.svg" alt="Semantic Versioning 2.0.0"></a>
+  <a href="../../../CHANGELOG.md"><img src="https://img.shields.io/badge/Keep%20a%20Changelog-1.1.0-orange.svg" alt="Keep a Changelog 1.1.0"></a>
+  <a href="../../../CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg" alt="Contributor Covenant 2.1"></a>
   <a href="../../../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
   <a href="../../../THIRD_PARTY_LICENSES.md"><img src="https://img.shields.io/badge/components-AGPL--3.0-orange.svg" alt="Components: AGPL-3.0"></a>
   <a href="../../../CHANGELOG.md"><img src="https://img.shields.io/badge/status-pre--1.0-yellow.svg" alt="Status: pre-1.0"></a>
@@ -145,6 +158,7 @@ este repositorio sea MIT mientras cada componente conserva su propia licencia.
 | | Freehold Mail | Mailu / Mailcow | docker-mailserver | Google Workspace |
 |---|---|---|---|---|
 | Servidor de correo | Stalwart (Rust, nativo de JMAP) | Postfix + Dovecot | Postfix + Dovecot | — |
+| RAM en reposo (medida) | **218–288 MiB** | mailcow: 6 GiB min (docs) | — | — |
 | Webmail incluido | ✅ | ✅ | ❌ (aporte el suyo) | ✅ |
 | JMAP | ✅ | ❌ | ❌ | ❌ |
 | SSO/OIDC | ✅ edición opcional | parcial | ❌ | ✅ |

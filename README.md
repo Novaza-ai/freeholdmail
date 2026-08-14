@@ -16,6 +16,19 @@
   <a href="https://www.bestpractices.dev/projects/14076"><img src="https://www.bestpractices.dev/projects/14076/badge" alt="OpenSSF Best Practices"></a>
   <a href="https://github.com/Novaza-ai/freeholdmail/attestations"><img src="https://img.shields.io/badge/SLSA-Build%20L2-brightgreen.svg" alt="SLSA Build Level 2"></a>
   <a href="https://github.com/Novaza-ai/freeholdmail/releases/latest"><img src="https://img.shields.io/badge/SBOM-SPDX-blue.svg" alt="SBOM: SPDX"></a>
+  <a href=".github/dependabot.yml"><img src="https://img.shields.io/badge/Dependabot-enabled-025E8C.svg" alt="Dependabot enabled"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/stalwartlabs/stalwart"><img src="https://img.shields.io/badge/mail%20server-Rust-orange.svg" alt="Mail server: Rust"></a>
+  <a href="https://jmap.io"><img src="https://img.shields.io/badge/JMAP-native-blueviolet.svg" alt="JMAP native"></a>
+  <a href="https://github.com/Novaza-ai/freeholdmail/releases/latest"><img src="https://img.shields.io/github/v/release/Novaza-ai/freeholdmail?label=release" alt="Latest release"></a>
+</p>
+
+<p align="center">
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/SemVer-2.0.0-blue.svg" alt="Semantic Versioning 2.0.0"></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/Keep%20a%20Changelog-1.1.0-orange.svg" alt="Keep a Changelog 1.1.0"></a>
+  <a href="CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg" alt="Contributor Covenant 2.1"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
   <a href="THIRD_PARTY_LICENSES.md"><img src="https://img.shields.io/badge/components-AGPL--3.0-orange.svg" alt="Components: AGPL-3.0"></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/status-pre--1.0-yellow.svg" alt="Status: pre-1.0"></a>
@@ -142,15 +155,29 @@ while each component keeps its own license.
 | | Freehold Mail | Mailu / Mailcow | docker-mailserver | Google Workspace |
 |---|---|---|---|---|
 | Mail server | Stalwart (Rust, JMAP-native) | Postfix + Dovecot | Postfix + Dovecot | — |
+| RAM, idle (measured) | **218–288 MiB** | mailcow: 6 GiB min (docs) | — | — |
 | Webmail included | ✅ | ✅ | ❌ (bring your own) | ✅ |
 | JMAP | ✅ | ❌ | ❌ | ❌ |
 | SSO/OIDC | ✅ optional edition | partial | ❌ | ✅ |
 | You hold the data | ✅ | ✅ | ✅ | ❌ |
 | Maturity | **pre-1.0** | mature | mature | commercial |
 
+**About that RAM row, because a comparison without its caveats is marketing.** The
+218–288 MiB is `docker stats` against this stack running idle, over two independent runs —
+the range is published rather than the prettier single number because the two runs
+disagreed by 32%. Reproduce it with `docker stats --no-stream` after `docker compose up -d`;
+see [`docs/HOSTING.md`](docs/HOSTING.md). The 6 GiB is mailcow's *own*
+[documented minimum](https://docs.mailcow.email/getstarted/prerequisite-system/), not our
+benchmark of it. **And mailcow is heavier because it does more** — ClamAV antivirus alone
+accounts for roughly 1.3 GB, and SOGo adds CalDAV, CardDAV and ActiveSync. If you want
+groupware and virus scanning, that 6 GiB is the honest price of those features and you
+should pay it. The comparison is only fair for someone who wants mail, a web client, and
+nothing else.
+
 Mailu, Mailcow, and docker-mailserver are excellent and far more battle-tested. Pick
 Freehold Mail if you specifically want a JMAP-native, Rust mail server with webmail and
-optional SSO in one place.
+optional SSO in one place — and note that the mail server is the Rust part: the webmail is
+TypeScript, and nginx and PostgreSQL are C.
 
 ## Scope, honestly
 
