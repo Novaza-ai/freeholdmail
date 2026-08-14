@@ -14,10 +14,10 @@
 
 # Freehold Mail
 
-**Đừng đi thuê hộp thư của chính mình.** Một bộ mail stack self-hosted hoàn chỉnh — mail
+**Bạn muốn sở hữu mail server của chính mình?** Một bộ mail stack self-hosted hoàn chỉnh — mail
 server viết bằng Rust, web client hiện đại.
 
-> *Freehold* là thuật ngữ pháp lý: tài sản bạn **sở hữu đứt**, không có địa chủ, không có
+> _Freehold_ là thuật ngữ pháp lý: tài sản bạn **sở hữu đứt**, không có địa chủ, không có
 > hợp đồng thuê phải gia hạn. Đó chính là khác biệt giữa việc tự vận hành bộ này và việc
 > thuê hộp thư từ một bên mà mô hình kinh doanh của họ là dữ liệu của bạn.
 
@@ -70,10 +70,10 @@ server của ai cả.
 
 ## Hai edition
 
-| Edition | Gồm những gì | Đăng nhập | Đã test E2E |
-|---------|--------------|-----------|-------------|
-| **Full Mail** (mặc định) | mail server + webmail + nginx | tài khoản/mật khẩu tự thân | ✅ có |
-| **Mail + SSO** | như trên **+ Keycloak + PostgreSQL** | OIDC/SSO | ⚠️ một phần — stack khởi động được, database và OIDC discovery đã xác minh trên Keycloak 24; cấu hình cho bản 26.0 đang khai và vòng đăng nhập qua trình duyệt thì chưa đo. Xem [Known gaps](../../../CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these) |
+| Edition                  | Gồm những gì                         | Đăng nhập                  | Đã test E2E                                                                                                                                                                                                                                                          |
+| ------------------------ | ------------------------------------ | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Full Mail** (mặc định) | mail server + webmail + nginx        | tài khoản/mật khẩu tự thân | ✅ có                                                                                                                                                                                                                                                                |
+| **Mail + SSO**           | như trên **+ Keycloak + PostgreSQL** | OIDC/SSO                   | ⚠️ một phần — stack khởi động được, database và OIDC discovery đã xác minh trên Keycloak 24; cấu hình cho bản 26.0 đang khai và vòng đăng nhập qua trình duyệt thì chưa đo. Xem [Known gaps](../../../CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these) |
 
 Bạn không phải đụng đến Keycloak trừ khi muốn dùng SSO; nó nằm trong một file overlay tuỳ chọn.
 
@@ -133,14 +133,14 @@ phép MIT trong khi từng thành phần vẫn giữ giấy phép riêng của n
 
 ## So sánh
 
-| | Freehold Mail | Mailu / Mailcow | docker-mailserver | Google Workspace |
-|---|---|---|---|---|
-| Mail server | Stalwart (Rust, JMAP-native) | Postfix + Dovecot | Postfix + Dovecot | — |
-| Có sẵn webmail | ✅ | ✅ | ❌ (tự lo) | ✅ |
-| JMAP | ✅ | ❌ | ❌ | ❌ |
-| SSO/OIDC | ✅ edition tuỳ chọn | một phần | ❌ | ✅ |
-| Dữ liệu thuộc về bạn | ✅ | ✅ | ✅ | ❌ |
-| Độ chín | **pre-1.0** | đã chín | đã chín | thương mại |
+|                      | Freehold Mail                | Mailu / Mailcow   | docker-mailserver | Google Workspace |
+| -------------------- | ---------------------------- | ----------------- | ----------------- | ---------------- |
+| Mail server          | Stalwart (Rust, JMAP-native) | Postfix + Dovecot | Postfix + Dovecot | —                |
+| Có sẵn webmail       | ✅                           | ✅                | ❌ (tự lo)        | ✅               |
+| JMAP                 | ✅                           | ❌                | ❌                | ❌               |
+| SSO/OIDC             | ✅ edition tuỳ chọn          | một phần          | ❌                | ✅               |
+| Dữ liệu thuộc về bạn | ✅                           | ✅                | ✅                | ❌               |
+| Độ chín              | **pre-1.0**                  | đã chín           | đã chín           | thương mại       |
 
 Mailu, Mailcow và docker-mailserver đều xuất sắc và dày dạn trận mạc hơn nhiều. Hãy chọn
 Freehold Mail nếu bạn cụ thể muốn một mail server viết bằng Rust, JMAP-native, kèm webmail
@@ -169,16 +169,16 @@ chúng. **Rất mong có người đóng góp phần agent — xem mục "Help w
 - **Repo này** (orchestration, config, installer, tài liệu): **MIT** — xem [`LICENSE`](../../../LICENSE).
 - **Các chương trình mà nó triển khai vẫn giữ giấy phép riêng** và được kéo về dưới dạng
   image đã publish; repo này không chứa mã nguồn của chúng:
-  - Stalwart Mail Server — **AGPL-3.0-only OR SELv1** *(giấy phép kép; không phải "or later")*
+  - Stalwart Mail Server — **AGPL-3.0-only OR SELv1** _(giấy phép kép; không phải "or later")_
   - Bulwark Webmail — **AGPL-3.0-only**
-  - Keycloak — **Apache-2.0** *(bản SSO)*
-  - PostgreSQL — **PostgreSQL License** *(bản SSO)*
+  - Keycloak — **Apache-2.0** _(bản SSO)_
+  - PostgreSQL — **PostgreSQL License** _(bản SSO)_
   - nginx — **BSD-2-Clause**
 
 Nếu bạn **sửa đổi** Stalwart hoặc Bulwark rồi phục vụ cho người khác, AGPL buộc bạn phải
-công bố mã nguồn đã sửa *của chính thành phần đó*. Chạy image nguyên bản thì không phát sinh
+công bố mã nguồn đã sửa _của chính thành phần đó_. Chạy image nguyên bản thì không phát sinh
 nghĩa vụ này. Chi tiết: [`THIRD_PARTY_LICENSES.md`](../../../THIRD_PARTY_LICENSES.md) và
-[`NOTICE`](../../../NOTICE). *(Văn bản giấy phép chỉ có hiệu lực pháp lý ở bản tiếng Anh.)*
+[`NOTICE`](../../../NOTICE). _(Văn bản giấy phép chỉ có hiệu lực pháp lý ở bản tiếng Anh.)_
 
 ## Bảo mật
 
@@ -186,7 +186,7 @@ Open relay bị từ chối, gửi thư bắt buộc xác thực, và các cơ c
 chỉ được cấp sau STARTTLS — tất cả đều **đã đo**, không phải phỏng đoán. Nhưng cũng có
 những điểm yếu thật mà bạn phải tính đến, trong đó có một admin API của upstream trả về mật
 khẩu tài khoản ở dạng cleartext. **Hãy đọc [`SECURITY.md`](../../../SECURITY.md) trước khi mở bộ này
-ra internet.** *(File SECURITY.md chỉ có bản tiếng Anh — đó là bản có thẩm quyền.)*
+ra internet.** _(File SECURITY.md chỉ có bản tiếng Anh — đó là bản có thẩm quyền.)_
 
 ## Kiểm thử và vận hành
 
