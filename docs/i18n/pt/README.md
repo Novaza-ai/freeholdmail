@@ -33,11 +33,6 @@ de e-mail em Rust, cliente web moderno.
 > contrato para renovar. É essa a diferença entre executar isto e alugar uma caixa de correio a
 > alguém cujo modelo de negócio são os seus dados.
 
-[![CI](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg)](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
-[![Components: AGPL-3.0](https://img.shields.io/badge/components-AGPL--3.0-orange.svg)](../../../THIRD_PARTY_LICENSES.md)
-[![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-yellow.svg)](../../../CHANGELOG.md)
-
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="A caixa de entrada do Freehold Mail: barra lateral de pastas, lista de mensagens e painel de leitura" width="820">
 </p>
