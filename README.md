@@ -24,6 +24,7 @@ web client.
 
 [![CI](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg)](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Novaza-ai/freeholdmail/badge)](https://scorecard.dev/viewer/?uri=github.com/Novaza-ai/freeholdmail)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14076/badge)](https://www.bestpractices.dev/projects/14076)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Components: AGPL-3.0](https://img.shields.io/badge/components-AGPL--3.0-orange.svg)](THIRD_PARTY_LICENSES.md)
 [![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-yellow.svg)](CHANGELOG.md)
