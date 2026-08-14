@@ -32,11 +32,6 @@
 > นั่นคือความแตกต่างระหว่างการรันสิ่งนี้ด้วยตัวเอง กับการเช่ากล่องจดหมายจากคนที่มีโมเดลธุรกิจ
 > คือข้อมูลของคุณ
 
-[![CI](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg)](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
-[![Components: AGPL-3.0](https://img.shields.io/badge/components-AGPL--3.0-orange.svg)](../../../THIRD_PARTY_LICENSES.md)
-[![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-yellow.svg)](../../../CHANGELOG.md)
-
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="กล่องจดหมายของ Freehold Mail: แถบข้างแสดงโฟลเดอร์ รายการข้อความ และบานหน้าต่างอ่านข้อความ" width="820">
 </p>
