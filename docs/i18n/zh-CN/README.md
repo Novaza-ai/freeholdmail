@@ -30,11 +30,6 @@
 > *Freehold*（永久产权）：完全属于你的财产，没有房东，也没有需要续签的租约。
 > 自己运行这套系统，与向一个以你的数据为商业模式的人租用邮箱，区别正在于此。
 
-[![CI](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg)](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
-[![Components: AGPL-3.0](https://img.shields.io/badge/components-AGPL--3.0-orange.svg)](../../../THIRD_PARTY_LICENSES.md)
-[![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-yellow.svg)](../../../CHANGELOG.md)
-
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Freehold Mail 收件箱：文件夹侧栏、邮件列表与阅读窗格" width="820">
 </p>
