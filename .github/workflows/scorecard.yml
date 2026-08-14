@@ -1,11 +1,20 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-05 — OpenSSF Scorecard: automated, third-party scoring of this
+# Last-touched: 2026-08-14 — the scan can now be run on demand. It was the only scheduled
+# workflow here that could not be, and that gap had a cost: v0.5.0 was published twenty
+# seconds AFTER the scan that was meant to grade it, so Signed-Releases went on reporting -1
+# for something already fixed, with no way to re-measure short of pushing a commit for the
+# sake of the score or waiting until Monday.
+# Created 2026-08-05 — OpenSSF Scorecard: automated, third-party scoring of this
 # repo's security posture. Results land in the Security tab; the badge is generated from
 # the published results, so it cannot be faked by us.
 name: OpenSSF Scorecard
 
 on:
+  # Manual re-measurement. Adds no permission the job did not already hold on every push to
+  # main, and the results are public by design (publish_results below), so a manual run
+  # republishes a score and discloses nothing.
+  workflow_dispatch:
   branch_protection_rule:
   schedule:
     - cron: '31 4 * * 1'     # weekly, Monday
