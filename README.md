@@ -151,9 +151,22 @@ while each component keeps its own license.
 | You hold the data | ✅ | ✅ | ✅ | ❌ |
 | Maturity | **pre-1.0** | mature | mature | commercial |
 
+**About that RAM row, because a comparison without its caveats is marketing.** The
+218–288 MiB is `docker stats` against this stack running idle, over two independent runs —
+the range is published rather than the prettier single number because the two runs
+disagreed by 32%. Reproduce it with `docker stats --no-stream` after `docker compose up -d`;
+see [`docs/HOSTING.md`](docs/HOSTING.md). The 6 GiB is mailcow's *own*
+[documented minimum](https://docs.mailcow.email/getstarted/prerequisite-system/), not our
+benchmark of it. **And mailcow is heavier because it does more** — ClamAV antivirus alone
+accounts for roughly 1.3 GB, and SOGo adds CalDAV, CardDAV and ActiveSync. If you want
+groupware and virus scanning, that 6 GiB is the honest price of those features and you
+should pay it. The comparison is only fair for someone who wants mail, a web client, and
+nothing else.
+
 Mailu, Mailcow, and docker-mailserver are excellent and far more battle-tested. Pick
 Freehold Mail if you specifically want a JMAP-native, Rust mail server with webmail and
-optional SSO in one place.
+optional SSO in one place — and note that the mail server is the Rust part: the webmail is
+TypeScript, and nginx and PostgreSQL are C.
 
 ## Scope, honestly
 
