@@ -7,6 +7,17 @@
   </picture>
 </p>
 
+<p align="center">
+  <a href="https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml"><img src="https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/Novaza-ai/freeholdmail"><img src="https://api.scorecard.dev/projects/github.com/Novaza-ai/freeholdmail/badge" alt="OpenSSF Scorecard"></a>
+  <a href="https://www.bestpractices.dev/projects/14076"><img src="https://www.bestpractices.dev/projects/14076/badge" alt="OpenSSF Best Practices"></a>
+  <a href="https://github.com/Novaza-ai/freeholdmail/attestations"><img src="https://img.shields.io/badge/SLSA-Build%20L2-brightgreen.svg" alt="SLSA Build Level 2"></a>
+  <a href="https://github.com/Novaza-ai/freeholdmail/releases/latest"><img src="https://img.shields.io/badge/SBOM-SPDX-blue.svg" alt="SBOM: SPDX"></a>
+  <a href="../../../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="../../../THIRD_PARTY_LICENSES.md"><img src="https://img.shields.io/badge/components-AGPL--3.0-orange.svg" alt="Components: AGPL-3.0"></a>
+  <a href="../../../CHANGELOG.md"><img src="https://img.shields.io/badge/status-pre--1.0-yellow.svg" alt="Status: pre-1.0"></a>
+</p>
+
 [English](../../../README.md) · **日本語** — 英語版が正典です。[`TRANSLATIONS.md`](../../../TRANSLATIONS.md) を参照してください
 
 > **この翻訳は参考用です。** 内容が英語版と矛盾する場合は、常に英語版が優先されます。
@@ -19,11 +30,6 @@
 
 > *Freehold*（自由保有権）: 地主も更新すべき賃貸契約も存在せず、完全に自分のものである資産のこと。
 > これを自分で動かすことと、あなたのデータを収益源とする誰かから受信箱を借りることの違いが、まさにそれです。
-
-[![CI](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg)](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
-[![Components: AGPL-3.0](https://img.shields.io/badge/components-AGPL--3.0-orange.svg)](../../../THIRD_PARTY_LICENSES.md)
-[![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-yellow.svg)](../../../CHANGELOG.md)
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Freehold Mail の受信箱: フォルダーのサイドバー、メッセージ一覧、閲覧ペイン" width="820">
