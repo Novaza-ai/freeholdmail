@@ -11,6 +11,8 @@
   <a href="https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml"><img src="https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://scorecard.dev/viewer/?uri=github.com/Novaza-ai/freeholdmail"><img src="https://api.scorecard.dev/projects/github.com/Novaza-ai/freeholdmail/badge" alt="OpenSSF Scorecard"></a>
   <a href="https://www.bestpractices.dev/projects/14076"><img src="https://www.bestpractices.dev/projects/14076/badge" alt="OpenSSF Best Practices"></a>
+  <a href="https://github.com/stalwartlabs/stalwart"><img src="https://img.shields.io/badge/mail%20server-Rust-orange.svg" alt="Mail server: Rust"></a>
+  <a href="https://jmap.io"><img src="https://img.shields.io/badge/JMAP-native-blueviolet.svg" alt="JMAP native"></a>
   <a href="https://github.com/Novaza-ai/freeholdmail/attestations"><img src="https://img.shields.io/badge/SLSA-Build%20L2-brightgreen.svg" alt="SLSA Build Level 2"></a>
   <a href="https://github.com/Novaza-ai/freeholdmail/releases/latest"><img src="https://img.shields.io/badge/SBOM-SPDX-blue.svg" alt="SBOM: SPDX"></a>
   <a href="../../../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
@@ -145,6 +147,7 @@ MIT, тогда как каждый компонент сохраняет соб
 | | Freehold Mail | Mailu / Mailcow | docker-mailserver | Google Workspace |
 |---|---|---|---|---|
 | Почтовый сервер | Stalwart (Rust, нативный JMAP) | Postfix + Dovecot | Postfix + Dovecot | — |
+| ОЗУ в простое (измерено) | **218–288 MiB** | mailcow: 6 GiB min (docs) | — | — |
 | Веб-почта в комплекте | ✅ | ✅ | ❌ (своя) | ✅ |
 | JMAP | ✅ | ❌ | ❌ | ❌ |
 | SSO/OIDC | ✅ опциональная редакция | частично | ❌ | ✅ |
