@@ -32,11 +32,6 @@ server viết bằng Rust, web client hiện đại.
 > hợp đồng thuê phải gia hạn. Đó chính là khác biệt giữa việc tự vận hành bộ này và việc
 > thuê hộp thư từ một bên mà mô hình kinh doanh của họ là dữ liệu của bạn.
 
-[![CI](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg)](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
-[![Components: AGPL-3.0](https://img.shields.io/badge/components-AGPL--3.0-orange.svg)](../../../THIRD_PARTY_LICENSES.md)
-[![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-yellow.svg)](../../../CHANGELOG.md)
-
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Hộp thư Freehold Mail: sidebar thư mục, danh sách thư và khung đọc" width="820">
 </p>
