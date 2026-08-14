@@ -33,11 +33,6 @@ klien web modern.
 > sewa yang harus diperpanjang. Itulah perbedaan antara menjalankan ini sendiri dan menyewa kotak
 > surat dari pihak yang model bisnisnya adalah data Anda.
 
-[![CI](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg)](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
-[![Components: AGPL-3.0](https://img.shields.io/badge/components-AGPL--3.0-orange.svg)](../../../THIRD_PARTY_LICENSES.md)
-[![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-yellow.svg)](../../../CHANGELOG.md)
-
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Kotak masuk Freehold Mail: sidebar folder, daftar pesan, dan panel baca" width="820">
 </p>
