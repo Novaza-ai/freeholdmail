@@ -31,11 +31,6 @@
 > *Freehold*（永久產權）：完全歸你所有的財產，沒有房東，也沒有需要續約的租約。
 > 自己執行這套系統，和向一個以你的資料為商業模式的人租用信箱，差別就在這裡。
 
-[![CI](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg)](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
-[![Components: AGPL-3.0](https://img.shields.io/badge/components-AGPL--3.0-orange.svg)](../../../THIRD_PARTY_LICENSES.md)
-[![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-yellow.svg)](../../../CHANGELOG.md)
-
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Freehold Mail 收件匣：資料夾側邊欄、郵件清單與閱讀窗格" width="820">
 </p>
