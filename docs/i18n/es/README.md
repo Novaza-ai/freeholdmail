@@ -33,11 +33,6 @@ de correo en Rust, cliente web moderno.
 > alquiler que renovar. Esa es la diferencia entre ejecutar esto y alquilarle un buzón a alguien
 > cuyo modelo de negocio son sus datos.
 
-[![CI](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml/badge.svg)](https://github.com/Novaza-ai/freeholdmail/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
-[![Components: AGPL-3.0](https://img.shields.io/badge/components-AGPL--3.0-orange.svg)](../../../THIRD_PARTY_LICENSES.md)
-[![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-yellow.svg)](../../../CHANGELOG.md)
-
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="La bandeja de entrada de Freehold Mail: barra lateral de carpetas, lista de mensajes y panel de lectura" width="820">
 </p>
