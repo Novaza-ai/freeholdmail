@@ -48,6 +48,6 @@ jobs:
         # This is codeql-action's SARIF *uploader*, not a CodeQL scan. CodeQL itself runs
         # through GitHub's default setup — see SECURITY.md for what it does and does not
         # cover. Reading this line as "the repo runs CodeQL" would be wrong.
-        uses: github/codeql-action/upload-sarif@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
+        uses: github/codeql-action/upload-sarif@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4.37.8
         with:
           sarif_file: results.sarif
