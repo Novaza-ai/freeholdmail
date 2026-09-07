@@ -28,14 +28,14 @@ readonly STALWART_DIGEST_DEFAULT="@sha256:5d0e3a332dfb3db8852d9fabb76c1b479b5ee1
 readonly BULWARK_IMAGE_DEFAULT="ghcr.io/bulwarkmail/webmail"
 # Patch floor is 1.4.11: anything below it carries CVE-2026-34834 (auth bypass) and
 # CVE-2026-34833 (password disclosure). See SECURITY.md before changing this.
-readonly BULWARK_VERSION_DEFAULT="v1.8.1"
-readonly BULWARK_DIGEST_DEFAULT="@sha256:97d9d96adfb7c1d221b71b90b8380b98e2e5623f64ba62b090e45911f4ee0b3b"
+readonly BULWARK_VERSION_DEFAULT="v1.9.2"
+readonly BULWARK_DIGEST_DEFAULT="@sha256:1209d8d8bb5686275a93ce0d6f99bfd86650fc9059b63a9cb69980f3267f5c2a"
 readonly NGINX_VERSION_DEFAULT="1.30.4-alpine"
 readonly NGINX_DIGEST_DEFAULT="@sha256:97d490c12ba55b4946b01546d1c3ed324e8d41ab1c9fcb2a616aa470620e5b46"
-readonly KEYCLOAK_VERSION_DEFAULT="26.7.1"
-readonly KEYCLOAK_DIGEST_DEFAULT="@sha256:f1f1f01e472c8a78df40d8f2a49a925274eda4d3d80d5f6edbb5c880ee3c01c6"
+readonly KEYCLOAK_VERSION_DEFAULT="26.7.3"
+readonly KEYCLOAK_DIGEST_DEFAULT="@sha256:88943b6ad06d6293a239f0dfca5acec64218c9b3ab327bf9c936acf408a6ae3b"
 readonly POSTGRES_VERSION_DEFAULT="17-alpine"
-readonly POSTGRES_DIGEST_DEFAULT="@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193"
+readonly POSTGRES_DIGEST_DEFAULT="@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73"
 
 # Errors go to STDERR so that redirecting stdout to a log never swallows them.
 err() { printf '%s\n' "$*" >&2; }
