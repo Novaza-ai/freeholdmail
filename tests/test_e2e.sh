@@ -36,7 +36,7 @@ JMAP_PORT=$((PORT_BASE + 80))
 HTTPS_PORT=$((PORT_BASE + 43))
 
 WORK="$(mktemp -d)"
-# shellcheck disable=SC2317  # invoked via trap, not called directly
+# shellcheck disable=SC2317,SC2329  # invoked via trap, not called directly
 cleanup() {
   local rc=$?
   echo "== teardown =="
