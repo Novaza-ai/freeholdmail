@@ -1,10 +1,9 @@
 # Changelog
 
-<!-- Last-touched: 2026-08-13 (later same day) — cuts 0.5.0, which is the seven findings of the
-     gold-standard audit and their fixes: the empty-secret start, the unguarded nginx admin route,
-     the phantom metadata audit, the unwatched history, release artefacts, persist-credentials,
-     and the brand assets. Earlier the same day: the ruleset, the signed-commit requirement and
-     its merge gotcha, and the Scorecard badge. Before that, cut 0.4.0 and 0.3.0. -->
+<!-- Last-touched: 2026-11-04 — cuts 0.6.0: the webmail moves past the GHSA-r2r7-pvh6-mvj5 floor,
+     every other pin is re-pinned, the mail-server lag is re-argued with a new review date, and the
+     changes merged since 0.5.0 that were never recorded here are recorded. Adds the comparison
+     links Keep a Changelog asks for. Earlier: 0.5.0 on 2026-08-13. -->
 
 All notable changes to this repo. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -12,6 +11,54 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 Nothing yet.
+
+## [0.6.0] — 2026-11-04
+
+The weekly pin check had been red since 2026-10-12 and this release is what it was pointing at:
+the webmail sat inside the range of a newly published advisory, three more images had moved on,
+and the mail server's declared lag expired on 2026-11-01. It also records the work merged between
+0.5.0 and now that this file never mentioned — an empty `[Unreleased]` section while eight pull
+requests landed is exactly the gap a changelog exists to prevent.
+
+Everything below was re-run against the new pins before this entry was written: static suite
+**204 passed, 0 failed, 0 skipped**; end-to-end **14 / 0** on the base edition and **15 / 0** on
+the SSO edition against Keycloak 26.8.1 (101 tables migrated, 1 realm).
+
+### Security
+- **Webmail to `v1.20.0`; the floor is now 1.16.0.** GHSA-r2r7-pvh6-mvj5 (Medium, published
+  2026-10-23) affects 1.7.0 up to 1.16.0: the mobile sign-in hand-off could give the mailbox
+  password to any app that registers the `bulwarkmobile://` scheme. `v1.11.0`, shipped here since
+  2026-09-24, is inside that range. The advisory's own range was read rather than the advisory
+  list, which `scripts/check_pins.py` deliberately reports as context only.
+  Upstream changes a user will notice between 1.11 and 1.20: every sign-in is remembered and the
+  *Remember me* box is hidden unless `LOGIN_SHOW_REMEMBER_ME=true`; plugin credential approvals made
+  before 1.15 must be requested again; the extension marketplace speaks only the directory's v2
+  API. Anonymous usage statistics stay off by default — verified on the running image
+  (`telemetry: scheduler not started {"consent":"off"}`).
+- **No advisory affects the Keycloak or mail-server versions shipped.** Each was checked against
+  its upstream's published ranges: every Keycloak advisory to date is patched by 26.7.4, and the
+  five Stalwart advisories are patched at or below 0.13.4 or apply only to 0.15.4.
+
+### Changed
+- **Re-pinned:** nginx `1.30.5-alpine` → `1.30.6-alpine`, Keycloak `26.7.4` → `26.8.1`, and the
+  `postgres:17-alpine` digest after the tag moved. Every digest is the multi-arch index digest.
+  `.env.example` and the `install.sh` defaults move together, as the suite requires.
+- **The mail-server lag is re-argued, not extended by habit** (`scripts/pin_sources.json`,
+  `review_by` → 2027-02-01). Upstream is now 1.0.x, which makes the gap wider: 1.0 changed the
+  database layout and settings schema again and is reachable from 0.16 only through upstream's
+  migration tool. See *Known gaps* item 2.
+- CI: `github/codeql-action/upload-sarif` 4.37.6 → 4.38.1 (#26, #29, Dependabot).
+
+### Added
+- The Scorecard scan can be run on demand (`workflow_dispatch`), so a fix can be re-measured
+  without pushing a commit for it (#18).
+- OpenSSF Best Practices: the questionnaire pre-filled from repository evidence (#20), corrected so
+  it could actually earn the badge (#22), and the **passing** badge, project 14076, earned
+  2026-08-14 (#21). Passing is the first of three tiers; silver and gold need coverage figures this
+  repository does not measure.
+- The README comparison table gains the row the project wins on — idle RAM, measured at
+  218–288 MiB, with the method and the 32 % spread between runs published beside it (#23).
+- README translations: Vietnamese updated (#19).
 
 ## [0.5.0] — 2026-08-13
 
@@ -584,9 +631,11 @@ First public release.
    the official Keycloak documentation and are **not** measured here. Re-run the SSO
    stack against 26.0 on a host with registry access before relying on it.
    The OIDC login round-trip through the webmail (browser flow) is also untested.
-2. **The mail server is on 0.13.4, not the current 0.16 line.** 0.13.4 is the patch floor
-   for GHSA-8jqj-qj5p-v5rr, so no known advisory affects what ships. Upstream is at
-   `v0.16.16`, and following it is a redesign rather than a tag bump: 0.16.0 replaces the
+2. **The mail server is on 0.13.4, not the current 1.0 line.** 0.13.4 is the patch floor
+   for GHSA-8jqj-qj5p-v5rr, so no known advisory affects what ships (re-checked 2026-11-04).
+   Upstream is at `v1.0.2`. Since 2026-10-26, 1.0.0 also changes the database layout and the
+   settings schema, and is reachable from 0.16 only through upstream's `stalwart-migrate` tool.
+   Following it is a redesign rather than a tag bump: 0.16.0 replaces the
    TOML configuration with a typed JSON schema, moves config to `/etc/stalwart` and data to
    `/var/lib/stalwart`, runs as a non-root user, and **replaces the REST management API with
    a JMAP one — so `POST /api/principal`, which every first-run instruction in this repo
@@ -604,3 +653,11 @@ First public release.
    public domain; `docs/DNS.md` is guidance, not a verified result.
 5. **`SEARCH HEADER Message-ID` returns no hits** on the tested mail server version
    (`SEARCH SUBJECT`/`FROM` work). Clients relying on header search will come up empty.
+
+[Unreleased]: https://github.com/Novaza-ai/freeholdmail/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/Novaza-ai/freeholdmail/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/Novaza-ai/freeholdmail/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/Novaza-ai/freeholdmail/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/Novaza-ai/freeholdmail/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/Novaza-ai/freeholdmail/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/Novaza-ai/freeholdmail/releases/tag/v0.1.0
