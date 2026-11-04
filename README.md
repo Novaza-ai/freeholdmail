@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-04 — 32-second MCP clip under "For AI agents"; MCP overlay for agents (docs/MCP.md); Keycloak version in the editions
+<!-- Last-touched: 2026-11-04 — test suite on video (docs/VERIFICATION.md) under "Tests and operations"; 32-second MCP clip under "For AI agents"; MCP overlay for agents (docs/MCP.md); Keycloak version in the editions
      table corrected to the shipped 26.8.1. Before that, 2026-08-13 — brand lockup at the head. Two files, not one: the wordmark is
      navy and disappears on a dark background, so <picture> serves a lightened variant to
      dark-mode readers. Keep the alt text descriptive — it is what a screen reader announces
@@ -249,6 +249,9 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 container names, and tears it down on exit — it will not disturb a running deployment.
 See [`tests/README.md`](tests/README.md), including what these tests deliberately do
 **not** cover.
+
+Each of these runs, plus a mutation test that breaks the security checks one at a time
+and a look at the mailbox afterwards, is [recorded on video](docs/VERIFICATION.md) on a fresh clone.
 
 Day-2 operations — backups, certificate renewal, mailbox management, upgrades, incident
 playbooks — are in [`docs/RUNBOOK.md`](docs/RUNBOOK.md). Prerequisites are in
