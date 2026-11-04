@@ -40,3 +40,7 @@ docs/media/frames/
 __pycache__/
 *.pyc
 *.log
+
+# MCP agent policy and mailbox app passwords: operator secrets.
+config/mcp/agents.toml
+config/mcp/*.app

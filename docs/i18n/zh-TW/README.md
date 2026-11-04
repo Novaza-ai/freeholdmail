@@ -89,6 +89,8 @@ PostgreSQL 是 C 寫的，所以「記憶體安全」描述的是我們所選的
 
 除非你想要 SSO，否則永遠不必碰 Keycloak；它放在一個選用的 overlay 檔案裡。
 
+**給 AI 代理（選用，兩個版本皆適用）：** `docker-compose.mcp.yml` 會加入一個 [MCP](https://modelcontextprotocol.io) 伺服器。你可以為每個代理決定：能看到哪些資料夾、能否撰寫草稿、整理或寄信，以及能寄給誰。每次呼叫都會寫入稽核記錄，撤銷只需修改一處設定，代理永遠拿不到你的信箱密碼。沒有刪除工具。已端對端測試（43/43）；威脅模型見 [`docs/MCP.md`](../../MCP.md)。
+
 ## 快速開始
 
 需求條件：一台裝有 Docker 與 Compose v2 的 Linux 主機、一個你掌控的網域、可連通的
@@ -198,6 +200,7 @@ Mailu、Mailcow 與 docker-mailserver 都很優秀，而且久經實戰考驗。
 tests/test_config.sh      # static: both editions validate, no secrets, digests pinned … (~seconds)
 tests/test_e2e.sh         # real: stack up → send a message → read it back over IMAP (~2 min)
 tests/test_e2e.sh --sso   # same, plus Keycloak + PostgreSQL
+tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP client
 ```
 
 `test_e2e.sh` 會在僅綁定回送位址的連接埠上，以自己的磁碟區與容器名稱建立一套用完即丟的系統，

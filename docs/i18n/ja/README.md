@@ -90,6 +90,8 @@ PostgreSQL は C です。つまり「メモリ安全」はスタック全体で
 
 SSO が不要なら Keycloak に触れることはありません。オプションのオーバーレイファイルに分離されています。
 
+**AI エージェント向け（任意、両エディション共通）:** `docker-compose.mcp.yml` で [MCP](https://modelcontextprotocol.io) サーバーが追加されます。エージェントごとに、見えるフォルダー、下書き・整理・送信の可否、送信先を決められます。すべての呼び出しは監査ログに残り、取り消しは設定の1 行の編集で済み、エージェントがメールボックスのパスワードを持つことはありません。削除ツールはありません。エンドツーエンドで検証済み（43/43）。脅威モデルは [`docs/MCP.md`](../../MCP.md) にあります。
+
 ## クイックスタート
 
 必要なもの: Docker と Compose v2 が動く Linux ホスト、自分が管理するドメイン、到達可能な
@@ -209,6 +211,7 @@ Stalwart または Bulwark を**改変して**他者に提供する場合、AGPL
 tests/test_config.sh      # static: both editions validate, no secrets, digests pinned … (~seconds)
 tests/test_e2e.sh         # real: stack up → send a message → read it back over IMAP (~2 min)
 tests/test_e2e.sh --sso   # same, plus Keycloak + PostgreSQL
+tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP client
 ```
 
 `test_e2e.sh` はループバック専用ポート上に、独自のボリュームとコンテナ名を持つ使い捨てスタックを構築し、

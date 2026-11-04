@@ -96,6 +96,8 @@ Dovecot, Rspamd и веб-почты, — либо хостинговый поч
 
 Вы вообще не касаетесь Keycloak, если вам не нужен SSO; он вынесен в необязательный overlay-файл.
 
+**Для ИИ-агентов (необязательно, обе редакции):** `docker-compose.mcp.yml` добавляет сервер [MCP](https://modelcontextprotocol.io). Вы решаете для каждого агента, какие папки он видит, может ли он составлять черновики, сортировать или отправлять письма и кому. Каждый вызов попадает в журнал аудита, отзыв доступа — одна правка, а пароль от ящика у агента не бывает никогда. Инструмента удаления нет. Проверено end-to-end (43/43); модель угроз — в [`docs/MCP.md`](../../MCP.md).
+
 ## Быстрый старт
 
 Требования: Linux-хост с Docker и Compose v2, домен под вашим контролем, доступные порты
@@ -219,6 +221,7 @@ Freehold Mail, если вам нужен именно нативный для J
 tests/test_config.sh      # static: both editions validate, no secrets, digests pinned … (~seconds)
 tests/test_e2e.sh         # real: stack up → send a message → read it back over IMAP (~2 min)
 tests/test_e2e.sh --sso   # same, plus Keycloak + PostgreSQL
+tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP client
 ```
 
 `test_e2e.sh` собирает одноразовый стек на портах, доступных только через loopback, с собственными

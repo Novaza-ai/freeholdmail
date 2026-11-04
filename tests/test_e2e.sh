@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-13 — corrected the claim that this exercises "the defaults users get":
+# Last-touched: 2026-11-04 — --mcp: builds the MCP overlay and drives it with a real client.
+# Before that, 2026-08-13 — corrected the claim that this exercises "the defaults users get":
 # it exercises the shipped image pins and wiring, and generates every secret. The empty-secret
 # path it never covered is now refused by compose and asserted in tests/test_config.sh.
 # Before that, 2026-08-07 — JMAP discovery guard made version-independent and
@@ -15,6 +16,8 @@
 # Usage:
 #   tests/test_e2e.sh                 # base edition (Full Mail)
 #   tests/test_e2e.sh --sso           # base + SSO overlay (adds Keycloak + PostgreSQL)
+#   tests/test_e2e.sh --mcp           # base + MCP overlay, driven by a real MCP client
+#                                     # (needs mcp/requirements-dev.txt installed)
 #   FREEHOLDMAIL_TEST_PORT_BASE=13000 tests/test_e2e.sh
 #
 # Image overrides, for hosts that cannot reach a registry or that want to test a build:
@@ -27,13 +30,16 @@ PORT_BASE="${FREEHOLDMAIL_TEST_PORT_BASE:-12500}"
 DOMAIN="qa.test"
 MAIL_HOST="mail.${DOMAIN}"
 WITH_SSO=0
+WITH_MCP=0
 [[ "${1:-}" == "--sso" ]] && WITH_SSO=1
+[[ "${1:-}" == "--mcp" ]] && WITH_MCP=1
 
 SMTP_PORT=$((PORT_BASE + 25))
 SUBMISSION_PORT=$((PORT_BASE + 87))
 IMAPS_PORT=$((PORT_BASE + 93))
 JMAP_PORT=$((PORT_BASE + 80))
 HTTPS_PORT=$((PORT_BASE + 43))
+MCP_PORT=$((PORT_BASE + 90))
 
 WORK="$(mktemp -d)"
 # shellcheck disable=SC2317,SC2329  # invoked via trap, not called directly
@@ -126,6 +132,24 @@ services:
     ports: !override
       - "127.0.0.1:${HTTPS_PORT}:443"
 EOF
+# The MCP container runs as the invoking user here (it is uid 10001 in production) so this
+# script can read the audit log and the 0600 files the setup step writes.
+if (( WITH_MCP )); then
+  mkdir -p "$WORK/mcp-state/audit"
+  cat >> "$WORK/docker-compose.test.yml" <<EOF
+  mcp:
+    container_name: ${PROJECT}-mcp
+    image: freehold-mcp:e2e-$$
+    user: "$(id -u):$(id -g)"
+    environment:
+      FREEHOLD_MCP_ALLOWED_HOSTS: 127.0.0.1:${MCP_PORT}
+    volumes: !override
+      - ${WORK}/mcp-state:/etc/freehold-mcp:ro
+      - ${WORK}/mcp-state/audit:/var/log/freehold-mcp
+    ports: !override
+      - "127.0.0.1:${MCP_PORT}:8090"
+EOF
+fi
 # The base edition has no db/idp; drop those stanzas unless the overlay is in play.
 (( WITH_SSO )) || sed -i '/^  db:$/,+1d; /^  idp:$/,+1d' "$WORK/docker-compose.test.yml"
 
@@ -133,12 +157,20 @@ EOF
 # --project-directory, and these files live in the throwaway copy.
 FILES=(-f "$WORK/docker-compose.yml")
 (( WITH_SSO )) && FILES+=(-f "$WORK/docker-compose.sso.yml")
+(( WITH_MCP )) && FILES+=(-f "$WORK/docker-compose.mcp.yml")
 FILES+=(-f "$WORK/docker-compose.test.yml")
 
 compose() { docker compose -p "$PROJECT" --project-directory "$WORK" --env-file "$WORK/.env" "${FILES[@]}" "$@"; }
 
 echo "== starting =="
-compose up -d
+if (( WITH_MCP )); then
+  # The MCP server refuses to start without its policy, which needs the mail server to
+  # exist first. Start everything else now; the mcp service starts after setup below.
+  compose build mcp
+  compose up -d mailserver webmail proxy
+else
+  compose up -d
+fi
 
 echo "== waiting for the mail server to become healthy =="
 deadline=$((SECONDS + 180))
@@ -305,6 +337,36 @@ elif [[ "$code" == "30"[0-8] && "$target" == "https://127.0.0.1:${HTTPS_PORT}/"*
   ok "JMAP discovery reaches the mail server (http $code → $target)"
 else
   bad "JMAP discovery not routed to the mail server (http $code, redirect '$target')"
+fi
+
+if (( WITH_MCP )); then
+  echo "== MCP server =="
+  py="${FREEHOLDMAIL_TEST_PYTHON:-python3}"
+  export FREEHOLDMAIL_TEST_JMAP_URL="http://127.0.0.1:${JMAP_PORT}"
+  export FREEHOLDMAIL_TEST_ADMIN_SECRET="$ADMIN_SECRET"
+  export FREEHOLDMAIL_TEST_MCP_URL="http://127.0.0.1:${MCP_PORT}/mcp"
+  export FREEHOLDMAIL_TEST_AUDIT_LOG="$WORK/mcp-state/audit/audit.jsonl"
+  mcp_health() { docker inspect "$(compose ps -q mcp)" --format '{{.State.Health.Status}}' 2>/dev/null || true; }
+  if "$py" "$REPO_DIR/tests/e2e_mcp.py" setup "$WORK/mcp-state"; then
+    ok "MCP fixtures provisioned (app password, folders, 5 messages, 3 agents)"
+    compose up -d mcp
+    deadline=$((SECONDS + 90))
+    until [[ "$(mcp_health)" == "healthy" ]] || (( SECONDS > deadline )); do sleep 2; done
+    if [[ "$(mcp_health)" == "healthy" ]]; then
+      ok "MCP container healthy"
+      # Each assertion prints its own PASS/FAIL line; fold the script's verdict into ours.
+      if "$py" "$REPO_DIR/tests/e2e_mcp.py" check "$WORK/mcp-state"; then
+        ok "MCP end-to-end suite"
+      else
+        bad "MCP end-to-end suite (see FAIL lines above)"
+      fi
+    else
+      bad "MCP container never became healthy"
+      compose logs --tail 30 mcp
+    fi
+  else
+    bad "MCP fixture provisioning failed"
+  fi
 fi
 
 if (( WITH_SSO )); then

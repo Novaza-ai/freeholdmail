@@ -1,0 +1,43 @@
+# Last-touched: 2026-11-04 — example MCP agent policy. Copy to agents.toml and edit.
+#
+# One [[agent]] per agent. Every grant is explicit; anything not listed is refused.
+# The server re-reads this file whenever it changes, so revoking is: set `revoked = true`
+# (or delete the block) and save. No restart.
+#
+# Scopes (a closed set — a typo is a startup error, not a silent no-op):
+#   mail:read      list folders, search, read messages
+#   mail:draft     create drafts (nothing leaves the server)
+#   mail:organize  move between permitted folders, set read/flagged
+#   mail:send      send a draft — requires a send_to allow-list
+#
+# folders: names or roles (inbox, drafts, sent, archive, junk, trash) the agent may see and
+# use. "*" means all. Mail in other folders is invisible: reading it answers "not found".
+#
+# credential_file: a mailbox APP PASSWORD, one line, readable by uid 10001. The agent never
+# sees it. Create one per agent so revoking it at the mail server cuts off only that agent:
+#   curl -u admin:… -X PATCH http://127.0.0.1:8080/api/principal/you@example.com \
+#     -d '[{"action":"addItem","field":"secrets","value":"$app$agent-triage$<random>"}]'
+#   printf '%s' '<random>' > config/mcp/triage.app
+#
+# token_sha256: from `docker compose run --rm mcp new-token`. Give the agent the token; put
+# only the hash here.
+
+[[agent]]
+id = "triage"
+account = "you@example.com"
+credential_file = "triage.app"
+scopes = ["mail:read", "mail:draft", "mail:organize"]
+folders = ["inbox", "drafts", "archive"]
+token_sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
+# expires = 2027-01-01T00:00:00Z
+# revoked = true
+
+# [[agent]]
+# id = "assistant"
+# account = "you@example.com"
+# credential_file = "assistant.app"
+# scopes = ["mail:read", "mail:draft", "mail:send"]
+# folders = ["inbox", "drafts", "sent"]
+# send_to = ["colleague@example.com", "@your-company.example"]   # exact, or @domain
+# max_sends_per_hour = 10
+# token_sha256 = "…"

@@ -1,4 +1,5 @@
-<!-- Last-touched: 2026-08-07 — 0.13.4 landed; the mail-server item now points at 0.16 only. -->
+<!-- Last-touched: 2026-11-04 — Agentic Mail's first three items are built and tested (MCP server,
+     per-agent scoped credentials, audit trail); the "where we are" table re-measured. -->
 # Roadmap
 
 This file separates three things that are easy to blur: **what works today and was
@@ -13,7 +14,9 @@ Measured on a throwaway stack built from this repo (see `tests/`):
 |------------|--------|----------|
 | Full Mail edition boots and delivers | ✅ works | `tests/test_e2e.sh` — **14/14**, a real message goes SMTP → mailbox → IMAP with a matching `Message-ID` |
 | Security defaults | ✅ verified | relay refused `550 5.1.2`, unauthenticated submission refused `503 5.5.1`, password AUTH only after STARTTLS, TLS 1.3 on 465 — re-measured 2026-08-05 |
-| SSO edition starts | ⚠️ partial | `tests/test_e2e.sh --sso` — **15/15** on the shipped **Keycloak 26.7.0**; the browser login round-trip is still unmeasured |
+| SSO edition starts | ⚠️ partial | `tests/test_e2e.sh --sso` — **15/15** on the shipped **Keycloak 26.8.1**; the browser login round-trip is still unmeasured |
+| MCP server for agents | ✅ works | `tests/test_e2e.sh --mcp` — **43/43** against the real stack: folder isolation, scopes, allow-listed send delivered to the recipient, revocation without restart, audit trail. 30 unit tests. Four security checks mutation-tested |
+| MCP OAuth mode (SSO edition) | ⚠️ partial | JWT checks unit-tested with real signatures; RFC 9728 metadata and `401` verified live; no end-to-end run against Keycloak yet |
 | Browser OIDC login | ❌ untested | needs browser automation |
 | Deliverability (SPF/DKIM/DMARC scoring) | ❌ unmeasured | needs a real public domain |
 
@@ -46,9 +49,8 @@ Work that has to land before the rest of the roadmap is worth starting.
 The direction has a name now: **Agentic Mail** — mail infrastructure a software agent can be
 given safely, rather than mail infrastructure an agent has to be handed your password to use.
 
-**This section describes where the project is going, not what it does today.** Nothing in it exists in
-the repository today; `grep -ri "mcp\|agent" --include='*.py' --include='*.sh' .` finds no
-implementation, and the version that ships it is the version that may claim it.
+**The first three items below are built and tested; the fourth is not.** Each is marked, and
+each "built" carries the test that proves it. [docs/MCP.md](docs/MCP.md) has the threat model.
 
 We think mail is about to be consumed by software agents as much as by people, and this stack
 is unusually well placed for it: the mail server is **JMAP-native**, a JSON API rather than a
@@ -56,21 +58,25 @@ protocol from 1986 that agents must be taught to speak. That is an accident of w
 assembled, not foresight — but it is the reason this direction is credible here and would not
 be on a Postfix/Dovecot stack.
 
-What Agentic Mail means concretely — **none of this is built yet**:
+What Agentic Mail means concretely:
 
-- **An MCP server for the mailbox**, so an assistant can search, read, draft and file mail
-  through a typed interface instead of scraping IMAP.
-- **Per-agent credentials with real scope**: an agent gets its own address and its own
-  token, restricted to one folder, revocable in one action, and fully audited. Handing an
-  agent your primary password is the current state of the art and it is indefensible.
-- **Sub-addressing and routing rules** designed for agent traffic, so automated mail is
-  separable from human mail at the protocol level rather than by filters.
-- **An audit trail** that answers "which agent sent this, on whose authority, when".
+- ✅ **An MCP server for the mailbox**, so an assistant can search, read, draft and file mail
+  through a typed interface instead of scraping IMAP. *Built* — `mcp/`, seven tools, no
+  delete; `tests/test_e2e.sh --mcp`.
+- ✅ **Per-agent credentials with real scope**: an agent gets its own token, restricted to the
+  folders and actions you grant, sending only to an allow-list, revocable in one edit, and
+  fully audited. It never holds the mailbox password. *Built* — `config/mcp/agents.toml`.
+  Handing an agent your primary password is the current state of the art and it is
+  indefensible.
+- ❌ **Sub-addressing and routing rules** designed for agent traffic, so automated mail is
+  separable from human mail at the protocol level rather than by filters. *Not started.*
+- ✅ **An audit trail** that answers "which agent sent this, on whose authority, when".
+  *Built* — one `fsync`'d JSON line per call, refusals included, message bodies hashed.
 
 **Why the project is still not *named* Agentic Mail.** The milestone carries the name; the
-product does not, and will not until the code exists. There is no agent code in this repo
-today. A name that promises autonomous agents while shipping a mail-server assembly would
-be a claim we cannot support, and this project's only real asset is that its claims hold up
+product does not. The agent code that exists is a tool an agent is *given*, with limits you
+set; it is not an agent. A name that promises autonomous agents while shipping a mail-server
+assembly would be a claim we cannot support, and this project's only real asset is that its claims hold up
 when you check them. The name will keep describing what the thing *is* — a mail stack you
 own outright — and this file will describe where it is going.
 
@@ -92,9 +98,10 @@ starting something large, so two people don't build it twice.
 2. A verified migration path for existing v0.11.x installs. The 0.13.4 upgrade is shipped
    and green for fresh installs; upgrading in place corrupts the database, and the
    export/import route upstream documents is untested here. See `docs/RUNBOOK.md` §6.
-3. A prototype MCP server over JMAP — even a read-only one that lists and searches mail
-   would settle the design questions.
-4. Scoped, revocable per-agent credentials. Start with the threat model, not the code.
+3. An end-to-end test of the MCP server's OAuth mode against the SSO edition's Keycloak:
+   issue a client-credentials token in the realm and call a tool with it.
+4. Agent sub-addressing (`you+agent@`) with routing rules, so agent mail is separable at the
+   protocol level. Start with the threat model in `docs/MCP.md`, not the code.
 
 **Ground rule, same as `CONTRIBUTING.md`:** a change to runtime behaviour needs a
 measurement, not "works on my machine". If you build any of the agent work above, the

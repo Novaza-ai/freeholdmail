@@ -93,6 +93,8 @@ Freehold Mail คือทางเลือกที่สาม: รีโพ�
 
 คุณจะไม่ต้องแตะ Keycloak เลยเว้นแต่คุณต้องการ SSO เพราะมันอยู่ในไฟล์ overlay ที่เป็นทางเลือก
 
+**สำหรับ AI agent (ไม่บังคับ ใช้ได้ทั้งสองรุ่น):** `docker-compose.mcp.yml` จะเพิ่มเซิร์ฟเวอร์ [MCP](https://modelcontextprotocol.io) คุณกำหนดได้สำหรับแต่ละ agent ว่าเห็นโฟลเดอร์ใดได้บ้าง ร่าง จัดระเบียบ หรือส่งอีเมลได้หรือไม่ และส่งถึงใครได้ ทุกการเรียกถูกบันทึกในบันทึกตรวจสอบ การเพิกถอนทำได้ด้วยการแก้ไขเพียงจุดเดียว และ agent ไม่เคยถือรหัสผ่านกล่องจดหมายของคุณ ไม่มีเครื่องมือลบอีเมล ทดสอบแบบ end-to-end แล้ว (43/43) แบบจำลองภัยคุกคามอยู่ที่ [`docs/MCP.md`](../../MCP.md)
+
 ## เริ่มต้นอย่างรวดเร็ว
 
 สิ่งที่ต้องมี: โฮสต์ Linux ที่มี Docker และ Compose v2, โดเมนที่คุณควบคุม, พอร์ต
@@ -212,6 +214,7 @@ Open relay ถูกปฏิเสธ การส่งเมลต้อง�
 tests/test_config.sh      # static: both editions validate, no secrets, digests pinned … (~seconds)
 tests/test_e2e.sh         # real: stack up → send a message → read it back over IMAP (~2 min)
 tests/test_e2e.sh --sso   # same, plus Keycloak + PostgreSQL
+tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP client
 ```
 
 `test_e2e.sh` สร้างสแตกแบบใช้แล้วทิ้งบนพอร์ตที่ผูกกับ loopback เท่านั้น โดยมีโวลุ่มและ
