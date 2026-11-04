@@ -1,4 +1,5 @@
-# Last-touched: 2026-08-05 — keeps SHA-pinned actions current.
+# Last-touched: 2026-11-04 — also the MCP server's hash-locked Python deps and its base image.
+# Before that, 2026-08-05 — keeps SHA-pinned actions current.
 #
 # Actions are pinned to commit SHAs for supply-chain safety, which means they never update
 # on their own. Dependabot is what stops "pinned" from turning into "abandoned".
@@ -10,5 +11,26 @@ updates:
       interval: weekly
     commit-message:
       prefix: "ci"
+    labels:
+      - dependencies
+  # mcp/requirements*.txt are hash-locked and mcp/Dockerfile pins its base by digest; like the
+  # action SHAs, neither moves unless something proposes the move.
+  - package-ecosystem: pip
+    directory: /mcp
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(mcp)"
+    labels:
+      - dependencies
+    groups:
+      mcp-python:
+        patterns: ["*"]
+  - package-ecosystem: docker
+    directory: /mcp
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(mcp)"
     labels:
       - dependencies

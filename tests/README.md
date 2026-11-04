@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-04 — created during pre-public QA. -->
+<!-- Last-touched: 2026-11-04 — MCP layer: unit tests in mcp/tests and `test_e2e.sh --mcp`. Created 2026-08-04. -->
 # Tests
 
 Two layers, both runnable by anyone who clones this repo.
@@ -7,11 +7,14 @@ Two layers, both runnable by anyone who clones this repo.
 |--------|----------------|-------|------|
 | `test_config.sh` | Everything provable without starting anything: both editions validate, required services exist, the mail server's storage mapping is complete, a listener exists for every published port, no secrets or placeholders, images are digest-pinned, hardening flags set, `valid_domain()` accepts and rejects the right inputs, docs present | `docker compose`, `python3` | seconds |
 | `test_e2e.sh` | The stack actually works: it starts, becomes healthy without restart-looping, provisions a domain and mailboxes, **a real message travels SMTP → mailbox → IMAP and comes back with the same `Message-ID`**, relaying is refused, unauthenticated submission is refused, TLS negotiates, and the webmail is served | Docker, ability to pull the images | ~2 min |
+| `test_e2e.sh --mcp` + `e2e_mcp.py` | The MCP overlay: the image builds and becomes healthy; a real MCP client gets `401` without a valid token, sees only permitted folders, cannot tell an out-of-scope message from a missing one, is refused every scope it lacks, drafts and organises, **sends to an allow-listed address and the message is read back from the recipient's mailbox**, is refused off-list recipients and a second send in the hour, loses access on revocation with no restart, and leaves exactly one audit line per call with no message body in it | the above, plus `mcp/requirements-dev.txt` | ~3 min |
+| `mcp/tests/` (pytest) | Policy validation, auth modes (static, stdio, OAuth JWT with real signatures), rate limit and its refund, folder scoping, address validation, JMAP client host pinning | `mcp/requirements-dev.txt` | seconds |
 
 ```bash
 tests/test_config.sh          # run before every commit
 tests/test_e2e.sh             # base edition (Full Mail)
 tests/test_e2e.sh --sso       # base + Keycloak + PostgreSQL
+tests/test_e2e.sh --mcp       # base + MCP server, driven by a real MCP client
 ```
 
 ## Safety

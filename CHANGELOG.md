@@ -1,6 +1,6 @@
 # Changelog
 
-<!-- Last-touched: 2026-11-04 — cuts 0.6.0: the webmail moves past the GHSA-r2r7-pvh6-mvj5 floor,
+<!-- Last-touched: 2026-11-04 — [Unreleased]: the MCP server. Before that, same day — cuts 0.6.0: the webmail moves past the GHSA-r2r7-pvh6-mvj5 floor,
      every other pin is re-pinned, the mail-server lag is re-argued with a new review date, and the
      changes merged since 0.5.0 that were never recorded here are recorded. Adds the comparison
      links Keep a Changelog asks for. Earlier: 0.5.0 on 2026-08-13. -->
@@ -10,7 +10,48 @@ versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-Nothing yet.
+The first Agentic Mail release: an MCP server that gives an AI agent scoped, audited, revocable
+access to one mailbox, in an optional overlay. Nothing changes for an install that does not add
+`docker-compose.mcp.yml`. Measured before this entry was written: `tests/test_e2e.sh --mcp`
+**17 / 0** for the harness, with **43 / 0** for the MCP client assertions inside it; 30 unit tests;
+static suite **215 / 0**; SSO edition re-run **15 / 0**. A mutation run (allow-list check removed,
+folder-scope check removed, move widened to every folder, rate-limit refund removed) failed the
+suite each time.
+
+### Added
+- **MCP server** (`mcp/`, `docker-compose.mcp.yml`, [docs/MCP.md](docs/MCP.md)). Seven tools over
+  JMAP: list folders, search, read, create draft, send, move, set flags. **No delete tool.**
+  Stateless Streamable HTTP with output schemas and tool annotations (`readOnlyHint`,
+  `destructiveHint`, `openWorldHint`), or stdio for a local agent.
+- **Per-agent policy** (`config/mcp/agents.toml`): scopes from a closed set (`mail:read`,
+  `mail:draft`, `mail:organize`, `mail:send`), folders by name or role, a required recipient
+  allow-list for send, hourly send limit, expiry and revocation. The file is re-read on change,
+  so a revocation takes effect on the next request with no restart.
+- **Audit trail**: one JSON line per tool call, refusals and errors included, `fsync`'d before the
+  tool returns, mode `0600`. Message bodies are recorded as SHA-256 + length, never as text.
+- **Two auth modes.** `static`: per-agent bearer tokens stored as SHA-256. `keycloak`: an OAuth 2.1
+  resource server that checks JWT signature, issuer, audience (RFC 8707) and expiry, and serves
+  Protected Resource Metadata (RFC 9728). In `keycloak` mode the effective scopes are the token's
+  scopes intersected with the policy's.
+- CI job `mcp`: hash-locked install, unit tests, then `tests/test_e2e.sh --mcp`. Static guards for
+  the overlay: bounded, read-only root filesystem, loopback-only port, digest-pinned base,
+  hash-locked dependencies, example policy accepted by the real parser.
+- Dependabot now also watches the MCP server's Python lock and its base image.
+
+### Security
+- The agent never holds the mailbox password. The server reads a per-agent mailbox **app
+  password** from an operator-owned file, so revoking that one app password at the mail server
+  cuts off that agent alone.
+- Mail content is returned only in fields named `untrusted_*`. That labels prompt-injection risk;
+  it does not remove it. What holds regardless of the model: no delete tool, sending only to the
+  allow-list, two-step send, and the rate limit. A message outside the granted folders answers
+  exactly like a missing one, so an agent cannot probe for it.
+
+### Known limits
+- `keycloak` mode has no end-to-end test against a live Keycloak yet (ROADMAP "Help wanted" 3).
+- Stalwart only grants a JMAP sending identity for an address under a public suffix. An account on
+  `*.test` or `*.internal` can read and draft, but cannot send. The MCP test suite provisions its
+  accounts on `example.com` for this reason, and the server now explains this refusal.
 
 ## [0.6.0] — 2026-11-04
 

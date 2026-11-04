@@ -96,6 +96,8 @@ yang jujur. **Apa ini bukan:** fork atau penulisan ulang mail server milik siapa
 
 Anda tidak pernah menyentuh Keycloak kecuali Anda menginginkan SSO; ia berada di sebuah file overlay opsional.
 
+**Untuk agen AI (opsional, kedua edisi):** `docker-compose.mcp.yml` menambahkan server [MCP](https://modelcontextprotocol.io). Anda menentukan, per agen, folder mana yang terlihat, apakah agen boleh membuat draf, merapikan, atau mengirim, dan kepada siapa. Setiap panggilan diaudit, pencabutan cukup satu suntingan, dan agen tidak pernah memegang kata sandi kotak surat Anda. Tidak ada alat hapus. Diuji end-to-end (43/43); model ancaman ada di [`docs/MCP.md`](../../MCP.md).
+
 ## Mulai cepat
 
 Kebutuhan: sebuah host Linux dengan Docker dan Compose v2, domain yang Anda kendalikan, port
@@ -217,6 +219,7 @@ Keduanya ada di dalam repo — Anda dapat mereproduksi sendiri setiap klaim di a
 tests/test_config.sh      # static: both editions validate, no secrets, digests pinned … (~seconds)
 tests/test_e2e.sh         # real: stack up → send a message → read it back over IMAP (~2 min)
 tests/test_e2e.sh --sso   # same, plus Keycloak + PostgreSQL
+tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP client
 ```
 
 `test_e2e.sh` membangun stack sekali pakai pada port loopback-only dengan volume dan nama

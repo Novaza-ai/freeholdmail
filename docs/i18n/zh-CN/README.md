@@ -88,6 +88,8 @@ PostgreSQL 是 C 写的，所以“内存安全”描述的是我们所选的那
 
 除非你想要 SSO，否则完全不必接触 Keycloak；它位于一个可选的 overlay 文件中。
 
+**面向 AI 智能体（可选，两个版本均适用）：** `docker-compose.mcp.yml` 会添加一个 [MCP](https://modelcontextprotocol.io) 服务器。你可以为每个智能体决定：能看到哪些文件夹、能否起草、整理或发送邮件，以及能发给谁。每次调用都会写入审计日志，撤销只需修改一处配置，智能体永远拿不到你的邮箱密码。没有删除工具。已端到端测试（43/43）；威胁模型见 [`docs/MCP.md`](../../MCP.md)。
+
 ## 快速开始
 
 前提条件：一台装有 Docker 与 Compose v2 的 Linux 主机、一个你拥有的域名、可访问的
@@ -198,6 +200,7 @@ Rust 编写的邮件服务器，并希望 Webmail 与可选 SSO 集中在一处�
 tests/test_config.sh      # static: both editions validate, no secrets, digests pinned … (~seconds)
 tests/test_e2e.sh         # real: stack up → send a message → read it back over IMAP (~2 min)
 tests/test_e2e.sh --sso   # same, plus Keycloak + PostgreSQL
+tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP client
 ```
 
 `test_e2e.sh` 会在仅绑定回环地址的端口上，用自己的卷与容器名构建一套一次性系统，并在退出时拆除 ——

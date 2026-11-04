@@ -95,6 +95,8 @@ Freehold Mail तीसरा विकल्प है: एक ही repo ज�
 
 जब तक आपको SSO न चाहिए, आप Keycloak को छूते तक नहीं; वह एक वैकल्पिक overlay फ़ाइल में रहता है।
 
+**AI एजेंटों के लिए (वैकल्पिक, दोनों संस्करणों में):** `docker-compose.mcp.yml` एक [MCP](https://modelcontextprotocol.io) सर्वर जोड़ता है। आप हर एजेंट के लिए तय करते हैं कि वह कौन-से फ़ोल्डर देख सकता है, क्या वह ड्राफ़्ट बना, व्यवस्थित या भेज सकता है, और किसे। हर कॉल ऑडिट होती है, पहुँच वापस लेना एक बदलाव भर है, और एजेंट के पास कभी आपका मेलबॉक्स पासवर्ड नहीं होता। कोई डिलीट टूल नहीं है। एंड-टू-एंड परीक्षित (43/43); थ्रेट मॉडल [`docs/MCP.md`](../../MCP.md) में है।
+
 ## क्विकस्टार्ट
 
 आवश्यकताएँ: Docker और Compose v2 वाला एक Linux होस्ट, आपके नियंत्रण का एक domain, पहुँच-योग्य
@@ -216,6 +218,7 @@ admin API शामिल है जो अकाउंट के पासव�
 tests/test_config.sh      # static: both editions validate, no secrets, digests pinned … (~seconds)
 tests/test_e2e.sh         # real: stack up → send a message → read it back over IMAP (~2 min)
 tests/test_e2e.sh --sso   # same, plus Keycloak + PostgreSQL
+tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP client
 ```
 
 `test_e2e.sh` केवल loopback पोर्ट पर, अपने अलग volumes और container नामों के साथ एक अस्थायी स्टैक

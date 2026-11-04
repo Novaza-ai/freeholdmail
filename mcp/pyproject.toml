@@ -1,0 +1,44 @@
+# Last-touched: 2026-11-04 — MCP server package. Runtime deps are hash-locked in requirements.txt.
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "freehold-mcp"
+dynamic = ["version"]
+description = "MCP server for Freehold Mail: scoped, audited, revocable agent access to one mailbox over JMAP"
+readme = "README.md"
+license = "MIT"
+license-files = ["../LICENSE"]
+requires-python = ">=3.12"
+authors = [{ name = "Novaza Solution JSC" }]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Topic :: Communications :: Email",
+]
+dependencies = [
+  "mcp>=2.3,<3",
+  "pyjwt[crypto]>=2.10,<3",
+  "uvicorn>=0.34,<1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+freehold-mcp = "freehold_mcp.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/Novaza-ai/freeholdmail"
+Documentation = "https://github.com/Novaza-ai/freeholdmail/blob/main/docs/MCP.md"
+
+[tool.setuptools.dynamic]
+version = { attr = "freehold_mcp.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

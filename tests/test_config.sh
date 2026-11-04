@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-13 — four guards added for defects an audit found, each of which had
+# Last-touched: 2026-11-04 — MCP overlay guards: bounds, loopback port, pinned image.
+# Before that, 2026-08-13 — four guards added for defects an audit found, each of which had
 # been claimed somewhere and asserted nowhere: the shipped .env.example must not resolve to a
 # runnable config; only JMAP may reach the mail server through nginx; every workflow must
 # parse, not just ci.yml; the SBOM must describe every pinned image.
@@ -32,6 +33,8 @@ refute() { # refute <description> <command...>  — passes when the command FAIL
   local desc="$1"; shift
   if "$@" >/dev/null 2>&1; then bad "$desc"; else ok "$desc"; fi
 }
+# shellcheck disable=SC2317  # invoked through check(), not called directly
+same() { [[ "$1" == "$2" ]]; }  # same <a> <b> — for check() on a computed value
 # Some checks can only be answered inside a git checkout of THIS repository: a tarball
 # export has no history, and a copy vendored inside another repo would answer with the
 # parent's history instead of its own. Comparing the toplevel to REPO_DIR rules out both.
@@ -241,6 +244,45 @@ print(f'{len(have)} {len(svcs)}')
   done
   refute "no service keeps SYS_ADMIN" grep -q 'SYS_ADMIN' <<<"$hardening"
 fi
+
+echo "== MCP overlay =="
+# The overlay is optional, so nothing above sees it. It gets the same bounds as every other
+# service, plus the two properties its threat model rests on (docs/MCP.md): the port is not
+# reachable from outside the host, and the container cannot write to its own filesystem.
+mcp_cfg="$(docker compose --env-file "$LINT_ENV" \
+  -f docker-compose.yml -f docker-compose.mcp.yml config --format json 2>/dev/null)"
+if [[ -z "$mcp_cfg" ]]; then
+  bad "could not resolve the MCP overlay (docker-compose.mcp.yml)"
+else
+  ok "MCP overlay resolves"
+  mcp_field() { python3 -c "
+import json, sys
+m = json.load(sys.stdin)['services']['mcp']
+print(json.dumps(eval(sys.argv[1], {'m': m})))" "$1" <<<"$mcp_cfg"; }
+  check "mcp drops every capability" same "$(mcp_field 'm.get("cap_drop") == ["ALL"]')" true
+  check "mcp is bounded (mem_limit, pids_limit, logging)" same true \
+    "$(mcp_field 'all(m.get(k) is not None for k in ("mem_limit", "pids_limit", "logging"))')"
+  check "mcp root filesystem is read-only" same true "$(mcp_field 'm.get("read_only")')"
+  check "mcp sets no-new-privileges" same true \
+    "$(mcp_field '"no-new-privileges:true" in (m.get("security_opt") or [])')"
+  check "mcp publishes its port on loopback only" same true \
+    "$(mcp_field 'bool(m.get("ports")) and all(p.get("host_ip") == "127.0.0.1" for p in m["ports"])')"
+fi
+check "mcp/Dockerfile pins every base image by digest" \
+  bash -c '! grep -E "^FROM " mcp/Dockerfile | grep -vq "@sha256:"'
+check "mcp/Dockerfile installs dependencies with --require-hashes" \
+  grep -q -- '--require-hashes' mcp/Dockerfile
+for lock in mcp/requirements.txt mcp/requirements-dev.txt; do
+  check "$lock carries hashes" grep -q -- "--hash=sha256:" "$lock"
+done
+# The example is what operators copy. If the real parser rejects it, the first thing a new
+# operator sees is a startup error — so parse it with the server's own code, not a TOML lint.
+check "config/mcp/agents.toml.example is a valid policy" \
+  python3 -c "
+import sys; sys.path.insert(0, 'mcp/src')
+from pathlib import Path
+from freehold_mcp.policy import parse_policy
+assert parse_policy(Path('config/mcp/agents.toml.example').read_text(), Path('config/mcp'))"
 
 # The mail server's admin API lives on the same port as JMAP (8080), so what keeps it off the
 # internet is one nginx location pattern and nothing else. Compared as a STRING, not matched as

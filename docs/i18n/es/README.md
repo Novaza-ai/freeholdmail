@@ -96,6 +96,8 @@ documentación honesta. **Qué no es:** un fork ni una reescritura del servidor 
 
 Nunca toca Keycloak a menos que quiera SSO; reside en un archivo overlay opcional.
 
+**Para agentes de IA (opcional, ambas ediciones):** `docker-compose.mcp.yml` añade un servidor [MCP](https://modelcontextprotocol.io). Usted decide, por agente, qué carpetas ve, si puede redactar, organizar o enviar, y a quién. Cada llamada queda auditada, revocar es una sola edición y el agente nunca tiene la contraseña de su buzón. No hay herramienta de borrado. Probado de extremo a extremo (43/43); el modelo de amenazas está en [`docs/MCP.md`](../../MCP.md).
+
 ## Inicio rápido
 
 Requisitos: un host Linux con Docker y Compose v2, un dominio que usted controle, los puertos
@@ -218,6 +220,7 @@ Ambas están en el repositorio: puede reproducir usted mismo cada afirmación an
 tests/test_config.sh      # static: both editions validate, no secrets, digests pinned … (~seconds)
 tests/test_e2e.sh         # real: stack up → send a message → read it back over IMAP (~2 min)
 tests/test_e2e.sh --sso   # same, plus Keycloak + PostgreSQL
+tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP client
 ```
 
 `test_e2e.sh` construye una pila desechable en puertos solo de loopback, con sus propios volúmenes

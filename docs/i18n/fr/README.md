@@ -96,6 +96,8 @@ messagerie de qui que ce soit.
 | **Mail + SSO** | ce qui précède **+ Keycloak + PostgreSQL** | OIDC/SSO | ⚠️ partiel — la pile démarre, la base de données et la découverte OIDC sont vérifiées sur Keycloak 24 ; la configuration 26.0 livrée et l'aller-retour de connexion dans le navigateur ne sont pas encore mesurés. Voir [Lacunes connues](../../../CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these) |
 
 Vous ne touchez jamais à Keycloak sauf si vous voulez le SSO ; il réside dans un fichier de surcharge
+
+**Pour les agents IA (facultatif, les deux éditions) :** `docker-compose.mcp.yml` ajoute un serveur [MCP](https://modelcontextprotocol.io). Vous décidez, agent par agent, quels dossiers il voit, s'il peut rédiger, classer ou envoyer, et à qui. Chaque appel est journalisé, la révocation tient en une modification, et l'agent ne détient jamais le mot de passe de votre boîte. Il n'y a pas d'outil de suppression. Testé de bout en bout (43/43) ; le modèle de menace est dans [`docs/MCP.md`](../../MCP.md).
 (overlay) optionnel.
 
 ## Démarrage rapide
@@ -222,6 +224,7 @@ Les deux sont dans le dépôt — vous pouvez reproduire vous-même chacune des 
 tests/test_config.sh      # static: both editions validate, no secrets, digests pinned … (~seconds)
 tests/test_e2e.sh         # real: stack up → send a message → read it back over IMAP (~2 min)
 tests/test_e2e.sh --sso   # same, plus Keycloak + PostgreSQL
+tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP client
 ```
 
 `test_e2e.sh` construit une pile jetable sur des ports en boucle locale uniquement, avec ses propres

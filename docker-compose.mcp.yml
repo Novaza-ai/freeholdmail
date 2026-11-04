@@ -1,0 +1,51 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Novaza Solution JSC
+# Last-touched: 2026-11-04 — new overlay: the MCP server, for agents. Off unless you add it.
+#
+# Adds an MCP server that gives AI agents scoped, audited, revocable access to mailboxes:
+#   docker compose -f docker-compose.yml -f docker-compose.mcp.yml up -d
+# Works with either edition. Read docs/MCP.md first — it is the threat model.
+#
+# The image is built here from ./mcp: its base is pinned by digest and every Python
+# dependency by hash, so the build is reproducible without a published image to trust.
+
+services:
+  mcp:
+    build: ./mcp
+    image: freehold-mcp:local
+    container_name: freeholdmail-mcp
+    restart: unless-stopped
+    depends_on:
+      mailserver:
+        condition: service_healthy
+    environment:
+      # Inside the compose network, straight to the mail server's JMAP listener. The mailbox
+      # app passwords travel this hop only, never the internet.
+      FREEHOLD_MCP_JMAP_URL: http://mailserver:8080
+      FREEHOLD_MCP_JMAP_VERIFY_TLS: "false"
+      FREEHOLD_MCP_AUTH: ${FREEHOLD_MCP_AUTH:-static}
+      FREEHOLD_MCP_ALLOWED_HOSTS: ${FREEHOLD_MCP_ALLOWED_HOSTS:-127.0.0.1:8090,localhost:8090}
+      FREEHOLD_MCP_OIDC_ISSUER: ${FREEHOLD_MCP_OIDC_ISSUER:-}
+      FREEHOLD_MCP_RESOURCE_URL: ${FREEHOLD_MCP_RESOURCE_URL:-}
+    volumes:
+      # Policy + credential files, owned by the operator. Edit agents.toml to grant, narrow
+      # or revoke; the server re-reads it on the next request.
+      - ./config/mcp:/etc/freehold-mcp:ro
+      - mcp_audit:/var/log/freehold-mcp
+    ports:
+      # Loopback only. Put it behind your TLS reverse proxy before exposing it — see
+      # docs/MCP.md. Bearer tokens over plain HTTP on a public interface would be readable.
+      - "127.0.0.1:8090:8090"
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "5"}
+    mem_limit: 256m
+    pids_limit: 128
+
+volumes:
+  mcp_audit:

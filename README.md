@@ -1,4 +1,5 @@
-<!-- Last-touched: 2026-08-13 — brand lockup at the head. Two files, not one: the wordmark is
+<!-- Last-touched: 2026-11-04 — MCP overlay for agents (docs/MCP.md); Keycloak version in the editions
+     table corrected to the shipped 26.8.1. Before that, 2026-08-13 — brand lockup at the head. Two files, not one: the wordmark is
      navy and disappears on a dark background, so <picture> serves a lightened variant to
      dark-mode readers. Keep the alt text descriptive — it is what a screen reader announces
      for the project. -->
@@ -91,9 +92,15 @@ docs. **What it is not:** a fork or a rewrite of anyone's mail server.
 | Edition | Includes | Login | Tested E2E |
 |---------|----------|-------|------------|
 | **Full Mail** (default) | mail server + webmail + nginx | native username/password | ✅ yes |
-| **Mail + SSO** | the above **+ Keycloak + PostgreSQL** | OIDC/SSO | ⚠️ partial — stack starts, database and OIDC discovery **verified on the shipped Keycloak 26.7.0** (15/15); the browser login round-trip is still not measured. See [Known gaps](CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these) |
+| **Mail + SSO** | the above **+ Keycloak + PostgreSQL** | OIDC/SSO | ⚠️ partial — stack starts, database and OIDC discovery **verified on the shipped Keycloak 26.8.1** (15/15); the browser login round-trip is still not measured. See [Known gaps](CHANGELOG.md#known-gaps-do-not-publish-without-deciding-these) |
 
 You never touch Keycloak unless you want SSO; it lives in an optional overlay file.
+
+**For AI agents (optional, either edition):** `docker-compose.mcp.yml` adds an
+[MCP](https://modelcontextprotocol.io) server. You decide, per agent, which folders it sees,
+whether it may draft, organise or send, and to whom. Every call is audited, revoking is one
+edit, and the agent never holds your mailbox password. There is no delete tool.
+Tested end to end (43/43); the threat model is in [`docs/MCP.md`](docs/MCP.md).
 
 ## Quickstart
 
@@ -190,11 +197,12 @@ particular is a deliverability discipline, not a feature toggle — don't assume
 
 **Roadmap:** see [`ROADMAP.md`](ROADMAP.md) — near term is trustworthiness (SSO verified on
 the shipped Keycloak, current upstream mail-server line, deliverability measured on a real
-domain). Further out is **Agentic Mail** (v0.3): a stack a software
-agent can be given safely — an MCP server over JMAP, and scoped, revocable per-agent
-credentials instead of handing a bot your password. **None of it is built yet**, which is
-why the milestone carries that name and the product does not. **Contributions on the agent work are wanted —
-see "Help wanted" in the roadmap.**
+domain). Then **Agentic Mail** (v0.3): a stack a software agent can be given safely. Its first
+three pieces are **built and tested**: an MCP server over JMAP, scoped revocable per-agent
+credentials, and an audit trail ([`docs/MCP.md`](docs/MCP.md)). Agent sub-addressing is not
+started. The project is still not *named* after it, because the product is a mail stack you
+own, and the agent work is a tool you hand an agent on your terms. **Contributions on the
+agent work are wanted; see "Help wanted" in the roadmap.**
 
 ## ⚖️ License
 
@@ -228,6 +236,7 @@ Both are in the repo — you can reproduce every claim above yourself:
 tests/test_config.sh      # static: both editions validate, no secrets, digests pinned … (~seconds)
 tests/test_e2e.sh         # real: stack up → send a message → read it back over IMAP (~2 min)
 tests/test_e2e.sh --sso   # same, plus Keycloak + PostgreSQL
+tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP client
 ```
 
 `test_e2e.sh` builds a throwaway stack on loopback-only ports with its own volumes and

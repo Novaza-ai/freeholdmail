@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-13 — checkouts no longer persist the job token; compose linting uses a
+# Last-touched: 2026-11-04 — new `mcp` job: unit tests plus the MCP overlay end to end.
+# Before that, 2026-08-13 — checkouts no longer persist the job token; compose linting uses a
 # generated env because .env.example deliberately no longer resolves; and that refusal is
 # itself asserted here, so the required-variable markers cannot be dropped unnoticed.
 # Created 2026-08-04 during pre-public QA (GATE 1).
@@ -77,6 +78,32 @@ jobs:
           FREEHOLDMAIL_TEST_PORT_BASE: "16400"
         run: tests/test_e2e.sh --sso
 
+  mcp:
+    name: MCP server (unit + end-to-end)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Builds the MCP image from mcp/Dockerfile, stands the base stack up beside it and drives
+    # it with a real MCP client: scopes, folder isolation, allow-listed send with delivery
+    # checked in the recipient's mailbox, revocation without restart, and the audit trail.
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # The runner's own Python, and a hash-locked install: an unpinned `pip install` is an
+      # unpinned dependency, which this repo does not allow anywhere else either.
+      - name: Install the hash-locked test dependencies
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install --require-hashes --no-deps \
+            -r mcp/requirements-dev.txt
+      - name: Unit tests
+        working-directory: mcp
+        run: '"$RUNNER_TEMP/venv/bin/python" -m pytest -q'
+      - name: tests/test_e2e.sh --mcp
+        env:
+          FREEHOLDMAIL_TEST_PORT_BASE: "17400"
+        run: FREEHOLDMAIL_TEST_PYTHON="$RUNNER_TEMP/venv/bin/python" tests/test_e2e.sh --mcp
+
   lint:
     name: Lint and validate
     runs-on: ubuntu-latest
@@ -131,6 +158,11 @@ jobs:
         run: |
           docker compose --env-file "$RUNNER_TEMP/lint.env" \
             -f docker-compose.yml -f docker-compose.sso.yml config -q
+
+      - name: Compose config (MCP overlay)
+        run: |
+          docker compose --env-file "$RUNNER_TEMP/lint.env" \
+            -f docker-compose.yml -f docker-compose.mcp.yml config -q
 
       # The refusal itself is a security control, so CI has to see it fail. Without this, the
       # required-variable markers could be dropped and every other check would stay green.

@@ -96,6 +96,8 @@ server của ai cả.
 
 Bạn không phải đụng đến Keycloak trừ khi muốn dùng SSO; nó nằm trong một file overlay tuỳ chọn.
 
+**Cho AI agent (tuỳ chọn, cả hai bản):** `docker-compose.mcp.yml` thêm một máy chủ [MCP](https://modelcontextprotocol.io). Bạn quyết định cho từng agent: được thấy thư mục nào, được soạn nháp, sắp xếp hay gửi thư không, và gửi cho ai. Mọi lệnh gọi đều được ghi audit, thu hồi chỉ cần sửa một dòng, và agent không bao giờ cầm mật khẩu hộp thư của bạn. Không có công cụ xoá thư. Đã kiểm thử end-to-end (43/43); mô hình đe doạ nằm ở [`docs/MCP.md`](../../MCP.md).
+
 ## Bắt đầu nhanh
 
 Yêu cầu: một máy Linux có Docker và Compose v2, một domain bạn sở hữu, các cổng
@@ -216,6 +218,7 @@ Cả hai đều nằm trong repo — bạn tự tái lập được mọi tuyên
 tests/test_config.sh      # static: both editions validate, no secrets, digests pinned … (~seconds)
 tests/test_e2e.sh         # real: stack up → send a message → read it back over IMAP (~2 min)
 tests/test_e2e.sh --sso   # same, plus Keycloak + PostgreSQL
+tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP client
 ```
 
 `test_e2e.sh` dựng một stack dùng-một-lần trên các cổng chỉ bind loopback, với volume và tên
