@@ -49,6 +49,13 @@ the SSO edition against Keycloak 26.8.1 (101 tables migrated, 1 realm).
   migration tool. See *Known gaps* item 2.
 - CI: `github/codeql-action/upload-sarif` 4.37.6 → 4.38.1 (#26, #29, Dependabot).
 
+### Fixed
+- **CI went red on code nobody had changed.** Since 2026-10-19 the `ubuntu-latest` runner is
+  Ubuntu 26, which ships shellcheck 0.11. That version split "function never invoked" out of
+  SC2317 into a new code, SC2329. Five test helpers that run indirectly (through `check()` or a
+  `trap`) were already annotated for SC2317 and now carry SC2329 as well. Verified clean with
+  shellcheck 0.11.0 and 0.9.0.
+
 ### Added
 - The Scorecard scan can be run on demand (`workflow_dispatch`), so a fix can be re-measured
   without pushing a commit for it (#18).
