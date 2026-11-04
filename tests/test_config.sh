@@ -90,14 +90,14 @@ refute "the shipped .env.example alone cannot resolve a runnable config" \
 
 # A variable marked required in compose but shipped with a VALUE in .env.example would satisfy
 # the guard above while handing every operator the same published secret — worse than empty.
-# shellcheck disable=SC2317  # both helpers run indirectly, through check()
+# shellcheck disable=SC2317,SC2329  # both helpers run indirectly, through check()
 required_compose_vars() {
   # Comment lines first, or a header that mentions the ${VAR:?} form in prose is read as a
   # variable named VAR. That is not hypothetical: it is how this check first went red.
   grep -hv '^[[:space:]]*#' docker-compose.yml docker-compose.sso.yml \
     | grep -oE '\$\{[A-Z_]+:\?' | sed 's/^\${//; s/:?$//' | sort -u
 }
-# shellcheck disable=SC2317  # runs indirectly, through check()
+# shellcheck disable=SC2317,SC2329  # runs indirectly, through check()
 every_required_var_ships_empty() {
   local v missing=0
   while read -r v; do
@@ -246,7 +246,7 @@ fi
 # internet is one nginx location pattern and nothing else. Compared as a STRING, not matched as
 # a regex: any widening at all — an added alternative, a dropped anchor, a trailing .* — has to
 # fail, and a regex written to allow "roughly this" would allow exactly the mistake it guards.
-# shellcheck disable=SC2317  # runs indirectly, through check()
+# shellcheck disable=SC2317,SC2329  # runs indirectly, through check()
 only_jmap_reaches_mailserver() {
   local conf="$1" line found=0
   local expected='location ~ ^/(jmap|\.well-known/jmap) {'
@@ -562,7 +562,7 @@ sys.exit(1 if missing or extra else 0)'
   # generator would be found by a red release, after the tag exists. Build one here, on every
   # push, and assert it actually describes the images this repository pins. An SBOM that
   # silently lists fewer components than the stack runs is worse than shipping none.
-  # shellcheck disable=SC2317  # runs indirectly, through check()
+  # shellcheck disable=SC2317,SC2329  # runs indirectly, through check()
   sbom_describes_every_pinned_image() {
     python3 - <<'PYEOF'
 import json, subprocess, sys
