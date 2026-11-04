@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-04 — MCP overlay for agents (docs/MCP.md); Keycloak version in the editions
+<!-- Last-touched: 2026-11-04 — 32-second MCP clip under "For AI agents"; MCP overlay for agents (docs/MCP.md); Keycloak version in the editions
      table corrected to the shipped 26.8.1. Before that, 2026-08-13 — brand lockup at the head. Two files, not one: the wordmark is
      navy and disappears on a dark background, so <picture> serves a lightened variant to
      dark-mode readers. Keep the alt text descriptive — it is what a screen reader announces
@@ -101,6 +101,12 @@ You never touch Keycloak unless you want SSO; it lives in an optional overlay fi
 whether it may draft, organise or send, and to whom. Every call is audited, revoking is one
 edit, and the agent never holds your mailbox password. There is no delete tool.
 Tested end to end (43/43); the threat model is in [`docs/MCP.md`](docs/MCP.md).
+
+The clip below is 32 seconds long, has no sound, and was recorded against a local test stack. In it, a hostile email is
+handed to the agent as data, a send to an address outside the allow-list is refused, an allowed
+send arrives in the recipient's inbox, and every call is audited.
+
+https://github.com/user-attachments/assets/4bb6657e-2863-47dc-bdd7-7fd51768c25f
 
 ## Quickstart
 
