@@ -1,6 +1,6 @@
 # Changelog
 
-<!-- Last-touched: 2026-11-04 — [Unreleased]: the MCP server. Before that, same day — cuts 0.6.0: the webmail moves past the GHSA-r2r7-pvh6-mvj5 floor,
+<!-- Last-touched: 2026-11-04 — [Unreleased]: the MCP server, and its README clip. Before that, same day — cuts 0.6.0: the webmail moves past the GHSA-r2r7-pvh6-mvj5 floor,
      every other pin is re-pinned, the mail-server lag is re-argued with a new review date, and the
      changes merged since 0.5.0 that were never recorded here are recorded. Adds the comparison
      links Keep a Changelog asks for. Earlier: 0.5.0 on 2026-08-13. -->
@@ -37,6 +37,10 @@ suite each time.
   the overlay: bounded, read-only root filesystem, loopback-only port, digest-pinned base,
   hash-locked dependencies, example policy accepted by the real parser.
 - Dependabot now also watches the MCP server's Python lock and its base image.
+- A 32-second clip of the MCP server in the README: a hostile email read as `untrusted_*` data,
+  a send to an address outside the allow-list refused, an allowed send arriving in the recipient's
+  inbox in the bundled webmail, and the audit lines for those calls. It was recorded against a local
+  test stack with a real MCP client; every value on screen is what the server returned.
 
 ### Security
 - The agent never holds the mailbox password. The server reads a per-agent mailbox **app
