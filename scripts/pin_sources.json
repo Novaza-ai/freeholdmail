@@ -35,8 +35,8 @@
       "source": { "kind": "github_releases", "repo": "stalwartlabs/stalwart" },
       "advisories": { "repo": "stalwartlabs/stalwart" },
       "acknowledged_lag": {
-        "reason": "0.16.0 replaces the TOML config with a typed JSON schema, moves config and data paths, and replaces the REST management API with a JMAP one -- POST /api/principal, used by every first-run instruction here, no longer exists. Following it is a redesign, not a tag bump. 0.13.4 is the patch floor for GHSA-8jqj-qj5p-v5rr, so no known advisory affects what ships. Tracked in CHANGELOG.md 'Known gaps' item 2.",
-        "review_by": "2026-11-01"
+        "reason": "Re-argued 2026-11-04. Upstream is now 1.0.x, which widens the gap rather than closing it: 0.16.0 replaced the TOML config with a typed JSON schema, moved config and data paths and replaced the REST management API with a JMAP one (POST /api/principal, used by every first-run instruction here, no longer exists); 1.0.0 then changed the database layout and the settings schema again, and can only be reached from 0.16 through the stalwart-migrate tool, not in place. Following it is a redesign of the install, the docs and the test suite, not a tag bump. 0.13.4 is the patch floor for GHSA-8jqj-qj5p-v5rr and no published advisory affects it (re-checked 2026-11-04 against all five on stalwartlabs/stalwart). Tracked in CHANGELOG.md 'Known gaps' item 2.",
+        "review_by": "2027-02-01"
       }
     },
     {

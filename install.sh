@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Novaza Solution JSC
-# Last-touched: 2026-08-13 — Keycloak default to 26.7.1 (patch floor for six advisories, four
-# High) and postgres digest re-pinned; both must match .env.example, which the suite asserts.
+# Last-touched: 2026-11-04 — webmail default to v1.20.0 (floor 1.16.0, GHSA-r2r7-pvh6-mvj5),
+# nginx 1.30.6, Keycloak 26.8.1, postgres digest re-pinned; all must match .env.example.
 # Mail-server default stays stalwartlabs/stalwart v0.13.4, the patch floor for
 # GHSA-8jqj-qj5p-v5rr. Structure follows the Google Shell Style Guide
 # (main function, readonly constants, errors to STDERR).
@@ -27,15 +27,16 @@ readonly STALWART_VERSION_DEFAULT="v0.13.4"
 readonly STALWART_DIGEST_DEFAULT="@sha256:5d0e3a332dfb3db8852d9fabb76c1b479b5ee11aa45607d7d48fb7e9b2d3a1bc"
 readonly BULWARK_IMAGE_DEFAULT="ghcr.io/bulwarkmail/webmail"
 # Patch floor is 1.4.11: anything below it carries CVE-2026-34834 (auth bypass) and
-# CVE-2026-34833 (password disclosure). See SECURITY.md before changing this.
-readonly BULWARK_VERSION_DEFAULT="v1.11.0"
-readonly BULWARK_DIGEST_DEFAULT="@sha256:555965b469a8dfa58b8a2733184b55baa74d8fe2d2922db0f8df5669913180e7"
-readonly NGINX_VERSION_DEFAULT="1.30.5-alpine"
-readonly NGINX_DIGEST_DEFAULT="@sha256:bf3201ab56f23e5954646379c775d511fc466e9f11376d9725361064ad07ed35"
-readonly KEYCLOAK_VERSION_DEFAULT="26.7.4"
-readonly KEYCLOAK_DIGEST_DEFAULT="@sha256:82a77884f3af238beab1e7afd63b5f530e1b5c0590bd7aa60b40a40463e29b2c"
+# CVE-2026-34833 (password disclosure). 1.16.0 is the later floor for GHSA-r2r7-pvh6-mvj5.
+# See SECURITY.md before changing this.
+readonly BULWARK_VERSION_DEFAULT="v1.20.0"
+readonly BULWARK_DIGEST_DEFAULT="@sha256:df2074bd1f714f89643da127acf547d4167b4960a22cc1a3fa1570b4584ad16f"
+readonly NGINX_VERSION_DEFAULT="1.30.6-alpine"
+readonly NGINX_DIGEST_DEFAULT="@sha256:0e52bd054126cdc040b1276c0af347aeb02a41b9cfe305d6094767ac30e97949"
+readonly KEYCLOAK_VERSION_DEFAULT="26.8.1"
+readonly KEYCLOAK_DIGEST_DEFAULT="@sha256:3f3c5f8e03c614774b4bd9173b88391fefa4153bfc010d8012d59ad825377332"
 readonly POSTGRES_VERSION_DEFAULT="17-alpine"
-readonly POSTGRES_DIGEST_DEFAULT="@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24"
+readonly POSTGRES_DIGEST_DEFAULT="@sha256:266d3c257594e195b309ae9d1805e54c788f1d7b375f56bf6c367aac6c917e7b"
 
 # Errors go to STDERR so that redirecting stdout to a log never swallows them.
 err() { printf '%s\n' "$*" >&2; }
