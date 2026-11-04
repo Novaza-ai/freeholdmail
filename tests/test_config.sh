@@ -33,7 +33,7 @@ refute() { # refute <description> <command...>  — passes when the command FAIL
   local desc="$1"; shift
   if "$@" >/dev/null 2>&1; then bad "$desc"; else ok "$desc"; fi
 }
-# shellcheck disable=SC2317  # invoked through check(), not called directly
+# shellcheck disable=SC2317,SC2329  # invoked through check(), not called directly
 same() { [[ "$1" == "$2" ]]; }  # same <a> <b> — for check() on a computed value
 # Some checks can only be answered inside a git checkout of THIS repository: a tarball
 # export has no history, and a copy vendored inside another repo would answer with the
