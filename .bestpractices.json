@@ -1,7 +1,8 @@
 {
   "_comment": [
-    "Last-touched: 2026-08-14 - corrected after the badge was earned. Answers every passing-level",
-    "criterion for the OpenSSF Best Practices badge, so registration and re-runs auto-fill.",
+    "Last-touched: 2026-11-04 - the cross-check below is spelled out instead of pointing at a",
+    "document outside this repo. 2026-08-14 - corrected after the badge was earned. Answers every",
+    "passing-level criterion for the OpenSSF Best Practices badge, so registration and re-runs auto-fill.",
     "",
     "Read by bestpractices.dev when the project is registered and when 'Save (and continue)' is",
     "pressed. Spec: https://github.com/ossf/best-practices-badge/blob/main/docs/bestpractices-json.md",
@@ -15,9 +16,9 @@
     "     count, and BadgeApp displays its own placeholder text in place of the missing reason. The",
     "     badge stalled at 94% with every criterion reading Met until URLs were supplied.",
     "  Both defects share one cause: the file's syntax was validated and never cross-checked against",
-    "  the criteria metadata. Before trusting this file again, run the check in",
-    "  CRM_LAST_STATE_20260814_FREEHOLDMAIL_OPENSSF_BADGE.md (Mistake 6) - it reads criteria.yml and",
-    "  reports any status that is missing a required justification or URL."
+    "  the criteria metadata. Before trusting this file again, cross-check it against criteria.yml",
+    "  in ossf/best-practices-badge: no MUST criterion may be '?', and every criterion marked",
+    "  'met_url_required: true' needs a justification that contains a URL."
   ],
   "description_good_status": "Met",
   "interact_status": "Met",
