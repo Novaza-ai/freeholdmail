@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -39,12 +39,15 @@
 
 # Freehold Mail
 
-**Pare de alugar a sua caixa de entrada.** Uma stack de e-mail completa e auto-hospedada — servidor
-de e-mail em Rust, cliente web moderno.
+**Pare de alugar a sua caixa de entrada.** Uma stack de e-mail completa e auto-hospedada — servidor de e-mail em Rust, cliente web moderno e um servidor MCP opcional para que agentes de IA trabalhem na sua caixa de correio com as permissões que definir.
 
 > *Freehold* (propriedade plena): um bem que é inteiramente seu, sem proprietário acima de si e sem
 > contrato para renovar. É essa a diferença entre executar isto e alugar uma caixa de correio a
 > alguém cujo modelo de negócio são os seus dados.
+
+32 segundos, sem som, gravado numa stack de teste local: um e-mail malicioso chega ao agente de IA apenas como dados, um envio para um endereço fora da lista de permissões é recusado, um envio permitido chega à caixa de entrada do destinatário e cada chamada fica auditada.
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="A caixa de entrada do Freehold Mail: barra lateral de pastas, lista de mensagens e painel de leitura" width="820">
@@ -227,6 +230,8 @@ O `test_e2e.sh` constrói uma stack descartável em portas apenas de loopback, c
 volumes e nomes de containers, e desmonta-a ao sair — não perturba uma implantação em execução.
 Consulte [`tests/README.md`](../../../tests/README.md), incluindo o que estes testes deliberadamente
 **não** cobrem.
+
+Cada uma destas execuções, mais um teste de mutação que quebra as verificações de segurança uma a uma e uma vista à caixa de correio no fim, está [gravada em vídeo](../../../docs/VERIFICATION.md) num clone novo.
 
 As operações do dia a dia — cópias de segurança, renovação de certificados, gestão de caixas de
 correio, atualizações, playbooks de incidentes — estão em

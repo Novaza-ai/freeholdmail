@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — bổ sung đủ danh sách giấy phép và đính chính khẳng định "memory-safe". -->
+<!-- Last-touched: 2026-11-14 — clip MCP đưa lên phần giới thiệu, câu mở đầu nhắc máy chủ MCP, thêm link tới video kiểm thử. Before that, 2026-08-06 — bổ sung đủ danh sách giấy phép và đính chính khẳng định "memory-safe". -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -38,12 +38,15 @@
 
 # Freehold Mail
 
-**Bạn muốn sở hữu mail server của chính mình?** Một bộ mail stack self-hosted hoàn chỉnh — mail
-server viết bằng Rust, web client hiện đại.
+**Bạn muốn sở hữu mail server của chính mình?** Một bộ mail stack self-hosted hoàn chỉnh — mail server viết bằng Rust, web client hiện đại, và một máy chủ MCP tuỳ chọn để AI agent làm việc trong hộp thư theo đúng quyền bạn cho.
 
 > _Freehold_ là thuật ngữ pháp lý: tài sản bạn **sở hữu đứt**, không có địa chủ, không có
 > hợp đồng thuê phải gia hạn. Đó chính là khác biệt giữa việc tự vận hành bộ này và việc
 > thuê hộp thư từ một bên mà mô hình kinh doanh của họ là dữ liệu của bạn.
+
+Clip dài 32 giây, không có tiếng, quay trên một stack thử nghiệm cục bộ: một email độc hại chỉ đến tay AI agent dưới dạng dữ liệu, lệnh gửi tới địa chỉ ngoài danh sách cho phép bị từ chối, lệnh gửi hợp lệ đến đúng hộp thư người nhận, và mọi lệnh gọi đều được ghi audit.
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Hộp thư Freehold Mail: sidebar thư mục, danh sách thư và khung đọc" width="820">
@@ -224,6 +227,8 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 `test_e2e.sh` dựng một stack dùng-một-lần trên các cổng chỉ bind loopback, với volume và tên
 container riêng, và luôn dọn sạch khi kết thúc — nó sẽ không làm phiền một bản triển khai
 đang chạy. Xem [`tests/README.md`](../../../tests/README.md), gồm cả phần **cố ý không** kiểm thử.
+
+Từng lần chạy ở trên, cùng một bài kiểm thử đột biến lần lượt phá từng lớp kiểm tra bảo mật và phần xem lại hộp thư sau đó, đều được [quay video](../../../docs/VERIFICATION.md) trên một bản clone mới.
 
 Vận hành hằng ngày — sao lưu, gia hạn chứng chỉ, quản lý hộp thư, nâng cấp, xử lý sự cố —
 nằm ở [`docs/RUNBOOK.md`](../../../docs/RUNBOOK.md). Điều kiện tiên quyết ở

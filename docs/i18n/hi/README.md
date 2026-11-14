@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -39,12 +39,15 @@
 
 # Freehold Mail
 
-**अपना inbox किराए पर लेना बंद कीजिए।** एक सम्पूर्ण, self-hosted मेल स्टैक — Rust मेल सर्वर,
-आधुनिक वेब क्लाइंट।
+**अपना inbox किराए पर लेना बंद कीजिए।** एक सम्पूर्ण, self-hosted मेल स्टैक — Rust मेल सर्वर, आधुनिक वेब क्लाइंट, और एक वैकल्पिक MCP सर्वर, जिससे AI एजेंट आपकी तय की हुई अनुमति के भीतर आपके mailbox में काम कर सकें।
 
 > *Freehold*: वह सम्पत्ति जो पूरी तरह आपकी अपनी है — न कोई मकान-मालिक, न कोई पट्टा जिसे नवीनीकृत
 > करना पड़े। इसे स्वयं चलाने और ऐसे किसी से mailbox किराए पर लेने में, जिसका व्यापार-मॉडल ही
 > आपका डेटा है, यही अंतर है।
+
+32 सेकंड का क्लिप, बिना आवाज़, एक लोकल टेस्ट स्टैक पर रिकॉर्ड किया गया: एक दुर्भावनापूर्ण ईमेल AI एजेंट तक केवल डेटा के रूप में पहुँचता है, allow-list से बाहर के पते पर भेजना अस्वीकार होता है, अनुमत ईमेल प्राप्तकर्ता के inbox में पहुँचता है, और हर कॉल audit होती है।
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Freehold Mail का inbox: फ़ोल्डर साइडबार, संदेश सूची और रीडिंग पेन" width="820">
@@ -225,6 +228,8 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 बनाता है और बाहर निकलते समय उसे हटा देता है — यह किसी चालू deployment में खलल नहीं डालेगा।
 देखें [`tests/README.md`](../../../tests/README.md), जिसमें यह भी है कि ये टेस्ट जानबूझकर क्या
 **नहीं** देखते।
+
+ऊपर का हर रन, साथ में एक mutation test जो सुरक्षा जाँचों को एक-एक करके तोड़ता है, और उसके बाद mailbox की जाँच, एक fresh clone पर [वीडियो में रिकॉर्ड](../../../docs/VERIFICATION.md) है।
 
 Day-2 संचालन — बैकअप, प्रमाणपत्र नवीनीकरण, mailbox प्रबंधन, अपग्रेड, incident playbook —
 [`docs/RUNBOOK.md`](../../../docs/RUNBOOK.md) में हैं। पूर्व-आवश्यकताएँ

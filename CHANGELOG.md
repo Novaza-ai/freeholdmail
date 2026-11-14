@@ -37,7 +37,8 @@ suite each time.
   the overlay: bounded, read-only root filesystem, loopback-only port, digest-pinned base,
   hash-locked dependencies, example policy accepted by the real parser.
 - Dependabot now also watches the MCP server's Python lock and its base image.
-- A 32-second clip of the MCP server in the README: a hostile email read as `untrusted_*` data,
+- A 32-second clip of the MCP server at the top of the README, under the tagline, which now names
+  the MCP server: a hostile email read as `untrusted_*` data,
   a send to an address outside the allow-list refused, an allowed send arriving in the recipient's
   inbox in the bundled webmail, and the audit lines for those calls. It was recorded against a local
   test stack with a real MCP client; every value on screen is what the server returned.
@@ -45,6 +46,9 @@ suite each time.
   one video per step: static suite, unit tests, both end-to-end runs, the SSO edition, a
   mutation run that removes each security check in turn and shows the suite fail (4 of 4
   caught), and the mailbox in the webmail afterwards. Linked from the README.
+- All eleven translations carry the clip, the new tagline and the link to
+  [docs/VERIFICATION.md](docs/VERIFICATION.md). They remain marked STALE in
+  [TRANSLATIONS.md](TRANSLATIONS.md) for the older gaps listed there.
 
 ### Security
 - The agent never holds the mailbox password. The server reads a per-agent mailbox **app

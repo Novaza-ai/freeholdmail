@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -39,12 +39,15 @@
 
 # Freehold Mail
 
-**Deje de alquilar su bandeja de entrada.** Una pila de correo completa y autoalojada: servidor
-de correo en Rust, cliente web moderno.
+**Deje de alquilar su bandeja de entrada.** Una pila de correo completa y autoalojada: servidor de correo en Rust, cliente web moderno y un servidor MCP opcional para que agentes de IA trabajen en su buzón con los permisos que usted fije.
 
 > *Freehold* (dominio pleno): una propiedad que es enteramente suya, sin arrendador ni contrato de
 > alquiler que renovar. Esa es la diferencia entre ejecutar esto y alquilarle un buzón a alguien
 > cuyo modelo de negocio son sus datos.
+
+32 segundos, sin sonido, grabado en una pila de prueba local: un correo malicioso llega al agente de IA solo como datos, un envío a una dirección fuera de la lista permitida se rechaza, un envío permitido llega a la bandeja del destinatario y cada llamada queda auditada.
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="La bandeja de entrada de Freehold Mail: barra lateral de carpetas, lista de mensajes y panel de lectura" width="820">
@@ -227,6 +230,8 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 y nombres de contenedor, y la desmonta al salir: no perturbará un despliegue en marcha. Consulte
 [`tests/README.md`](../../../tests/README.md), incluido lo que estas pruebas deliberadamente
 **no** cubren.
+
+Cada una de estas ejecuciones, más una prueba de mutación que rompe los controles de seguridad uno a uno y una revisión del buzón al final, está [grabada en vídeo](../../../docs/VERIFICATION.md) sobre un clon limpio.
 
 Las operaciones del día 2 —copias de seguridad, renovación de certificados, gestión de buzones,
 actualizaciones, guías de incidentes— están en [`docs/RUNBOOK.md`](../../../docs/RUNBOOK.md). Los
