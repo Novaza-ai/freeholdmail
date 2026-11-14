@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -38,11 +38,14 @@
 
 # Freehold Mail
 
-**受信箱を借りるのはもうやめましょう。** 完全な自己ホスト型メールスタック — Rust 製メールサーバーと
-モダンな Web クライアント。
+**受信箱を借りるのはもうやめましょう。** 完全な自己ホスト型メールスタック — Rust 製メールサーバー、モダンな Web クライアント、そして AI エージェントがあなたの決めた範囲でメールボックスを扱える任意の MCP サーバー。
 
 > *Freehold*（自由保有権）: 地主も更新すべき賃貸契約も存在せず、完全に自分のものである資産のこと。
 > これを自分で動かすことと、あなたのデータを収益源とする誰かから受信箱を借りることの違いが、まさにそれです。
+
+32 秒・無音、ローカルのテスト環境で収録。悪意あるメールはデータとしてのみ AI エージェントに渡され、許可リスト外への送信は拒否され、許可された送信は受信者の受信箱に届き、すべての呼び出しが監査ログに残ります。
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Freehold Mail の受信箱: フォルダーのサイドバー、メッセージ一覧、閲覧ペイン" width="820">
@@ -217,6 +220,8 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 `test_e2e.sh` はループバック専用ポート上に、独自のボリュームとコンテナ名を持つ使い捨てスタックを構築し、
 終了時に破棄します — 稼働中のデプロイを妨げることはありません。これらのテストが意図的に
 **カバーしていない**範囲も含め、[`tests/README.md`](../../../tests/README.md) を参照してください。
+
+上の各実行に加え、セキュリティチェックを 1 つずつ壊すミューテーションテストと、実行後のメールボックスの確認も、クリーンな clone 上で[動画に記録](../../../docs/VERIFICATION.md)されています。
 
 日常運用 — バックアップ、証明書更新、メールボックス管理、アップグレード、インシデント対応 — は
 [`docs/RUNBOOK.md`](../../../docs/RUNBOOK.md) にあります。前提条件は

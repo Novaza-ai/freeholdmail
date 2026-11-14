@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -38,11 +38,14 @@
 
 # Freehold Mail
 
-**別再租用你的收件匣。** 一套完整的自架郵件系統 —— Rust 寫成的郵件伺服器，搭配現代化的
-網頁用戶端。
+**別再租用你的收件匣。** 一套完整的自架郵件系統 —— Rust 寫成的郵件伺服器、現代化的網頁用戶端，以及可選的 MCP 伺服器，讓 AI 代理依你設定的權限處理信箱。
 
 > *Freehold*（永久產權）：完全歸你所有的財產，沒有房東，也沒有需要續約的租約。
 > 自己執行這套系統，和向一個以你的資料為商業模式的人租用信箱，差別就在這裡。
+
+長度 32 秒、無聲，在本機測試環境中錄製：惡意郵件只會以資料形式交給 AI 代理，寄往允許清單以外地址的郵件會被拒絕，允許的寄送會抵達收件人的收件匣，每次呼叫都有稽核紀錄。
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Freehold Mail 收件匣：資料夾側邊欄、郵件清單與閱讀窗格" width="820">
@@ -206,6 +209,8 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 `test_e2e.sh` 會在僅綁定回送位址的連接埠上，以自己的磁碟區與容器名稱建立一套用完即丟的系統，
 並在結束時拆除 —— 它不會干擾正在執行中的部署。請參閱
 [`tests/README.md`](../../../tests/README.md)，其中也說明了這些測試刻意**不**涵蓋的範圍。
+
+上面的每一次執行，加上一次逐一破壞安全檢查的變異測試，以及事後對信箱的檢查，都在全新 clone 上[錄成影片](../../../docs/VERIFICATION.md)。
 
 日常維運 —— 備份、憑證續期、信箱管理、升級、事故處理手冊 —— 見
 [`docs/RUNBOOK.md`](../../../docs/RUNBOOK.md)。前置需求見

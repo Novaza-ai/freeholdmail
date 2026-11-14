@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -39,12 +39,15 @@
 
 # Freehold Mail
 
-**Berhenti menyewa kotak masuk Anda.** Mail stack self-hosted yang lengkap — mail server Rust,
-klien web modern.
+**Berhenti menyewa kotak masuk Anda.** Mail stack self-hosted yang lengkap — mail server Rust, klien web modern, dan server MCP opsional agar agen AI bisa bekerja di kotak surat Anda sesuai izin yang Anda tetapkan.
 
 > *Freehold* (hak milik penuh): properti yang sepenuhnya Anda miliki, tanpa tuan tanah dan tanpa
 > sewa yang harus diperpanjang. Itulah perbedaan antara menjalankan ini sendiri dan menyewa kotak
 > surat dari pihak yang model bisnisnya adalah data Anda.
+
+Klip 32 detik tanpa suara, direkam pada stack uji lokal: email berbahaya hanya sampai ke agen AI sebagai data, pengiriman ke alamat di luar daftar izin ditolak, pengiriman yang diizinkan tiba di kotak masuk penerima, dan setiap panggilan diaudit.
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Kotak masuk Freehold Mail: sidebar folder, daftar pesan, dan panel baca" width="820">
@@ -226,6 +229,8 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 container-nya sendiri, lalu membongkarnya saat keluar — ia tidak akan mengganggu deployment yang
 sedang berjalan. Lihat [`tests/README.md`](../../../tests/README.md), termasuk apa saja yang sengaja
 **tidak** dicakup oleh pengujian ini.
+
+Setiap jalankan di atas, ditambah uji mutasi yang merusak pemeriksaan keamanan satu per satu dan pengecekan kotak surat sesudahnya, [direkam dalam video](../../../docs/VERIFICATION.md) pada clone yang baru.
 
 Operasi day-2 — backup, perpanjangan sertifikat, pengelolaan kotak surat, upgrade, playbook
 insiden — ada di [`docs/RUNBOOK.md`](../../../docs/RUNBOOK.md). Prasyaratnya ada di

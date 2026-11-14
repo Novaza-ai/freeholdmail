@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -39,12 +39,15 @@
 
 # Freehold Mail
 
-**Cessez de louer votre boîte de réception.** Une pile de messagerie complète et auto-hébergée —
-serveur de messagerie en Rust, client web moderne.
+**Cessez de louer votre boîte de réception.** Une pile de messagerie complète et auto-hébergée — serveur de messagerie en Rust, client web moderne, et un serveur MCP optionnel pour que des agents IA travaillent dans votre boîte selon les droits que vous fixez.
 
 > *Freehold* (pleine propriété) : un bien que vous possédez entièrement, sans propriétaire bailleur
 > ni bail à renouveler. C'est là toute la différence entre faire tourner ceci et louer une boîte aux
 > lettres à quelqu'un dont le modèle économique, ce sont vos données.
+
+32 secondes, sans son, enregistré sur une pile de test locale : un e-mail malveillant n'arrive à l'agent IA que sous forme de données, un envoi vers une adresse hors liste d'autorisation est refusé, un envoi autorisé arrive dans la boîte du destinataire, et chaque appel est journalisé.
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="La boîte de réception de Freehold Mail : barre latérale des dossiers, liste des messages et volet de lecture" width="820">
@@ -231,6 +234,8 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 volumes et noms de conteneurs, et la démonte en sortant — elle ne perturbera pas un déploiement en
 cours d'exécution. Voir [`tests/README.md`](../../../tests/README.md), y compris ce que ces tests ne
 couvrent délibérément **pas**.
+
+Chacune de ces exécutions, plus un test de mutation qui casse les contrôles de sécurité un par un et un coup d'œil à la boîte aux lettres ensuite, est [enregistrée en vidéo](../../../docs/VERIFICATION.md) sur un clone neuf.
 
 L'exploitation au quotidien (« day-2 ») — sauvegardes, renouvellement des certificats, gestion des
 boîtes aux lettres, mises à niveau, procédures d'incident — se trouve dans

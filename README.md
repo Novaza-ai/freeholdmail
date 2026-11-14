@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-04 — test suite on video (docs/VERIFICATION.md) under "Tests and operations"; 32-second MCP clip under "For AI agents"; MCP overlay for agents (docs/MCP.md); Keycloak version in the editions
+<!-- Last-touched: 2026-11-14 — MCP clip moved up into the intro and the tagline names the MCP server; translations carry both, plus the test-video link. Before that, 2026-11-04 — test suite on video (docs/VERIFICATION.md) under "Tests and operations"; 32-second MCP clip under "For AI agents"; MCP overlay for agents (docs/MCP.md); Keycloak version in the editions
      table corrected to the shipped 26.8.1. Before that, 2026-08-13 — brand lockup at the head. Two files, not one: the wordmark is
      navy and disappears on a dark background, so <picture> serves a lightened variant to
      dark-mode readers. Keep the alt text descriptive — it is what a screen reader announces
@@ -40,12 +40,15 @@
 
 # Freehold Mail
 
-**Stop renting your inbox.** A complete, self-hosted mail stack — Rust mail server, modern
-web client.
+**Stop renting your inbox.** A complete, self-hosted mail stack — Rust mail server, modern web client, and an optional MCP server so AI agents can work in your mailbox on the terms you set.
 
 > *Freehold*: property you own outright, with no landlord and no lease to renew. That is the
 > difference between running this and renting a mailbox from someone whose business model is
 > your data.
+
+32 seconds, no sound, recorded against a local test stack: a hostile email reaches an AI agent only as data, a send to an address outside the allow-list is refused, an allowed send lands in the recipient's inbox, and every call is audited.
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="docs/media/inbox.png" alt="The Freehold Mail inbox: folder sidebar, message list and reading pane" width="820">
@@ -102,11 +105,7 @@ whether it may draft, organise or send, and to whom. Every call is audited, revo
 edit, and the agent never holds your mailbox password. There is no delete tool.
 Tested end to end (43/43); the threat model is in [`docs/MCP.md`](docs/MCP.md).
 
-The clip below is 32 seconds long, has no sound, and was recorded against a local test stack. In it, a hostile email is
-handed to the agent as data, a send to an address outside the allow-list is refused, an allowed
-send arrives in the recipient's inbox, and every call is audited.
-
-https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
+The clip at the top of this page shows it working.
 
 ## Quickstart
 
