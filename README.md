@@ -106,7 +106,7 @@ The clip below is 32 seconds long, has no sound, and was recorded against a loca
 handed to the agent as data, a send to an address outside the allow-list is refused, an allowed
 send arrives in the recipient's inbox, and every call is audited.
 
-https://github.com/user-attachments/assets/4bb6657e-2863-47dc-bdd7-7fd51768c25f
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 ## Quickstart
 
