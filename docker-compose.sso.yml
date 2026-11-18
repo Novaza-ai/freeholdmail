@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-08-13 — the four secrets this overlay adds are now REQUIRED variables
 # (${VAR:?}), so a copied .env.example cannot start Keycloak or its database with empty
 # credentials. Before that, 2026-08-04 — GATE-2/3 QA: added the PostgreSQL service Keycloak requires

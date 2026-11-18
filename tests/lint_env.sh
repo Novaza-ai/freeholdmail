@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-08-13 — new: the shipped .env.example no longer resolves to a runnable
 # compose config, on purpose, so anything that only wants to LINT the config needs an env
 # where the required values are present but obviously fake.

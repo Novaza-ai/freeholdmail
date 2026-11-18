@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-11-04 — E2E for the MCP server: real Stalwart, real MCP client, real delivery.
 """End-to-end checks for the MCP server, against a live mail server.
 

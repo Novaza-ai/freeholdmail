@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-18 — 管理方改為 Paphus Solutions Inc.；MCP 測試影片直接在頁面內播放。 Before that, 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -93,6 +93,22 @@ PostgreSQL 是 C 寫的，所以「記憶體安全」描述的是我們所選的
 除非你想要 SSO，否則永遠不必碰 Keycloak；它放在一個選用的 overlay 檔案裡。
 
 **給 AI 代理（選用，兩個版本皆適用）：** `docker-compose.mcp.yml` 會加入一個 [MCP](https://modelcontextprotocol.io) 伺服器。你可以為每個代理決定：能看到哪些資料夾、能否撰寫草稿、整理或寄信，以及能寄給誰。每次呼叫都會寫入稽核記錄，撤銷只需修改一處設定，代理永遠拿不到你的信箱密碼。沒有刪除工具。已端對端測試（43/43）；威脅模型見 [`docs/MCP.md`](../../MCP.md)。
+
+頁首短片背後的測試執行也都錄了影片：
+
+**MCP 伺服器單元測試** —— 政策、使用真實 RS256 JWT 的兩種驗證模式、稽核、速率限制：30 項通過。
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**包含 MCP 伺服器的端對端測試** —— 由 `mcp/Dockerfile` 建置的映像檔、三個代理、一個真實的 MCP 用戶端：43 項 MCP 檢查，0 失敗。
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**之後的信箱** —— 在內附的網頁郵件中查看代理留下的結果：被拒絕的草稿仍未寄出，唯一允許的那封已送達，每次呼叫對應一行稽核紀錄。
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+全部七段影片及錄製方式：[`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md)。
 
 ## 快速開始
 
@@ -231,7 +247,7 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) —— 並有
 [@anhkk1245](https://github.com/anhkk1245) 參與，隸屬於
-**[Novaza Solution JSC](https://novaza.ai)**。
+**[Paphus Solutions Inc.](https://paphussolutions.com)**。
 
 我們在正式環境中以這套系統的元件（Stalwart 與 Bulwark）承載自己的郵件，並打造了 Freehold Mail，
 把那套架構打包給任何想自架的人使用。採用 MIT 授權條款；見

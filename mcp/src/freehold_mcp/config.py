@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-11-04 — every setting comes from the environment; nothing is hardcoded.
 """Runtime settings. Read once at startup; the policy file is what changes at runtime."""
 from __future__ import annotations

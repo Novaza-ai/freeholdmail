@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-08-13 — new: the first three releases carried ZERO assets. A consumer had
 # nothing to check a download against, nothing saying which images the release pins, and no
 # statement of where the artifact came from. GitHub's auto-generated source tarball is not a

@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-18 — проект теперь курирует Paphus Solutions Inc.; тестовые видео MCP воспроизводятся прямо на странице. Before that, 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -100,6 +100,22 @@ Dovecot, Rspamd и веб-почты, — либо хостинговый поч
 Вы вообще не касаетесь Keycloak, если вам не нужен SSO; он вынесен в необязательный overlay-файл.
 
 **Для ИИ-агентов (необязательно, обе редакции):** `docker-compose.mcp.yml` добавляет сервер [MCP](https://modelcontextprotocol.io). Вы решаете для каждого агента, какие папки он видит, может ли он составлять черновики, сортировать или отправлять письма и кому. Каждый вызов попадает в журнал аудита, отзыв доступа — одна правка, а пароль от ящика у агента не бывает никогда. Инструмента удаления нет. Проверено end-to-end (43/43); модель угроз — в [`docs/MCP.md`](../../MCP.md).
+
+Тесты, стоящие за роликом в начале страницы, тоже записаны на видео:
+
+**Модульные тесты MCP-сервера** — политика, оба режима аутентификации с настоящими JWT RS256, аудит, ограничение частоты: 30 пройдено.
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**Сквозной тест с MCP-сервером** — образ, собранный из `mcp/Dockerfile`, три агента, настоящий MCP-клиент: 43 проверки MCP, 0 провалов.
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**Почтовый ящик после этого** — что оставили агенты, во встроенном веб-клиенте: отклонённый черновик так и не отправлен, единственная разрешённая отправка доставлена, и по одной строке аудита на каждый вызов.
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+Все семь записей и то, как они сделаны: [`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md).
 
 ## Быстрый старт
 
@@ -254,7 +270,7 @@ bus-фактора: [`MAINTAINERS.md`](../../../MAINTAINERS.md).
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — вместе с
 [@anhkk1245](https://github.com/anhkk1245), в компании
-**[Novaza Solution JSC](https://novaza.ai)**.
+**[Paphus Solutions Inc.](https://paphussolutions.com)**
 
 Мы используем компоненты этого стека (Stalwart и Bulwark) в продакшене для собственной почты и
 создали Freehold Mail, чтобы упаковать эту архитектуру для всех, кто хочет разместить её у себя.

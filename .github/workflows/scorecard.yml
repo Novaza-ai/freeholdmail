@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-08-14 — the scan can now be run on demand. It was the only scheduled
 # workflow here that could not be, and that gap had a cost: v0.5.0 was published twenty
 # seconds AFTER the scan that was meant to grade it, so Signed-Releases went on reporting -1

@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-14 — clip MCP đưa lên phần giới thiệu, câu mở đầu nhắc máy chủ MCP, thêm link tới video kiểm thử. Before that, 2026-08-06 — bổ sung đủ danh sách giấy phép và đính chính khẳng định "memory-safe". -->
+<!-- Last-touched: 2026-11-18 — thay đơn vị quản lý sang Paphus Solutions Inc.; video kiểm thử MCP phát ngay trong trang. Before that, 2026-11-14 — clip MCP đưa lên phần giới thiệu, câu mở đầu nhắc máy chủ MCP, thêm link tới video kiểm thử. Before that, 2026-08-06 — bổ sung đủ danh sách giấy phép và đính chính khẳng định "memory-safe". -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -100,6 +100,22 @@ server của ai cả.
 Bạn không phải đụng đến Keycloak trừ khi muốn dùng SSO; nó nằm trong một file overlay tuỳ chọn.
 
 **Cho AI agent (tuỳ chọn, cả hai bản):** `docker-compose.mcp.yml` thêm một máy chủ [MCP](https://modelcontextprotocol.io). Bạn quyết định cho từng agent: được thấy thư mục nào, được soạn nháp, sắp xếp hay gửi thư không, và gửi cho ai. Mọi lệnh gọi đều được ghi audit, thu hồi chỉ cần sửa một dòng, và agent không bao giờ cầm mật khẩu hộp thư của bạn. Không có công cụ xoá thư. Đã kiểm thử end-to-end (43/43); mô hình đe doạ nằm ở [`docs/MCP.md`](../../MCP.md).
+
+Các lần chạy kiểm thử đứng sau clip ở đầu trang cũng được quay video:
+
+**Kiểm thử đơn vị của máy chủ MCP** — chính sách, cả hai chế độ xác thực với JWT RS256 thật, nhật ký kiểm toán, giới hạn tần suất: 30 đạt.
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**Kiểm thử đầu-cuối với máy chủ MCP** — image dựng từ `mcp/Dockerfile`, ba agent, một MCP client thật: 43 kiểm tra MCP, 0 lỗi.
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**Hộp thư sau đó** — những gì agent để lại, xem trong webmail đi kèm: bản nháp bị từ chối vẫn chưa gửi, lần gửi hợp lệ duy nhất đã đến nơi, và mỗi lần gọi có một dòng kiểm toán.
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+Đủ bảy video và cách quay: [`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md).
 
 ## Bắt đầu nhanh
 
@@ -249,7 +265,7 @@ Dẫn dắt bởi **Daika Ginza** — [GitHub](https://github.com/daikaginza) ·
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — cùng
 [@anhkk1245](https://github.com/anhkk1245), tại
-**[Novaza Solution JSC](https://novaza.ai)**.
+**[Paphus Solutions Inc.](https://paphussolutions.com)**
 
 Chúng tôi chạy các thành phần của stack này (Stalwart và Bulwark) trong môi trường production
 cho hệ thống mail của chính mình, và xây Freehold Mail để đóng gói kiến trúc đó cho bất kỳ ai

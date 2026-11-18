@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-18 — ahora la custodia es de Paphus Solutions Inc.; los vídeos de prueba de MCP se reproducen en la página. Before that, 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -100,6 +100,22 @@ documentación honesta. **Qué no es:** un fork ni una reescritura del servidor 
 Nunca toca Keycloak a menos que quiera SSO; reside en un archivo overlay opcional.
 
 **Para agentes de IA (opcional, ambas ediciones):** `docker-compose.mcp.yml` añade un servidor [MCP](https://modelcontextprotocol.io). Usted decide, por agente, qué carpetas ve, si puede redactar, organizar o enviar, y a quién. Cada llamada queda auditada, revocar es una sola edición y el agente nunca tiene la contraseña de su buzón. No hay herramienta de borrado. Probado de extremo a extremo (43/43); el modelo de amenazas está en [`docs/MCP.md`](../../MCP.md).
+
+Las pruebas detrás del clip del principio también están en vídeo:
+
+**Pruebas unitarias del servidor MCP** — política, ambos modos de autenticación con JWT RS256 reales, auditoría, límite de frecuencia: 30 superadas.
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**De extremo a extremo con el servidor MCP** — la imagen construida desde `mcp/Dockerfile`, tres agentes, un cliente MCP real: 43 comprobaciones MCP, 0 fallos.
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**El buzón después** — lo que dejaron los agentes, en el webmail incluido: el borrador rechazado sigue sin enviar, el único envío permitido llegó, y una línea de auditoría por llamada.
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+Las siete grabaciones y cómo se hicieron: [`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md).
 
 ## Inicio rápido
 
@@ -252,7 +268,7 @@ Dirigido por **Daika Ginza** — [GitHub](https://github.com/daikaginza) ·
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — junto con
 [@anhkk1245](https://github.com/anhkk1245), en
-**[Novaza Solution JSC](https://novaza.ai)**.
+**[Paphus Solutions Inc.](https://paphussolutions.com)**
 
 Ejecutamos los componentes de esta pila (Stalwart y Bulwark) en producción para nuestro propio
 correo, y construimos Freehold Mail para empaquetar esa arquitectura para cualquiera que quiera

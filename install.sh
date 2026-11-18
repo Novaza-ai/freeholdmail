@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-11-04 — webmail default to v1.20.0 (floor 1.16.0, GHSA-r2r7-pvh6-mvj5),
 # nginx 1.30.6, Keycloak 26.8.1, postgres digest re-pinned; all must match .env.example.
 # Mail-server default stays stalwartlabs/stalwart v0.13.4, the patch floor for

@@ -8,7 +8,7 @@ before you depend on the answer.
 
 ## The model
 
-**Company-stewarded, single maintainer.** Novaza Solution JSC sponsors the work and
+**Company-stewarded, single maintainer.** Paphus Solutions Inc. sponsors the work and
 [`MAINTAINERS.md`](MAINTAINERS.md) names who holds the merge button. There is no committee,
 no voting, and pretending otherwise would be theatre at this size.
 

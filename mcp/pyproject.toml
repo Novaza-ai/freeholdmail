@@ -11,7 +11,7 @@ readme = "README.md"
 license = "MIT"
 license-files = ["../LICENSE"]
 requires-python = ">=3.12"
-authors = [{ name = "Novaza Solution JSC" }]
+authors = [{ name = "Paphus Solutions Inc." }]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Programming Language :: Python :: 3",

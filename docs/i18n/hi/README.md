@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-18 — संचालक अब Paphus Solutions Inc.; MCP परीक्षण वीडियो पेज पर ही चलते हैं। Before that, 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -99,6 +99,22 @@ Freehold Mail तीसरा विकल्प है: एक ही repo ज�
 जब तक आपको SSO न चाहिए, आप Keycloak को छूते तक नहीं; वह एक वैकल्पिक overlay फ़ाइल में रहता है।
 
 **AI एजेंटों के लिए (वैकल्पिक, दोनों संस्करणों में):** `docker-compose.mcp.yml` एक [MCP](https://modelcontextprotocol.io) सर्वर जोड़ता है। आप हर एजेंट के लिए तय करते हैं कि वह कौन-से फ़ोल्डर देख सकता है, क्या वह ड्राफ़्ट बना, व्यवस्थित या भेज सकता है, और किसे। हर कॉल ऑडिट होती है, पहुँच वापस लेना एक बदलाव भर है, और एजेंट के पास कभी आपका मेलबॉक्स पासवर्ड नहीं होता। कोई डिलीट टूल नहीं है। एंड-टू-एंड परीक्षित (43/43); थ्रेट मॉडल [`docs/MCP.md`](../../MCP.md) में है।
+
+ऊपर वाली क्लिप के पीछे के परीक्षण भी वीडियो पर हैं:
+
+**MCP सर्वर यूनिट टेस्ट** — नीति, असली RS256 JWT के साथ दोनों auth मोड, ऑडिट, रेट लिमिट: 30 पास।
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**MCP सर्वर के साथ end-to-end** — `mcp/Dockerfile` से बनी image, तीन एजेंट, एक असली MCP client: 43 MCP जाँचें, 0 विफल।
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**उसके बाद का मेलबॉक्स** — एजेंटों ने जो छोड़ा, साथ आए webmail में: अस्वीकृत ड्राफ़्ट अब भी बिना भेजे, अनुमत एकमात्र संदेश पहुँचा, और हर कॉल की एक ऑडिट पंक्ति।
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+सभी सात वीडियो और उन्हें कैसे रिकॉर्ड किया गया: [`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md)।
 
 ## क्विकस्टार्ट
 
@@ -250,7 +266,7 @@ Day-2 संचालन — बैकअप, प्रमाणपत्र न
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — साथ में
 [@anhkk1245](https://github.com/anhkk1245), संस्था
-**[Novaza Solution JSC](https://novaza.ai)**।
+**[Paphus Solutions Inc.](https://paphussolutions.com)**।
 
 हम इस स्टैक के components (Stalwart और Bulwark) को अपनी ही मेल के लिए production में चलाते हैं,
 और Freehold Mail हमने इसलिए बनाया ताकि वह आर्किटेक्चर हर उस व्यक्ति के लिए पैक किया जा सके जो

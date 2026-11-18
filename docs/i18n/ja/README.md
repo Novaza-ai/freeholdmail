@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-18 — 管理主体を Paphus Solutions Inc. に変更。MCP のテスト動画をページ内で再生。 Before that, 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -94,6 +94,22 @@ PostgreSQL は C です。つまり「メモリ安全」はスタック全体で
 SSO が不要なら Keycloak に触れることはありません。オプションのオーバーレイファイルに分離されています。
 
 **AI エージェント向け（任意、両エディション共通）:** `docker-compose.mcp.yml` で [MCP](https://modelcontextprotocol.io) サーバーが追加されます。エージェントごとに、見えるフォルダー、下書き・整理・送信の可否、送信先を決められます。すべての呼び出しは監査ログに残り、取り消しは設定の1 行の編集で済み、エージェントがメールボックスのパスワードを持つことはありません。削除ツールはありません。エンドツーエンドで検証済み（43/43）。脅威モデルは [`docs/MCP.md`](../../MCP.md) にあります。
+
+冒頭のクリップの裏付けとなるテスト実行も動画で公開しています:
+
+**MCP サーバーの単体テスト** — ポリシー、本物の RS256 JWT による両方の認証モード、監査、レート制限: 30 件成功。
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**MCP サーバーを含むエンドツーエンド** — `mcp/Dockerfile` からビルドしたイメージ、3 つのエージェント、本物の MCP クライアント: MCP チェック 43 件、失敗 0。
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**その後のメールボックス** — エージェントの操作結果を付属の Web メールで確認: 拒否された下書きは未送信のまま、許可された 1 通だけが届き、呼び出しごとに監査ログが 1 行。
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+全 7 本の動画と収録方法: [`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md)。
 
 ## クイックスタート
 
@@ -242,7 +258,7 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — そして
 [@anhkk1245](https://github.com/anhkk1245)、所属は
-**[Novaza Solution JSC](https://novaza.ai)**。
+**[Paphus Solutions Inc.](https://paphussolutions.com)**。
 
 私たちはこのスタックのコンポーネント（Stalwart と Bulwark）を自社のメールとして本番運用しており、
 その構成を自己ホストしたい人のためにパッケージ化したのが Freehold Mail です。MIT ライセンスです。

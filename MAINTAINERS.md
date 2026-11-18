@@ -1,4 +1,5 @@
-<!-- Last-touched: 2026-08-06 — the company address is now a verified email, so all fifteen
+<!-- Last-touched: 2026-11-18 — steward is now Paphus Solutions Inc.; contact admin@paphussolutions.com. The older commits keep
+     the former steward's identity, described as history. Before that, 2026-08-06 — the company address is now a verified email, so all fifteen
      older commits are credited; measured block updated to match. -->
 # Maintainers and team
 
@@ -21,10 +22,10 @@ Substack.
 | Daika Ginza | [@daikaginza](https://github.com/daikaginza) | Project lead · maintainer · releases · security response |
 | [@anhkk1245](https://github.com/anhkk1245) | [@anhkk1245](https://github.com/anhkk1245) | Team member |
 
-The project is stewarded by **[Novaza Solution JSC](https://novaza.ai)**, which runs this
+The project is stewarded by **[Paphus Solutions Inc.](https://paphussolutions.com)**, which runs this
 stack's components (Stalwart and Bulwark) in production for its own mail.
 
-Contact: `admin@novaza.ai`. For anything with a security dimension use the private advisory
+Contact: `admin@paphussolutions.com`. For anything with a security dimension use the private advisory
 flow instead — see [`SECURITY.md`](SECURITY.md). Never report a vulnerability in a public
 issue.
 
@@ -32,10 +33,10 @@ issue.
 
 **Commits are authored by the person who made them.** Each maintainer sets `user.name` and
 `user.email` to their own details, using an address verified on their GitHub account.
-Copyright is separate and does not change: [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) name
-**Novaza Solution JSC**.
+Copyright is separate from authorship: [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) name
+**Paphus Solutions Inc.**
 
-Earlier commits were made under the company identity, `Novaza Solution JSC
+Earlier commits were made under the identity of the former steward, `Novaza Solution JSC
 <admin@novaza.ai>`. For a while that address was verified on no GitHub account, so those
 commits were credited to nobody and `dependabot` was the only name under
 **Insights → Contributors**. Adding the address to a maintainer's verified emails fixed it

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-11-04 — --mcp: builds the MCP overlay and drives it with a real client.
 # Before that, 2026-08-13 — corrected the claim that this exercises "the defaults users get":
 # it exercises the shipped image pins and wiring, and generates every secret. The empty-secret

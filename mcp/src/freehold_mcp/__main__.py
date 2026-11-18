@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-11-04 — command line: serve over HTTP or stdio, mint agent tokens.
 """``freehold-mcp`` command line."""
 from __future__ import annotations

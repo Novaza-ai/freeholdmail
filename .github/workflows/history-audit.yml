@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-08-13 — new: nobody was watching the history.
 #
 # CI scans the WORKING TREE on every push. That is the right gate for a pull request, and it is

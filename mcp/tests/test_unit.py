@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-11-04 — unit tests: policy, auth, audit, rate limit, scope, JMAP client.
 """Fast tests with no mail server. The end-to-end proof is tests/e2e_mcp.py."""
 from __future__ import annotations

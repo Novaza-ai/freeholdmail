@@ -1,6 +1,6 @@
 # Changelog
 
-<!-- Last-touched: 2026-11-04 — [Unreleased]: the MCP server, its README clip, and the test suite on video. Before that, same day — cuts 0.6.0: the webmail moves past the GHSA-r2r7-pvh6-mvj5 floor,
+<!-- Last-touched: 2026-11-18 — [Unreleased]: steward changed to Paphus Solutions Inc.; MCP test videos inline in every README. Before that, 2026-11-04 — [Unreleased]: the MCP server, its README clip, and the test suite on video. Before that, same day — cuts 0.6.0: the webmail moves past the GHSA-r2r7-pvh6-mvj5 floor,
      every other pin is re-pinned, the mail-server lag is re-argued with a new review date, and the
      changes merged since 0.5.0 that were never recorded here are recorded. Adds the comparison
      links Keep a Changelog asks for. Earlier: 0.5.0 on 2026-08-13. -->
@@ -49,6 +49,17 @@ suite each time.
 - All eleven translations carry the clip, the new tagline and the link to
   [docs/VERIFICATION.md](docs/VERIFICATION.md). They remain marked STALE in
   [TRANSLATIONS.md](TRANSLATIONS.md) for the older gaps listed there.
+- The three MCP test videos (unit tests, end to end with the MCP server, the mailbox afterwards)
+  play inline under "For AI agents" in the README and in all eleven translations, so a reader
+  sees them without opening docs/VERIFICATION.md.
+
+### Changed
+- **Steward and copyright holder: Paphus Solutions Inc.** (https://paphussolutions.com), replacing Novaza Solution JSC, in
+  `LICENSE`, `NOTICE`, every source header, the MCP package metadata, the SBOM supplier,
+  `MAINTAINERS.md`, `GOVERNANCE.md`, the README and its translations. The contact and security
+  email is now `admin@paphussolutions.com`. Commits already published under `Novaza Solution JSC
+  <admin@novaza.ai>` are left as they are and are described as the former steward's identity.
+  The repository address `github.com/Novaza-ai/freeholdmail` does not change.
 
 ### Security
 - The agent never holds the mailbox password. The server reads a per-agent mailbox **app

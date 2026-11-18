@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-08-13 — new: fails when a pinned image falls behind its upstream line.
 #
 # SECURITY.md records that pin currency is a manual duty on this project, and that the duty

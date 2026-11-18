@@ -58,7 +58,7 @@
   "vulnerability_report_process_status": "Met",
   "vulnerability_report_process_justification": "https://github.com/Novaza-ai/freeholdmail/blob/main/SECURITY.md",
   "vulnerability_report_private_status": "Met",
-  "vulnerability_report_private_justification": "https://github.com/Novaza-ai/freeholdmail/security/advisories - GitHub private security advisories are enabled, and SECURITY.md also gives admin@novaza.ai as an alternative channel.",
+  "vulnerability_report_private_justification": "https://github.com/Novaza-ai/freeholdmail/security/advisories - GitHub private security advisories are enabled, and SECURITY.md also gives admin@paphussolutions.com as an alternative channel.",
   "vulnerability_report_response_status": "Met",
   "build_status": "Met",
   "build_common_tools_status": "Met",

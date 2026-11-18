@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-18 — เปลี่ยนผู้ดูแลเป็น Paphus Solutions Inc.; วิดีโอทดสอบ MCP เล่นได้ในหน้านี้ Before that, 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -97,6 +97,22 @@ Freehold Mail คือทางเลือกที่สาม: รีโพ�
 คุณจะไม่ต้องแตะ Keycloak เลยเว้นแต่คุณต้องการ SSO เพราะมันอยู่ในไฟล์ overlay ที่เป็นทางเลือก
 
 **สำหรับ AI agent (ไม่บังคับ ใช้ได้ทั้งสองรุ่น):** `docker-compose.mcp.yml` จะเพิ่มเซิร์ฟเวอร์ [MCP](https://modelcontextprotocol.io) คุณกำหนดได้สำหรับแต่ละ agent ว่าเห็นโฟลเดอร์ใดได้บ้าง ร่าง จัดระเบียบ หรือส่งอีเมลได้หรือไม่ และส่งถึงใครได้ ทุกการเรียกถูกบันทึกในบันทึกตรวจสอบ การเพิกถอนทำได้ด้วยการแก้ไขเพียงจุดเดียว และ agent ไม่เคยถือรหัสผ่านกล่องจดหมายของคุณ ไม่มีเครื่องมือลบอีเมล ทดสอบแบบ end-to-end แล้ว (43/43) แบบจำลองภัยคุกคามอยู่ที่ [`docs/MCP.md`](../../MCP.md)
+
+การทดสอบที่อยู่เบื้องหลังคลิปด้านบนก็มีวิดีโอเช่นกัน:
+
+**การทดสอบหน่วยของเซิร์ฟเวอร์ MCP** — นโยบาย, การยืนยันตัวตนทั้งสองโหมดด้วย JWT RS256 จริง, audit, การจำกัดอัตรา: ผ่าน 30 รายการ
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**การทดสอบแบบ end-to-end พร้อมเซิร์ฟเวอร์ MCP** — อิมเมจที่ build จาก `mcp/Dockerfile`, เอเจนต์สามตัว, MCP client จริง: ตรวจ MCP 43 รายการ ล้มเหลว 0
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**กล่องจดหมายหลังจากนั้น** — สิ่งที่เอเจนต์ทิ้งไว้ ดูในเว็บเมลที่มาด้วย: ร่างที่ถูกปฏิเสธยังไม่ถูกส่ง, การส่งที่อนุญาตเพียงครั้งเดียวไปถึงผู้รับ, และ audit หนึ่งบรรทัดต่อการเรียกหนึ่งครั้ง
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+วิดีโอทั้งเจ็ดและวิธีบันทึก: [`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md)
 
 ## เริ่มต้นอย่างรวดเร็ว
 
@@ -246,7 +262,7 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — ร่วมกับ
 [@anhkk1245](https://github.com/anhkk1245) ที่
-**[Novaza Solution JSC](https://novaza.ai)**
+**[Paphus Solutions Inc.](https://paphussolutions.com)**
 
 เรารันคอมโพเนนต์ของสแตกนี้ (Stalwart และ Bulwark) บนโปรดักชันสำหรับอีเมลของเราเอง และเรา
 สร้าง Freehold Mail ขึ้นเพื่อบรรจุสถาปัตยกรรมนั้นให้ทุกคนที่ต้องการโฮสต์ด้วยตัวเอง

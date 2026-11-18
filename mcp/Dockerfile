@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-11-04 — MCP server image: digest-pinned base, hash-locked deps, non-root.
 #
 # The base is pinned by digest and every dependency by hash (pip --require-hashes), so a

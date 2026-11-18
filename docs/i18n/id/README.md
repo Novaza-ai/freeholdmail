@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-18 — pengelola kini Paphus Solutions Inc.; video pengujian MCP diputar langsung di halaman. Before that, 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -100,6 +100,22 @@ yang jujur. **Apa ini bukan:** fork atau penulisan ulang mail server milik siapa
 Anda tidak pernah menyentuh Keycloak kecuali Anda menginginkan SSO; ia berada di sebuah file overlay opsional.
 
 **Untuk agen AI (opsional, kedua edisi):** `docker-compose.mcp.yml` menambahkan server [MCP](https://modelcontextprotocol.io). Anda menentukan, per agen, folder mana yang terlihat, apakah agen boleh membuat draf, merapikan, atau mengirim, dan kepada siapa. Setiap panggilan diaudit, pencabutan cukup satu suntingan, dan agen tidak pernah memegang kata sandi kotak surat Anda. Tidak ada alat hapus. Diuji end-to-end (43/43); model ancaman ada di [`docs/MCP.md`](../../MCP.md).
+
+Pengujian di balik klip di bagian atas juga direkam dalam video:
+
+**Uji unit server MCP** — kebijakan, kedua mode autentikasi dengan JWT RS256 asli, audit, batas laju: 30 lulus.
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**End-to-end dengan server MCP** — image yang dibangun dari `mcp/Dockerfile`, tiga agen, klien MCP asli: 43 pemeriksaan MCP, 0 gagal.
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**Kotak surat sesudahnya** — apa yang ditinggalkan agen, di webmail bawaan: draf yang ditolak tetap belum terkirim, satu-satunya pengiriman yang diizinkan sampai, dan satu baris audit per panggilan.
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+Ketujuh video dan cara merekamnya: [`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md).
 
 ## Mulai cepat
 
@@ -252,7 +268,7 @@ Dipimpin oleh **Daika Ginza** — [GitHub](https://github.com/daikaginza) ·
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — bersama
 [@anhkk1245](https://github.com/anhkk1245), di
-**[Novaza Solution JSC](https://novaza.ai)**.
+**[Paphus Solutions Inc.](https://paphussolutions.com)**
 
 Kami menjalankan komponen-komponen stack ini (Stalwart dan Bulwark) di produksi untuk email kami
 sendiri, dan kami membangun Freehold Mail untuk mengemas arsitektur tersebut bagi siapa pun yang

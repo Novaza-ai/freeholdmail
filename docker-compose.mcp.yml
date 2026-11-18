@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-11-04 — new overlay: the MCP server, for agents. Off unless you add it.
 #
 # Adds an MCP server that gives AI agents scoped, audited, revocable access to mailboxes:

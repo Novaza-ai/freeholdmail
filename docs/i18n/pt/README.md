@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-18 — o projeto agora é mantido pela Paphus Solutions Inc.; os vídeos de teste do MCP tocam na própria página. Before that, 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -99,6 +99,22 @@ honesta. **O que não é:** um fork ou uma reescrita do servidor de e-mail de ni
 Nunca toca no Keycloak a menos que queira SSO; ele vive num ficheiro de overlay opcional.
 
 **Para agentes de IA (opcional, ambas as edições):** `docker-compose.mcp.yml` adiciona um servidor [MCP](https://modelcontextprotocol.io). Você decide, por agente, quais pastas ele vê, se pode redigir, organizar ou enviar, e para quem. Cada chamada é auditada, revogar é uma única edição e o agente nunca tem a senha da sua caixa de correio. Não há ferramenta de exclusão. Testado de ponta a ponta (43/43); o modelo de ameaças está em [`docs/MCP.md`](../../MCP.md).
+
+Os testes por trás do clipe no topo também estão em vídeo:
+
+**Testes unitários do servidor MCP** — política, os dois modos de autenticação com JWTs RS256 reais, auditoria, limite de taxa: 30 aprovados.
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**Ponta a ponta com o servidor MCP** — a imagem construída a partir de `mcp/Dockerfile`, três agentes, um cliente MCP real: 43 verificações MCP, 0 falhas.
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**A caixa de correio depois** — o que os agentes deixaram, no webmail incluído: o rascunho recusado continua sem envio, o único envio permitido chegou, e uma linha de auditoria por chamada.
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+As sete gravações e como foram feitas: [`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md).
 
 ## Início rápido
 
@@ -253,7 +269,7 @@ Liderado por **Daika Ginza** — [GitHub](https://github.com/daikaginza) ·
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — com
 [@anhkk1245](https://github.com/anhkk1245), na
-**[Novaza Solution JSC](https://novaza.ai)**.
+**[Paphus Solutions Inc.](https://paphussolutions.com)**
 
 Executamos os componentes desta stack (Stalwart e Bulwark) em produção para o nosso próprio e-mail, e
 construímos o Freehold Mail para empacotar essa arquitetura para quem a quiser auto-hospedar.
