@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-11-04 — test suite on video (docs/VERIFICATION.md) under "Tests and operations"; 32-second MCP clip under "For AI agents"; MCP overlay for agents (docs/MCP.md); Keycloak version in the editions
+<!-- Last-touched: 2026-11-18 — steward is now Paphus Solutions Inc.; the MCP test videos play inline under "For AI agents". Before that, 2026-11-14 — MCP clip moved up into the intro and the tagline names the MCP server; translations carry both, plus the test-video link. Before that, 2026-11-04 — test suite on video (docs/VERIFICATION.md) under "Tests and operations"; 32-second MCP clip under "For AI agents"; MCP overlay for agents (docs/MCP.md); Keycloak version in the editions
      table corrected to the shipped 26.8.1. Before that, 2026-08-13 — brand lockup at the head. Two files, not one: the wordmark is
      navy and disappears on a dark background, so <picture> serves a lightened variant to
      dark-mode readers. Keep the alt text descriptive — it is what a screen reader announces
@@ -40,12 +40,15 @@
 
 # Freehold Mail
 
-**Stop renting your inbox.** A complete, self-hosted mail stack — Rust mail server, modern
-web client.
+**Stop renting your inbox.** A complete, self-hosted mail stack — Rust mail server, modern web client, and an optional MCP server so AI agents can work in your mailbox on the terms you set.
 
 > *Freehold*: property you own outright, with no landlord and no lease to renew. That is the
 > difference between running this and renting a mailbox from someone whose business model is
 > your data.
+
+32 seconds, no sound, recorded against a local test stack: a hostile email reaches an AI agent only as data, a send to an address outside the allow-list is refused, an allowed send lands in the recipient's inbox, and every call is audited.
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="docs/media/inbox.png" alt="The Freehold Mail inbox: folder sidebar, message list and reading pane" width="820">
@@ -102,11 +105,21 @@ whether it may draft, organise or send, and to whom. Every call is audited, revo
 edit, and the agent never holds your mailbox password. There is no delete tool.
 Tested end to end (43/43); the threat model is in [`docs/MCP.md`](docs/MCP.md).
 
-The clip below is 32 seconds long, has no sound, and was recorded against a local test stack. In it, a hostile email is
-handed to the agent as data, a send to an address outside the allow-list is refused, an allowed
-send arrives in the recipient's inbox, and every call is audited.
+The clip at the top of this page shows it working. The test runs behind it are on video too:
 
-https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
+**MCP server unit tests** — policy, both auth modes with real RS256 JWTs, audit, rate limit: 30 passed.
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**End to end with the MCP server** — the image built from `mcp/Dockerfile`, three agents, a real MCP client: 43 MCP checks, 0 failed.
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**The mailbox afterwards** — what the agents left behind, in the bundled webmail: the refused draft still unsent, the one allowed send delivered, and one audit line per call.
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+All seven recordings, and how they were made: [`docs/VERIFICATION.md`](docs/VERIFICATION.md).
 
 ## Quickstart
 
@@ -272,7 +285,7 @@ Led by **Daika Ginza** — [GitHub](https://github.com/daikaginza) ·
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — with
 [@anhkk1245](https://github.com/anhkk1245), at
-**[Novaza Solution JSC](https://novaza.ai)**.
+**[Paphus Solutions Inc.](https://paphussolutions.com)**
 
 We run this stack's components (Stalwart and Bulwark) in production for our own mail, and we
 built Freehold Mail to package that architecture for anyone who wants to self-host it.
@@ -282,9 +295,9 @@ Full team, how decisions get made, and how to join:
 [`MAINTAINERS.md`](MAINTAINERS.md) · [`GOVERNANCE.md`](GOVERNANCE.md).
 
 > **On commit authorship.** Commits are authored by the person who made them, using an email
-> verified on their GitHub account. Copyright is separate and does not change:
-> [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) name Novaza Solution JSC. Earlier commits were
-> made under the company identity, `Novaza Solution JSC <admin@novaza.ai>`. That address is
+> verified on their GitHub account. Copyright is separate from authorship:
+> [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) name Paphus Solutions Inc. Earlier commits were
+> made under the identity of the former steward, `Novaza Solution JSC <admin@novaza.ai>`. That address is
 > verified on no GitHub account for a while, so those commits were credited to nobody and the
 > Contributors list showed only `dependabot`. Verifying the address on a maintainer's account
 > fixed all fifteen at once, without touching the commits. If you contribute, commit with an

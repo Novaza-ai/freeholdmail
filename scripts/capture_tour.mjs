@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2026 Novaza Solution JSC
+// Copyright (c) 2026 Paphus Solutions Inc.
 // Last-touched: 2026-08-05 — captures the product tour as PNG frames for the README GIF.
 //
 // Drives a real browser against a running Freehold Mail stack: signs in, starts the

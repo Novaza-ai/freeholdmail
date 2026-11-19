@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-08-05 — assembles captured tour frames into the README GIF.
 #
 # Frames come from scripts/capture_tour.mjs. ImageMagick is the only dependency; ffmpeg

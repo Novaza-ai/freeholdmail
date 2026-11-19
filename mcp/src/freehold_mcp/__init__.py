@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-11-04 — package version, single source for pyproject and the server.
 """Freehold Mail MCP server: scoped, audited agent access to one self-hosted mailbox."""
 

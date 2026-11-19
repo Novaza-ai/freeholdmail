@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-18 — 管理主体を Paphus Solutions Inc. に変更。MCP のテスト動画をページ内で再生。 Before that, 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -38,11 +38,14 @@
 
 # Freehold Mail
 
-**受信箱を借りるのはもうやめましょう。** 完全な自己ホスト型メールスタック — Rust 製メールサーバーと
-モダンな Web クライアント。
+**受信箱を借りるのはもうやめましょう。** 完全な自己ホスト型メールスタック — Rust 製メールサーバー、モダンな Web クライアント、そして AI エージェントがあなたの決めた範囲でメールボックスを扱える任意の MCP サーバー。
 
 > *Freehold*（自由保有権）: 地主も更新すべき賃貸契約も存在せず、完全に自分のものである資産のこと。
 > これを自分で動かすことと、あなたのデータを収益源とする誰かから受信箱を借りることの違いが、まさにそれです。
+
+32 秒・無音、ローカルのテスト環境で収録。悪意あるメールはデータとしてのみ AI エージェントに渡され、許可リスト外への送信は拒否され、許可された送信は受信者の受信箱に届き、すべての呼び出しが監査ログに残ります。
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Freehold Mail の受信箱: フォルダーのサイドバー、メッセージ一覧、閲覧ペイン" width="820">
@@ -91,6 +94,22 @@ PostgreSQL は C です。つまり「メモリ安全」はスタック全体で
 SSO が不要なら Keycloak に触れることはありません。オプションのオーバーレイファイルに分離されています。
 
 **AI エージェント向け（任意、両エディション共通）:** `docker-compose.mcp.yml` で [MCP](https://modelcontextprotocol.io) サーバーが追加されます。エージェントごとに、見えるフォルダー、下書き・整理・送信の可否、送信先を決められます。すべての呼び出しは監査ログに残り、取り消しは設定の1 行の編集で済み、エージェントがメールボックスのパスワードを持つことはありません。削除ツールはありません。エンドツーエンドで検証済み（43/43）。脅威モデルは [`docs/MCP.md`](../../MCP.md) にあります。
+
+冒頭のクリップの裏付けとなるテスト実行も動画で公開しています:
+
+**MCP サーバーの単体テスト** — ポリシー、本物の RS256 JWT による両方の認証モード、監査、レート制限: 30 件成功。
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**MCP サーバーを含むエンドツーエンド** — `mcp/Dockerfile` からビルドしたイメージ、3 つのエージェント、本物の MCP クライアント: MCP チェック 43 件、失敗 0。
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**その後のメールボックス** — エージェントの操作結果を付属の Web メールで確認: 拒否された下書きは未送信のまま、許可された 1 通だけが届き、呼び出しごとに監査ログが 1 行。
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+全 7 本の動画と収録方法: [`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md)。
 
 ## クイックスタート
 
@@ -218,6 +237,8 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 終了時に破棄します — 稼働中のデプロイを妨げることはありません。これらのテストが意図的に
 **カバーしていない**範囲も含め、[`tests/README.md`](../../../tests/README.md) を参照してください。
 
+上の各実行に加え、セキュリティチェックを 1 つずつ壊すミューテーションテストと、実行後のメールボックスの確認も、クリーンな clone 上で[動画に記録](../../../docs/VERIFICATION.md)されています。
+
 日常運用 — バックアップ、証明書更新、メールボックス管理、アップグレード、インシデント対応 — は
 [`docs/RUNBOOK.md`](../../../docs/RUNBOOK.md) にあります。前提条件は
 [`docs/REQUIREMENTS.md`](../../../docs/REQUIREMENTS.md)。
@@ -237,7 +258,7 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — そして
 [@anhkk1245](https://github.com/anhkk1245)、所属は
-**[Novaza Solution JSC](https://novaza.ai)**。
+**[Paphus Solutions Inc.](https://paphussolutions.com)**。
 
 私たちはこのスタックのコンポーネント（Stalwart と Bulwark）を自社のメールとして本番運用しており、
 その構成を自己ホストしたい人のためにパッケージ化したのが Freehold Mail です。MIT ライセンスです。

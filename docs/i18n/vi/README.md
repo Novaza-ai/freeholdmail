@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — bổ sung đủ danh sách giấy phép và đính chính khẳng định "memory-safe". -->
+<!-- Last-touched: 2026-11-18 — thay đơn vị quản lý sang Paphus Solutions Inc.; video kiểm thử MCP phát ngay trong trang. Before that, 2026-11-14 — clip MCP đưa lên phần giới thiệu, câu mở đầu nhắc máy chủ MCP, thêm link tới video kiểm thử. Before that, 2026-08-06 — bổ sung đủ danh sách giấy phép và đính chính khẳng định "memory-safe". -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -38,12 +38,15 @@
 
 # Freehold Mail
 
-**Bạn muốn sở hữu mail server của chính mình?** Một bộ mail stack self-hosted hoàn chỉnh — mail
-server viết bằng Rust, web client hiện đại.
+**Bạn muốn sở hữu mail server của chính mình?** Một bộ mail stack self-hosted hoàn chỉnh — mail server viết bằng Rust, web client hiện đại, và một máy chủ MCP tuỳ chọn để AI agent làm việc trong hộp thư theo đúng quyền bạn cho.
 
 > _Freehold_ là thuật ngữ pháp lý: tài sản bạn **sở hữu đứt**, không có địa chủ, không có
 > hợp đồng thuê phải gia hạn. Đó chính là khác biệt giữa việc tự vận hành bộ này và việc
 > thuê hộp thư từ một bên mà mô hình kinh doanh của họ là dữ liệu của bạn.
+
+Clip dài 32 giây, không có tiếng, quay trên một stack thử nghiệm cục bộ: một email độc hại chỉ đến tay AI agent dưới dạng dữ liệu, lệnh gửi tới địa chỉ ngoài danh sách cho phép bị từ chối, lệnh gửi hợp lệ đến đúng hộp thư người nhận, và mọi lệnh gọi đều được ghi audit.
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Hộp thư Freehold Mail: sidebar thư mục, danh sách thư và khung đọc" width="820">
@@ -97,6 +100,22 @@ server của ai cả.
 Bạn không phải đụng đến Keycloak trừ khi muốn dùng SSO; nó nằm trong một file overlay tuỳ chọn.
 
 **Cho AI agent (tuỳ chọn, cả hai bản):** `docker-compose.mcp.yml` thêm một máy chủ [MCP](https://modelcontextprotocol.io). Bạn quyết định cho từng agent: được thấy thư mục nào, được soạn nháp, sắp xếp hay gửi thư không, và gửi cho ai. Mọi lệnh gọi đều được ghi audit, thu hồi chỉ cần sửa một dòng, và agent không bao giờ cầm mật khẩu hộp thư của bạn. Không có công cụ xoá thư. Đã kiểm thử end-to-end (43/43); mô hình đe doạ nằm ở [`docs/MCP.md`](../../MCP.md).
+
+Các lần chạy kiểm thử đứng sau clip ở đầu trang cũng được quay video:
+
+**Kiểm thử đơn vị của máy chủ MCP** — chính sách, cả hai chế độ xác thực với JWT RS256 thật, nhật ký kiểm toán, giới hạn tần suất: 30 đạt.
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**Kiểm thử đầu-cuối với máy chủ MCP** — image dựng từ `mcp/Dockerfile`, ba agent, một MCP client thật: 43 kiểm tra MCP, 0 lỗi.
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**Hộp thư sau đó** — những gì agent để lại, xem trong webmail đi kèm: bản nháp bị từ chối vẫn chưa gửi, lần gửi hợp lệ duy nhất đã đến nơi, và mỗi lần gọi có một dòng kiểm toán.
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+Đủ bảy video và cách quay: [`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md).
 
 ## Bắt đầu nhanh
 
@@ -225,6 +244,8 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 container riêng, và luôn dọn sạch khi kết thúc — nó sẽ không làm phiền một bản triển khai
 đang chạy. Xem [`tests/README.md`](../../../tests/README.md), gồm cả phần **cố ý không** kiểm thử.
 
+Từng lần chạy ở trên, cùng một bài kiểm thử đột biến lần lượt phá từng lớp kiểm tra bảo mật và phần xem lại hộp thư sau đó, đều được [quay video](../../../docs/VERIFICATION.md) trên một bản clone mới.
+
 Vận hành hằng ngày — sao lưu, gia hạn chứng chỉ, quản lý hộp thư, nâng cấp, xử lý sự cố —
 nằm ở [`docs/RUNBOOK.md`](../../../docs/RUNBOOK.md). Điều kiện tiên quyết ở
 [`docs/REQUIREMENTS.md`](../../../docs/REQUIREMENTS.md).
@@ -244,7 +265,7 @@ Dẫn dắt bởi **Daika Ginza** — [GitHub](https://github.com/daikaginza) ·
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — cùng
 [@anhkk1245](https://github.com/anhkk1245), tại
-**[Novaza Solution JSC](https://novaza.ai)**.
+**[Paphus Solutions Inc.](https://paphussolutions.com)**
 
 Chúng tôi chạy các thành phần của stack này (Stalwart và Bulwark) trong môi trường production
 cho hệ thống mail của chính mình, và xây Freehold Mail để đóng gói kiến trúc đó cho bất kỳ ai

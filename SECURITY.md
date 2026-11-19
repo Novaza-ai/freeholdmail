@@ -1,6 +1,7 @@
 # Security Policy
 
-<!-- Last-touched: 2026-08-13 (later same day) — records the empty-secret defect and its fix,
+<!-- Last-touched: 2026-11-18 — the security email is now admin@paphussolutions.com, with the change of steward.
+     Before that, 2026-08-13 (later same day) — records the empty-secret defect and its fix,
      reverses the "releases will ship no assets" position with the reason it no longer holds,
      and re-measures the static-analysis table, which named 2 Python files when there were 4
      and was 10,431 bytes light on Shell. Earlier the same day: stated the secret-scanning tier
@@ -19,7 +20,7 @@ problem — a public report is a public exploit for everyone running this stack.
    https://github.com/Novaza-ai/freeholdmail/security/advisories/new
    It is private between you and the maintainers, it lets us work with you on a fix in a
    private fork, and it produces a CVE when the issue warrants one.
-2. **Email: admin@novaza.ai** — put `[SECURITY]` at the front of the subject.
+2. **Email: admin@paphussolutions.com** — put `[SECURITY]` at the front of the subject.
    Use this if you cannot or prefer not to use GitHub. If you want the report encrypted,
    say so in a first message with no details and we will exchange a key.
 

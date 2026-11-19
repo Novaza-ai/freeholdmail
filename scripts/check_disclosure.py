@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-08-13 — binaries are scanned too, via their printable runs. They used to
 # be skipped with a comment saying they were "covered by the metadata audit"; no such audit
 # existed anywhere in this repository, so the files most likely to carry metadata nobody reads

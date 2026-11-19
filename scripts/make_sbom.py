@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-08-13 — new: releases carried no artifacts at all, so a consumer had
 # nothing to verify and no way to answer "what would this actually run on my machine?".
 #
@@ -132,7 +132,7 @@ def main():
         "documentNamespace": "%s/sbom/%s" % (NAMESPACE, arguments.version),
         "creationInfo": {
             "created": arguments.created,
-            "creators": ["Tool: scripts/make_sbom.py", "Organization: Novaza Solution JSC"],
+            "creators": ["Tool: scripts/make_sbom.py", "Organization: Paphus Solutions Inc."],
         },
         "packages": [{
             "SPDXID": "SPDXRef-Package-freeholdmail",
@@ -142,7 +142,7 @@ def main():
             "filesAnalyzed": False,
             "licenseConcluded": "NOASSERTION",
             "licenseDeclared": "MIT",
-            "supplier": "Organization: Novaza Solution JSC",
+            "supplier": "Organization: Paphus Solutions Inc.",
         }] + packages,
         "relationships": [{
             "spdxElementId": "SPDXRef-DOCUMENT",

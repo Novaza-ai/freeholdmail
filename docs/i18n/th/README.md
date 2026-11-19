@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-18 — เปลี่ยนผู้ดูแลเป็น Paphus Solutions Inc.; วิดีโอทดสอบ MCP เล่นได้ในหน้านี้ Before that, 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -38,12 +38,15 @@
 
 # Freehold Mail
 
-**เลิกเช่ากล่องจดหมายของคุณเสียที** เมลสแตกแบบ self-hosted ที่ครบถ้วน — เมลเซิร์ฟเวอร์เขียนด้วย Rust
-และเว็บไคลเอนต์สมัยใหม่
+**เลิกเช่ากล่องจดหมายของคุณเสียที** เมลสแตกแบบ self-hosted ที่ครบถ้วน — เมลเซิร์ฟเวอร์เขียนด้วย Rust เว็บไคลเอนต์สมัยใหม่ และเซิร์ฟเวอร์ MCP (เลือกใช้ได้) ที่ให้ AI agent ทำงานกับกล่องจดหมายได้ตามสิทธิ์ที่คุณกำหนด
 
 > *Freehold* (กรรมสิทธิ์ขาด): ทรัพย์สินที่คุณเป็นเจ้าของโดยสมบูรณ์ ไม่มีเจ้าของที่ดิน และไม่มีสัญญาเช่าให้ต้องต่ออายุ
 > นั่นคือความแตกต่างระหว่างการรันสิ่งนี้ด้วยตัวเอง กับการเช่ากล่องจดหมายจากคนที่มีโมเดลธุรกิจ
 > คือข้อมูลของคุณ
+
+คลิปยาว 32 วินาที ไม่มีเสียง บันทึกจากสแตกทดสอบในเครื่อง: อีเมลอันตรายถูกส่งให้ AI agent ในรูปข้อมูลเท่านั้น การส่งไปยังที่อยู่นอกรายการที่อนุญาตถูกปฏิเสธ การส่งที่อนุญาตไปถึงกล่องจดหมายของผู้รับ และทุกการเรียกถูกบันทึก audit
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="กล่องจดหมายของ Freehold Mail: แถบข้างแสดงโฟลเดอร์ รายการข้อความ และบานหน้าต่างอ่านข้อความ" width="820">
@@ -94,6 +97,22 @@ Freehold Mail คือทางเลือกที่สาม: รีโพ�
 คุณจะไม่ต้องแตะ Keycloak เลยเว้นแต่คุณต้องการ SSO เพราะมันอยู่ในไฟล์ overlay ที่เป็นทางเลือก
 
 **สำหรับ AI agent (ไม่บังคับ ใช้ได้ทั้งสองรุ่น):** `docker-compose.mcp.yml` จะเพิ่มเซิร์ฟเวอร์ [MCP](https://modelcontextprotocol.io) คุณกำหนดได้สำหรับแต่ละ agent ว่าเห็นโฟลเดอร์ใดได้บ้าง ร่าง จัดระเบียบ หรือส่งอีเมลได้หรือไม่ และส่งถึงใครได้ ทุกการเรียกถูกบันทึกในบันทึกตรวจสอบ การเพิกถอนทำได้ด้วยการแก้ไขเพียงจุดเดียว และ agent ไม่เคยถือรหัสผ่านกล่องจดหมายของคุณ ไม่มีเครื่องมือลบอีเมล ทดสอบแบบ end-to-end แล้ว (43/43) แบบจำลองภัยคุกคามอยู่ที่ [`docs/MCP.md`](../../MCP.md)
+
+การทดสอบที่อยู่เบื้องหลังคลิปด้านบนก็มีวิดีโอเช่นกัน:
+
+**การทดสอบหน่วยของเซิร์ฟเวอร์ MCP** — นโยบาย, การยืนยันตัวตนทั้งสองโหมดด้วย JWT RS256 จริง, audit, การจำกัดอัตรา: ผ่าน 30 รายการ
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**การทดสอบแบบ end-to-end พร้อมเซิร์ฟเวอร์ MCP** — อิมเมจที่ build จาก `mcp/Dockerfile`, เอเจนต์สามตัว, MCP client จริง: ตรวจ MCP 43 รายการ ล้มเหลว 0
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**กล่องจดหมายหลังจากนั้น** — สิ่งที่เอเจนต์ทิ้งไว้ ดูในเว็บเมลที่มาด้วย: ร่างที่ถูกปฏิเสธยังไม่ถูกส่ง, การส่งที่อนุญาตเพียงครั้งเดียวไปถึงผู้รับ, และ audit หนึ่งบรรทัดต่อการเรียกหนึ่งครั้ง
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+วิดีโอทั้งเจ็ดและวิธีบันทึก: [`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md)
 
 ## เริ่มต้นอย่างรวดเร็ว
 
@@ -222,6 +241,8 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 ดู [`tests/README.md`](../../../tests/README.md) รวมถึงสิ่งที่การทดสอบเหล่านี้จงใจ
 **ไม่** ครอบคลุม
 
+การรันแต่ละครั้งข้างต้น รวมถึง mutation test ที่ทำลายการตรวจสอบความปลอดภัยทีละข้อ และการเปิดดูกล่องจดหมายหลังจากนั้น ได้[บันทึกเป็นวิดีโอ](../../../docs/VERIFICATION.md)บน clone ใหม่
+
 การปฏิบัติงานประจำวัน — การสำรองข้อมูล, การต่ออายุใบรับรอง, การจัดการกล่องจดหมาย, การอัปเกรด,
 แนวทางรับมือเหตุการณ์ — อยู่ใน [`docs/RUNBOOK.md`](../../../docs/RUNBOOK.md) ข้อกำหนดเบื้องต้นอยู่ใน
 [`docs/REQUIREMENTS.md`](../../../docs/REQUIREMENTS.md)
@@ -241,7 +262,7 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — ร่วมกับ
 [@anhkk1245](https://github.com/anhkk1245) ที่
-**[Novaza Solution JSC](https://novaza.ai)**
+**[Paphus Solutions Inc.](https://paphussolutions.com)**
 
 เรารันคอมโพเนนต์ของสแตกนี้ (Stalwart และ Bulwark) บนโปรดักชันสำหรับอีเมลของเราเอง และเรา
 สร้าง Freehold Mail ขึ้นเพื่อบรรจุสถาปัตยกรรมนั้นให้ทุกคนที่ต้องการโฮสต์ด้วยตัวเอง

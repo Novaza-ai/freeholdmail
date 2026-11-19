@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-11-04 — HTTP app factory: stateless Streamable HTTP, auth, health.
 """Build the HTTP application for either auth mode."""
 from __future__ import annotations

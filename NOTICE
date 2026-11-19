@@ -1,8 +1,8 @@
 Freehold Mail
-Copyright (c) 2026 Novaza Solution JSC
+Copyright (c) 2026 Paphus Solutions Inc.
 
-Maintainer: Novaza Solution JSC — https://novaza.ai
-Contact:    admin@novaza.ai
+Maintainer: Paphus Solutions Inc. — https://paphussolutions.com
+Contact:    admin@paphussolutions.com
             Security reports: prefer GitHub's private advisory flow — see SECURITY.md.
 
 This product is licensed under the MIT License (see LICENSE). The MIT license
@@ -39,7 +39,7 @@ upstream projects already provide.
 TRADEMARKS AND BRAND ASSETS — NOT covered by the MIT License:
 The name "Freehold Mail", the shield mark, and the artwork in docs/media/logo.png,
 docs/media/logo-dark.png and docs/media/icon.png are the identity of this project
-and remain the property of Novaza Solution JSC. The MIT grant above covers the
+and remain the property of Paphus Solutions Inc. The MIT grant above covers the
 code, configuration and documentation; it does not grant permission to use the
 name or the marks to brand a fork, imply endorsement, or identify a different
 product. Forking the code is welcome and needs no permission — please give your

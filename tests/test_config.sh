@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-11-04 — MCP overlay guards: bounds, loopback port, pinned image.
 # Before that, 2026-08-13 — four guards added for defects an audit found, each of which had
 # been claimed somewhere and asserted nowhere: the shipped .env.example must not resolve to a

@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-18 — 管理方改为 Paphus Solutions Inc.；MCP 测试视频直接在页面内播放。 Before that, 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -38,10 +38,14 @@
 
 # Freehold Mail
 
-**别再租用你的收件箱。** 一套完整的自托管邮件系统 —— Rust 编写的邮件服务器，加上现代化的 Web 客户端。
+**别再租用你的收件箱。** 一套完整的自托管邮件系统 —— Rust 编写的邮件服务器、现代化的 Web 客户端，以及可选的 MCP 服务器，让 AI 智能体按你设定的权限处理邮箱。
 
 > *Freehold*（永久产权）：完全属于你的财产，没有房东，也没有需要续签的租约。
 > 自己运行这套系统，与向一个以你的数据为商业模式的人租用邮箱，区别正在于此。
+
+时长 32 秒，无声音，在本地测试环境中录制：恶意邮件只会作为数据交给 AI 智能体，发往允许列表之外地址的邮件被拒绝，允许的发送会到达收件人的收件箱，每次调用都有审计记录。
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="Freehold Mail 收件箱：文件夹侧栏、邮件列表与阅读窗格" width="820">
@@ -89,6 +93,22 @@ PostgreSQL 是 C 写的，所以“内存安全”描述的是我们所选的那
 除非你想要 SSO，否则完全不必接触 Keycloak；它位于一个可选的 overlay 文件中。
 
 **面向 AI 智能体（可选，两个版本均适用）：** `docker-compose.mcp.yml` 会添加一个 [MCP](https://modelcontextprotocol.io) 服务器。你可以为每个智能体决定：能看到哪些文件夹、能否起草、整理或发送邮件，以及能发给谁。每次调用都会写入审计日志，撤销只需修改一处配置，智能体永远拿不到你的邮箱密码。没有删除工具。已端到端测试（43/43）；威胁模型见 [`docs/MCP.md`](../../MCP.md)。
+
+页首短片背后的测试运行也都录了视频：
+
+**MCP 服务器单元测试** —— 策略、使用真实 RS256 JWT 的两种认证模式、审计、速率限制：30 项通过。
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**包含 MCP 服务器的端到端测试** —— 由 `mcp/Dockerfile` 构建的镜像、三个智能体、一个真实的 MCP 客户端：43 项 MCP 检查，0 失败。
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**之后的邮箱** —— 在自带的 Web 邮件中查看智能体留下的结果：被拒绝的草稿仍未发送，唯一允许的那封已送达，每次调用对应一行审计记录。
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+全部七段视频及录制方式：[`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md)。
 
 ## 快速开始
 
@@ -207,6 +227,8 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 它不会干扰正在运行的部署。请参阅 [`tests/README.md`](../../../tests/README.md)，其中也说明了这些测试
 **刻意不覆盖**的范围。
 
+上面的每一次运行，加上一次逐个破坏安全检查的变异测试，以及事后对邮箱的检查，都在全新 clone 上[录制成视频](../../../docs/VERIFICATION.md)。
+
 日常运维 —— 备份、证书续期、邮箱管理、升级、事故处置 —— 见
 [`docs/RUNBOOK.md`](../../../docs/RUNBOOK.md)。前提条件见
 [`docs/REQUIREMENTS.md`](../../../docs/REQUIREMENTS.md)。
@@ -226,7 +248,7 @@ tests/test_e2e.sh --mcp   # same, plus the MCP server driven by a real MCP clien
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) —— 与
 [@anhkk1245](https://github.com/anhkk1245) 一起，在
-**[Novaza Solution JSC](https://novaza.ai)**。
+**[Paphus Solutions Inc.](https://paphussolutions.com)**。
 
 我们在生产环境中用这套系统的组件（Stalwart 与 Bulwark）承载自己的邮件，并把这套架构打包成
 Freehold Mail，供任何想自托管的人使用。采用 MIT 许可证；见

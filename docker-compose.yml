@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-08-13 — secrets are now REQUIRED variables (${VAR:?}). Copying
 # .env.example to .env used to yield an empty session key and an empty admin secret, and the
 # stack started anyway without a word; compose now refuses and names the variable.

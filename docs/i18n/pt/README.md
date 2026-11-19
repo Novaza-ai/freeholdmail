@@ -1,4 +1,4 @@
-<!-- Last-touched: 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
+<!-- Last-touched: 2026-11-18 — o projeto agora é mantido pela Paphus Solutions Inc.; os vídeos de teste do MCP tocam na própria página. Before that, 2026-11-14 — MCP clip at the top, tagline names the MCP server, link to the test-suite videos. Before that, 2026-08-06 — licence list completed and the "memory-safe" claim corrected. -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="../../../docs/media/logo-dark.png">
@@ -39,12 +39,15 @@
 
 # Freehold Mail
 
-**Pare de alugar a sua caixa de entrada.** Uma stack de e-mail completa e auto-hospedada — servidor
-de e-mail em Rust, cliente web moderno.
+**Pare de alugar a sua caixa de entrada.** Uma stack de e-mail completa e auto-hospedada — servidor de e-mail em Rust, cliente web moderno e um servidor MCP opcional para que agentes de IA trabalhem na sua caixa de correio com as permissões que definir.
 
 > *Freehold* (propriedade plena): um bem que é inteiramente seu, sem proprietário acima de si e sem
 > contrato para renovar. É essa a diferença entre executar isto e alugar uma caixa de correio a
 > alguém cujo modelo de negócio são os seus dados.
+
+32 segundos, sem som, gravado numa stack de teste local: um e-mail malicioso chega ao agente de IA apenas como dados, um envio para um endereço fora da lista de permissões é recusado, um envio permitido chega à caixa de entrada do destinatário e cada chamada fica auditada.
+
+https://github.com/user-attachments/assets/d55bced5-6463-4e35-bffa-cd6964f8a066
 
 <p align="center">
   <img src="../../../docs/media/inbox.png" alt="A caixa de entrada do Freehold Mail: barra lateral de pastas, lista de mensagens e painel de leitura" width="820">
@@ -96,6 +99,22 @@ honesta. **O que não é:** um fork ou uma reescrita do servidor de e-mail de ni
 Nunca toca no Keycloak a menos que queira SSO; ele vive num ficheiro de overlay opcional.
 
 **Para agentes de IA (opcional, ambas as edições):** `docker-compose.mcp.yml` adiciona um servidor [MCP](https://modelcontextprotocol.io). Você decide, por agente, quais pastas ele vê, se pode redigir, organizar ou enviar, e para quem. Cada chamada é auditada, revogar é uma única edição e o agente nunca tem a senha da sua caixa de correio. Não há ferramenta de exclusão. Testado de ponta a ponta (43/43); o modelo de ameaças está em [`docs/MCP.md`](../../MCP.md).
+
+Os testes por trás do clipe no topo também estão em vídeo:
+
+**Testes unitários do servidor MCP** — política, os dois modos de autenticação com JWTs RS256 reais, auditoria, limite de taxa: 30 aprovados.
+
+https://github.com/user-attachments/assets/9282c7df-195f-4de4-8aa2-6911ce799f4d
+
+**Ponta a ponta com o servidor MCP** — a imagem construída a partir de `mcp/Dockerfile`, três agentes, um cliente MCP real: 43 verificações MCP, 0 falhas.
+
+https://github.com/user-attachments/assets/54a60fd0-709f-4e86-b5e8-34353dbfc0e3
+
+**A caixa de correio depois** — o que os agentes deixaram, no webmail incluído: o rascunho recusado continua sem envio, o único envio permitido chegou, e uma linha de auditoria por chamada.
+
+https://github.com/user-attachments/assets/661dd2f6-9091-43d2-aae9-0f1ad49a066a
+
+As sete gravações e como foram feitas: [`docs/VERIFICATION.md`](../../../docs/VERIFICATION.md).
 
 ## Início rápido
 
@@ -228,6 +247,8 @@ volumes e nomes de containers, e desmonta-a ao sair — não perturba uma implan
 Consulte [`tests/README.md`](../../../tests/README.md), incluindo o que estes testes deliberadamente
 **não** cobrem.
 
+Cada uma destas execuções, mais um teste de mutação que quebra as verificações de segurança uma a uma e uma vista à caixa de correio no fim, está [gravada em vídeo](../../../docs/VERIFICATION.md) num clone novo.
+
 As operações do dia a dia — cópias de segurança, renovação de certificados, gestão de caixas de
 correio, atualizações, playbooks de incidentes — estão em
 [`docs/RUNBOOK.md`](../../../docs/RUNBOOK.md). Os pré-requisitos estão em
@@ -248,7 +269,7 @@ Liderado por **Daika Ginza** — [GitHub](https://github.com/daikaginza) ·
 [Substack](https://substack.com/@daikaginza) ·
 [LinkedIn](https://www.linkedin.com/in/daikaginza/) — com
 [@anhkk1245](https://github.com/anhkk1245), na
-**[Novaza Solution JSC](https://novaza.ai)**.
+**[Paphus Solutions Inc.](https://paphussolutions.com)**
 
 Executamos os componentes desta stack (Stalwart e Bulwark) em produção para o nosso próprio e-mail, e
 construímos o Freehold Mail para empacotar essa arquitetura para quem a quiser auto-hospedar.

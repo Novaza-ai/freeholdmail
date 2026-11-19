@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Novaza Solution JSC
+# Copyright (c) 2026 Paphus Solutions Inc.
 # Last-touched: 2026-11-04 — minimal async JMAP client (RFC 8620 core, RFC 8621 mail).
 """Just enough JMAP for the tools in server.py, and nothing that guesses.
 
