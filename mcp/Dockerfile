@@ -4,14 +4,14 @@
 #
 # The base is pinned by digest and every dependency by hash (pip --require-hashes), so a
 # rebuild either produces the same inputs or fails. Dependabot proposes both updates.
-FROM python:3.13-slim@sha256:ae14d4ce8771606477a81446e7ef429edd6762305fc50c84507c1041fa8285d1 AS build
+FROM python:3.15-slim@sha256:65a65fc7b30b06cb6df4930fd4650697cb23f4c2698ab81fc87e4b031bc36928 AS build
 ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
 WORKDIR /src
 COPY requirements.txt .
 RUN python -m venv /opt/venv \
  && /opt/venv/bin/pip install --require-hashes --no-deps -r requirements.txt
 
-FROM python:3.13-slim@sha256:ae14d4ce8771606477a81446e7ef429edd6762305fc50c84507c1041fa8285d1
+FROM python:3.15-slim@sha256:65a65fc7b30b06cb6df4930fd4650697cb23f4c2698ab81fc87e4b031bc36928
 LABEL org.opencontainers.image.title="freehold-mcp" \
       org.opencontainers.image.description="MCP server for Freehold Mail" \
       org.opencontainers.image.source="https://github.com/Novaza-ai/freeholdmail" \
